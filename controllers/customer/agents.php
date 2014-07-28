@@ -317,15 +317,19 @@ elseif($mode == 'companies_and_products') {
 elseif ($mode == 'order_make') {
 
     $step = empty($_REQUEST['step']) ? 1 : intval($_REQUEST['step'])+1 ;
-    if ($step == 1) {
-        fn_agents_process_order($_REQUEST, $step);
+    if ($step == 2) {
+        fn_agents_process_order($_REQUEST, $step, $auth);
         fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
         fn_save_cart_content($cart, $auth['user_id']);
     }
     if ($step == 3) {
-        fn_agents_process_order($_REQUEST, $step);
+        fn_agents_process_order($_REQUEST, $step, $auth);
     }
-    Registry::get('view')->assign('step', $step );
+    Registry::get('view')->assign('step', $step, $auth );
+    Registry::get('view')->assign('product', array(
+        'product_id' => $_REQUEST['product_id'],
+        'amount' => ($_REQUEST['item_count'] || 1) )
+    );
     Registry::get('view')->assign('mode', 'order_make');
     Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
@@ -1639,7 +1643,7 @@ function add_images_to_products(&$products, $groupById = true) {
     }
 }
 
-function fn_agents_process_order($order_data, $step = 1) {
+function fn_agents_process_order($order_data, $step = 1, $auth) {
     if (empty($_SESSION['cart'])) {
         fn_clear_cart($_SESSION['cart']);
     }
@@ -1649,15 +1653,16 @@ function fn_agents_process_order($order_data, $step = 1) {
     $product_id = $order_data['product_id'];
     $amount = $order_data['item_count'];
 
-    if ($step == 1) {
-        $client_id = fn_agents_register_customer($order_data);
-        fn_add_product_to_cart(array('product_id' => $product_id, 'amount' => $amount), $cart, $auth);
+    if ($step == 2) {
+        $client_id = fn_agents_register_customer($order_data['client']);
+        $product_data = array($product_id => array('product_id' => $product_id, 'amount' => $amount) );
+        fn_add_product_to_cart($product_data, $cart, $auth);
         fn_save_cart_content($cart, $auth['user_id']);
         fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
     }
 
     if($step == 3) {
-        fn_agents_new_order($order_data);
+        fn_agents_new_order($cart, $auth);
     }
 
 
@@ -1667,8 +1672,8 @@ function fn_agents_process_order($order_data, $step = 1) {
 function fn_agents_register_customer ($customer_data) {
     $action = 'add';
     $user_id = $customer_data['affiliate_id'];
-    $firstname = preg_split(' ', $customer_data['fio'])[1];
-    $lastname = preg_split(' ', $customer_data['fio'])[0];
+    $firstname = explode(' ', $customer_data['fio'])[1];
+    $lastname = explode(' ', $customer_data['fio'])[0];
     $user_data = array(
         'user_id' => $user_id,
         'profile_name' => $customer_data['fio'],
@@ -1709,7 +1714,6 @@ function fn_agents_register_customer ($customer_data) {
     return $client_id;
 }
 
-function fn_agents_new_order($order_data) {
-    var_dump($order_data);
-    die();
+function fn_agents_new_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
+    fn_place_order($cart, $auth, $action, $parent_order_id);
 }
