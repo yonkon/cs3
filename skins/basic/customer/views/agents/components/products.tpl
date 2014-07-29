@@ -1,5 +1,16 @@
 <div id="products_section">
-    <select name="company_id"></select> <select name="item_ids"></select>
+    <select id="client_company" name="client[company]">
+        <option value="">- {$lang.select_company} -</option>
+        {foreach from=$companies item="company" key="code"}
+            <option {if $company.company == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>
+        {/foreach}
+    </select>
+    <select id="client_product" name="client[product]">
+        <option value="">- {$lang.select_product} -</option>
+        {foreach from=$all_products item="product" key="code"}
+            <option {if $product.product == $client.product}selected="selected"{/if}  value="{$product.product_id}">{$product.product}</option>
+        {/foreach}
+    </select>
 
     <div id="product_sorting">
         Sort by name <select name="sort_name">
