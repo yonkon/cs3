@@ -969,16 +969,20 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
     //
 
     //Сортировака...
-    if(isset($params['sort_name']) && strtolower($params['sort_name']) != 'desc'){
-       $order[] = db_quote(' product asc');
-    }   else    {
-        $order[] = db_quote('product desc');
+    if(isset($params['sort_name']) ) {
+        if (strtolower($params['sort_name']) != 'desc'){
+            $order[] = db_quote(' product asc');
+        }   else    {
+            $order[] = db_quote('product desc');
+        }
     }
 
-    if(isset($params['sort_price']) && strtolower($params['sort_price']) != 'desc'){
-        $order[] = db_quote(' price asc');
-    }   else    {
-        $order[] = db_quote(' price desc');
+    if(isset($params['sort_price']) ) {
+        if (strtolower($params['sort_price']) != 'desc'){
+            $order[] = db_quote(' price asc');
+        }   else    {
+            $order[] = db_quote(' price desc');
+        }
     }
 
 
@@ -1578,7 +1582,7 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
 if (!empty ($order) && is_array($order)) {
     $order = 'ORDER BY ' . implode (', ', $order);
 } else {
-    $order = '';
+    $order = ' ORDER BY product asc ';
 }
 //    define('DEBUG_QUERIES', true);
 
