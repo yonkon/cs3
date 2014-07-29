@@ -1,13 +1,13 @@
 <div id="products_section">
-    <select></select> <select></select>
+    <select name="company_id"></select> <select name="item_ids"></select>
 
     <div id="product_sorting">
-        Sort by name <select>
+        Sort by name <select name="sort_name">
             <option>asc</option>
             <option>desc</option>
         </select>
 
-        price <select>
+        price <select name="sort_price">
             <option>asc</option>
             <option>desc</option>
         </select>

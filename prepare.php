@@ -16,7 +16,7 @@
 define('TIME', time());
 define('MICROTIME', microtime(true));
 define('MIN_PHP_VERSION', '5.1.0');
-define('MAX_PHP_VERSION', '5.5.10');
+define('MAX_PHP_VERSION', '5.5.11');
 if (stristr(PHP_OS, 'WIN')) {// Define operation system
 	define('IS_WINDOWS', true);
 }
