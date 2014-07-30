@@ -63,6 +63,8 @@
         {elseif $step == 2 }
             {include file="views/agents/components/order_make2.tpl"}
         {/if}
+    {elseif $mode == 'clients'}
+        {include file="views/agents/components/clients.tpl"}
     {/if}
 </div>
 

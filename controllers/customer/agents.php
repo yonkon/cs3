@@ -3,7 +3,7 @@
 
 
 if (!defined('AREA')) { die('Access denied'); }
-
+const PROFILE_TYPE_CLIENT = 'S';
 if (empty($auth['user_id'])) {
     return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form");
 }
@@ -307,15 +307,17 @@ elseif($mode == 'office') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif($mode == 'companies_and_products') {
-    $all_products = fn_agent_get_products(array('product_sort'=>'asc'), null );
-    $products = fn_agent_get_products(null, 10 );
+    $all_products = fn_agent_get_products(array('product_sort'=>'asc'), null, null, false );
+    $products = fn_agent_get_products($_REQUEST, 10 );
     $companies = fn_get_companies(null, $auth);
     Registry::get('view')->assign('all_products', $all_products[0]);
     Registry::get('view')->assign('products', $products[0]);
     Registry::get('view')->assign('products_param', $products[1]);
     Registry::get('view')->assign('companies', $companies[0]);
     Registry::get('view')->assign('mode', 'products');
+    Registry::get('view')->assign('client', $_REQUEST['client']);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'order_make') {
@@ -336,6 +338,13 @@ elseif ($mode == 'order_make') {
     );
     Registry::get('view')->assign('mode', 'order_make');
     Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    return array(CONTROLLER_STATUS_OK);
+}
+elseif ($mode == 'clients') {
+    $clients = fn_agents_get_clients($auth['user_id'], $_REQUEST);
+    Registry::get('view')->assign('mode', 'clients');
+    Registry::get('view')->assign('clients', $clients );
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
     return array(CONTROLLER_STATUS_OK);
 }
@@ -784,7 +793,7 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
 
 }
 
-function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAGE)
+function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAGE, $need_images = true)
 {
     /**
      * Changes params for selecting products
@@ -969,7 +978,7 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
     //
 
     //Сортировака...
-    if(isset($params['sort_name']) ) {
+    if(!empty($params['sort_name']) ) {
         if (strtolower($params['sort_name']) != 'desc'){
             $order[] = db_quote(' product asc');
         }   else    {
@@ -977,7 +986,7 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
         }
     }
 
-    if(isset($params['sort_price']) ) {
+    if(!empty($params['sort_price']) ) {
         if (strtolower($params['sort_price']) != 'desc'){
             $order[] = db_quote(' price asc');
         }   else    {
@@ -1307,6 +1316,14 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
     if (isset($params['company_id']) && $params['company_id'] != '') {
         $condition .= db_quote(' AND products.company_id = ?i ', $params['company_id']);
     }
+    if (isset($params['client']['company']) && $params['client']['company'] != '') {
+        $condition .= db_quote(' AND products.company_id = ?i ', $params['client']['company']);
+    }
+
+    if (isset($params['client']['product']) && $params['client']['product'] != '') {
+        $condition .= db_quote(' AND products.product_id = ?i ', $params['client']['product']);
+    }
+
 
     if (!empty($params['filter_params'])) {
         foreach ($params['filter_params'] as $field => $f_vals) {
@@ -1600,7 +1617,9 @@ if (!empty ($order) && is_array($order)) {
             list($products[$k]['category_ids'], $products[$k]['main_category']) = fn_convert_categories($v['category_ids']);
         }
     }
-    add_images_to_products($products);
+    if ($need_images) {
+        add_images_to_products($products);
+    }
 
     if (!empty($params['get_frontend_urls'])) {
         foreach ($products as &$product) {
@@ -1632,6 +1651,9 @@ if (!empty ($order) && is_array($order)) {
 
 
 function add_images_to_products(&$products, $groupById = true) {
+    if (empty($products)) {
+        return;
+    }
     $productsIds = array();
     $idToProduct = array();
     foreach($products as $k => $product) {
@@ -1718,4 +1740,17 @@ function fn_agents_register_customer ($customer_data) {
 
 function fn_agents_new_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
     fn_place_order($cart, $auth, $action, $parent_order_id);
+}
+
+function fn_agents_get_clients($user_id, $params) {
+    $select = 'SELECT * ';
+    $from = db_quote('FROM cscart_user_profiles ');
+    $where = db_quote(' WHERE user_id = ?i AND profile_type = ?s', $user_id, PROFILE_TYPE_CLIENT);
+    $group = '';
+    $order = ' ORDER BY profile_name ASC ';
+    $clients = db_get_array($select . $from . $where . $group . $order);
+    if(empty($clients)) {
+        $clients = array();
+    }
+    return $clients;
 }

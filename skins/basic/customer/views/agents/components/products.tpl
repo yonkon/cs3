@@ -1,36 +1,43 @@
-<div id="products_section">
-    <select id="client_company" name="client[company]">
+<div id="product_filters">
+    <form method="post">
+    <input type="hidden" name="dispatch" value="agents.companies_and_products">
+
+        <select id="client_company" name="client[company]">
         <option value="">- {$lang.select_company} -</option>
         {foreach from=$companies item="company" key="code"}
-            <option {if $company.company == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>
+            <option {if !empty($client.company) && $company.company_id == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>
         {/foreach}
     </select>
     <select id="client_product" name="client[product]">
         <option value="">- {$lang.select_product} -</option>
         {foreach from=$all_products item="product" key="code"}
-            <option {if $product.product == $client.product}selected="selected"{/if}  value="{$product.product_id}">{$product.product}</option>
+            <option {if !empty($client.product) && $product.product_id == $client.product}selected="selected"{/if}  value="{$product.product_id}">{$product.product}</option>
         {/foreach}
     </select>
 
-    <div id="product_sorting">
         Sort by name <select name="sort_name">
+            <option></option>
             <option>asc</option>
             <option>desc</option>
         </select>
 
         price <select name="sort_price">
+            <option></option>
             <option>asc</option>
             <option>desc</option>
         </select>
-        profit <select>
+        profit <select name="sort_profit">
+            <option></option>
             <option>asc</option>
             <option>desc</option>
         </select>
-        Location <select>
+        Location <select name="filter_city">
             <option>Current city</option>
             <option>Other city1</option>
             <option>Other city2</option>
         </select>
+        <button type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
+        </form>
     </div>
 
     {foreach from=$products item="product"}
