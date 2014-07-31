@@ -65,6 +65,8 @@
         {/if}
     {elseif $mode == 'clients'}
         {include file="views/agents/components/clients.tpl"}
+    {elseif $mode == 'add_client_form'}
+        {include file="views/agents/components/add_client_form.tpl"}
     {/if}
 </div>
 
