@@ -20,7 +20,7 @@
                 <td>{$client.profile_name}</td>
                 <td>{$client.b_phone}</td>
                 <td>{$client.b_email}</td>
-                <td>{$client.registration_date}</td>
+                <td>{$client.registration_date|date_format:"`$settings.Appearance.date_format`"}</td>
                 <td>{$client.comment}</td>
             </tr>
         {/foreach}

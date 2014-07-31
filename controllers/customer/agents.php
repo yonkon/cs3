@@ -370,7 +370,7 @@ elseif ($mode == 'add_client_form') {
             }
         }
         if(!empty($client_id)) {
-            fn_set_notification('S', fn_get_lang_var('success'), fn_get_lang_var('agents_new_client_registered'));
+            fn_set_notification('N', fn_get_lang_var('notice'), fn_get_lang_var('agents_new_client_registered'));
         }
     }
 
@@ -1742,6 +1742,7 @@ function fn_agents_register_customer ($customer_data) {
         'b_email' => $customer_data['email'],
         's_email' => $customer_data['email'],
         'comment' => $customer_data['comment'],
+        'registartion_date' => TIME,
         'b_city' =>  $customer_data['city'],
         's_city' =>  $customer_data['city'],
         'b_state' =>  $customer_data['region'],
