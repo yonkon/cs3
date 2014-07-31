@@ -28,7 +28,7 @@ elseif ($mode == 'add_ticket') {
         $ticket['user_id'] = $auth['user_id'];
         $errors = fn_support_get_ticket_fields_errors($ticket);
         if (empty($errors) ) {
-            $ticket_id = fn_agents_register_customer($ticket);
+            $ticket_id = fn_support_create_ticket($ticket);
         } else {
             foreach ($errors as $field=>$field_errors) {
                 foreach($field_errors as $error) {
@@ -38,16 +38,10 @@ elseif ($mode == 'add_ticket') {
             }
         }
         if(!empty($ticket_id)) {
-            fn_set_notification('S', fn_get_lang_var('success'), fn_get_lang_var('agents_new_client_registered'));
+            fn_set_notification('N', fn_get_lang_var('notice'), fn_get_lang_var('support_ticket_created'));
         }
     }
-    Registry::get('view')->assign('product', array(
-        'product_id' => $_REQUEST['product_id'],
-        'amount' => ($_REQUEST['item_count'] || 1) )
-    );
-    Registry::get('view')->assign('mode', 'order_make');
-    Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    Registry::get('view')->assign('content_tpl', 'views/support/add_ticket.tpl');
     return array(CONTROLLER_STATUS_OK);
 }
 
@@ -86,13 +80,11 @@ function fn_support_get_ticket_fields_errors($ticket) {
     return $errors;
 }
 
-function fn_agents_register_customer ($customer_data) {
+function fn_support_create_ticket ($ticket) {
 
-    $user_data['profile_id'] = db_query("INSERT INTO ?:user_profiles ?e", $user_data);
+    $ticket_id = db_query("INSERT INTO ?:support_tickets ?e", $ticket);
 
 
-    return $user_data['profile_id'];
-
-//    fn_update_user_profile()
     return $ticket_id;
+
 }
