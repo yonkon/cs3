@@ -36,7 +36,7 @@
 	{/hook}
 
 	
-	{if $settings.Suppliers.apply_for_vendor == "Y" && !($controller == 'companies' && $mode == 'apply_for_vendor' || $user_info.company_id)}
+	{if $settings.Suppliers.apply_for_vendor == "Y" && !empty($user_info) && !empty($user_info.company_id) && !($controller == 'companies' && $mode == 'apply_for_vendor' || $user_info.company_id)}
 		<li><a href="{"companies.apply_for_vendor?return_previous_url=`$return_current_url`"|fn_url}" rel="nofollow" class="underlined">{$lang.apply_for_vendor_account}</a></li>{/if}
 	
 	</ul>
