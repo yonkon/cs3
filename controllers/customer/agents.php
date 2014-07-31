@@ -348,6 +348,38 @@ elseif ($mode == 'clients') {
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
     return array(CONTROLLER_STATUS_OK);
 }
+elseif ($mode == 'add_client_form') {
+    $client_data = array('affiliate_id' => $auth['user_id']);
+    if($_REQUEST['submit'] == fn_get_lang_var('submit')){
+        $client_data = array(
+            'affiliate_id' => $auth['user_id'],
+            'fio' => $_REQUEST['profile_name'],
+            'phone' => $_REQUEST['b_phone'],
+            'email' => $_REQUEST['b_email'],
+            'comment' =>  $_REQUEST['comment'],
+        );
+        $errors = fn_agents_get_client_fields_errors($client_data);
+        if (empty($errors) ) {
+            $client_id = fn_agents_register_customer($client_data);
+        } else {
+            foreach ($errors as $field=>$field_errors) {
+                foreach($field_errors as $error) {
+                    $error_text = fn_get_lang_var('field') . ' "' . fn_get_lang_var($field) . '" ' . fn_get_lang_var($error);
+                    fn_set_notification('E', fn_get_lang_var('error'), $error_text);
+                }
+            }
+        }
+        if(!empty($client_id)) {
+            fn_set_notification('S', fn_get_lang_var('success'), fn_get_lang_var('agents_new_client_registered'));
+        }
+    }
+
+
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    Registry::get('view')->assign('mode', 'add_client_form');
+    Registry::get('view')->assign('client', $_REQUEST );
+    return array(CONTROLLER_STATUS_OK);
+}
         /**
          * Requests usergroup for customer
          *
@@ -387,7 +419,6 @@ elseif ($mode == 'clients') {
 
         return $agent;
     }
-
 
 
 /**
@@ -1708,6 +1739,9 @@ function fn_agents_register_customer ($customer_data) {
         's_lastname' => $lastname,
         'b_phone' => $customer_data['phone'],
         's_phone' => $customer_data['phone'],
+        'b_email' => $customer_data['email'],
+        's_email' => $customer_data['email'],
+        'comment' => $customer_data['comment'],
         'b_city' =>  $customer_data['city'],
         's_city' =>  $customer_data['city'],
         'b_state' =>  $customer_data['region'],
@@ -1753,4 +1787,42 @@ function fn_agents_get_clients($user_id, $params) {
         $clients = array();
     }
     return $clients;
+}
+
+function fn_agents_get_client_fields_errors($client) {
+    $not_empty_fields = array(
+        'affiliate_id',
+        'fio',
+        'phone'
+    );
+    $email_fields = array(
+        'email'
+    );
+    $integer_fields = array(
+        'affiliate_id'
+    );
+    $errors = array();
+
+    foreach ($not_empty_fields as $not_empty) {
+        if(empty($client[$not_empty]) ) {
+            $errors[$not_empty][] = 'is_empty';
+        }
+    }
+
+    foreach ($email_fields as $email) {
+        $_at = mb_strpos($client[$email], '@');
+        $_dot = mb_strpos($client[$email], '.', $_at);
+        $_after_dot_length = mb_strlen($client[$email]) - $_dot - 1;
+        if($_at < 1 || $_dot < $_at || $_after_dot_length < 2 ) {
+            $errors[$email][] = 'invalid_email';
+        }
+    }
+
+    foreach ($integer_fields as $numeric) {
+        if (!is_numeric($client[$numeric])) {
+            $errors[$numeric][] = 'invalid_value';
+        }
+    }
+
+    return $errors;
 }
