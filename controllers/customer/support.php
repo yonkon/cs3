@@ -28,7 +28,10 @@ elseif ($mode == 'add_ticket') {
         $ticket['user_id'] = $auth['user_id'];
         $errors = fn_support_get_ticket_fields_errors($ticket);
         if (empty($errors) ) {
+            $user_email = db_get_field(db_process('SELECT email FROM ?:users where user_id = ?i', array($auth['user_id'])));
+                	$from_email = Registry::get('settings.Company.company_users_department');
             $ticket_id = fn_support_create_ticket($ticket);
+           fn_send_mail($from_email, $user_email,$_REQUEST[theme], $_REQUEST[message],$_REQUEST[file] ,$u_data['lang_code']);
         } else {
             foreach ($errors as $field=>$field_errors) {
                 foreach($field_errors as $error) {
