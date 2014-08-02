@@ -29,9 +29,45 @@ elseif ($mode == 'add_ticket') {
         $errors = fn_support_get_ticket_fields_errors($ticket);
         if (empty($errors) ) {
             $user_email = db_get_field(db_process('SELECT email FROM ?:users where user_id = ?i', array($auth['user_id'])));
+
+
+
+
+
+            $uploaddir = DIR_CUSTOM_FILES;
+            $uploadfile = $uploaddir . basename($_FILES['application']['name']);
+
+
+            if (move_uploaded_file($_FILES['application']['tmp_name'], $uploadfile)) {
+                $ticket["file_path"] = $uploadfile;
+            } else {
+
+                fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('file_not_uploaded'));
+            }
+
+
+
+
+
+
+
+
+
                 	$from_email = Registry::get('settings.Company.company_users_department');
             $ticket_id = fn_support_create_ticket($ticket);
-           fn_send_mail($from_email, $user_email,$_REQUEST[theme], $_REQUEST[message],$_REQUEST[file] ,$u_data['lang_code']);
+            Registry::get('view_mail')->assign('theme', $_REQUEST['theme']);
+            Registry::get('view_mail')->assign('message', $_REQUEST['message']);
+            Registry::get('view_mail')->assign('file_path', $_REQUEST['file_path']);
+            $attachments = array();
+            $fb_files = fn_filter_uploaded_data('fb_files');
+
+            if (!empty($fb_files)) {
+                foreach ($fb_files as $k => $v) {
+                    $attachments[$v['name']] = $v['path'];
+                    $form_values[$k] = $v['name'];
+                }
+            }
+           fn_send_mail($from_email, $user_email,'support/new_ticket_subj.tpl', 'support/new_ticket_message.tpl', $_REQUEST['file'], $u_data['lang_code']);
         } else {
             foreach ($errors as $field=>$field_errors) {
                 foreach($field_errors as $error) {

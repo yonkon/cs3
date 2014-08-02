@@ -1,0 +1,1 @@
+Текст тикета: {$message} <br> {if !empty($file_path)} Прикрепленный фаил: {$file_path}{/if}
