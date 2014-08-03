@@ -17,19 +17,19 @@
 
         Sort by name <select name="sort_name">
             <option></option>
-            <option>asc</option>
-            <option>desc</option>
+            <option {if !empty($client.sort_name) && $client.sort_name == 'asc'}selected="selected" {/if}>asc</option>
+            <option {if !empty($client.sort_name) && $client.sort_name == 'desc'}selected="selected" {/if}>desc</option>
         </select>
 
         price <select name="sort_price">
             <option></option>
-            <option>asc</option>
-            <option>desc</option>
+            <option {if !empty($client.sort_price) && $client.sort_price == 'asc'}selected="selected" {/if}>asc</option>
+            <option{if !empty($client.sort_price) && $client.sort_price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
         profit <select name="sort_profit">
             <option></option>
-            <option>asc</option>
-            <option>desc</option>
+            <option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>
+            <option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>
         </select>
         Location <select name="filter_city">
             <option>Current city</option>

@@ -1,22 +1,9 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-
-
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="language" content="en" />
-
-    <!-- blueprint CSS framework -->
-    <link rel="stylesheet" type="text/css" href="index.css" />
-
-</head>
-
-    <div id="main_content">
-        <form>
+<div id="main_content">
+    <form>
         <div class="company_description_div">
             <a href="">{$lang.back_to_catalog}</a>
             <img src="" ALT="{$lang.logo}">
-            <p>текст компании</p>
+            <p>{$company.company_description}</p>
         </div>
         <div class="office_description_div">
             <a href="">{$lang.shipment_and_payment}</a> | <a href="">{$lang.about_company}</a>
@@ -46,9 +33,5 @@
             {/foreach}
         </div>
         <a href="">{$lang.back_to_catalog}</a>
-        </form>
-    </div>
-
-
-
-</html>
+    </form>
+</div>

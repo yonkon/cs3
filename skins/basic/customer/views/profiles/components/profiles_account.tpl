@@ -4,19 +4,19 @@
 
 {hook name="profiles:account_info"}
     {if false}
-{if $settings.General.use_email_as_login != "Y"}
-	<div class="form-field">
-		<label for="user_login_profile" class="cm-required cm-trim">{$lang.username}</label>
-		<input id="user_login_profile" type="text" name="user_data[user_login]" size="32" maxlength="32" value="{$user_data.user_login}" class="input-text" />
-	</div>
-{/if}
+{*{if $settings.General.use_email_as_login != "Y"}*}
+	{*<div class="form-field">*}
+		{*<label for="user_login_profile" class="cm-required cm-trim">{$lang.username}</label>*}
+		{*<input id="user_login_profile" type="text" name="user_data[user_login]" size="32" maxlength="32" value="{$user_data.user_login}" class="input-text" />*}
+	{*</div>*}
+{*{/if}*}
 
-{if $settings.General.use_email_as_login == "Y" || $nothing_extra || "CHECKOUT"|defined}
-	<div class="form-field">
-		<label for="email" class="cm-required cm-email cm-trim">{$lang.email}</label>
-		<input type="text" id="email" name="user_data[email]" size="32" maxlength="128" value="{$user_data.email}" class="input-text" />
-	</div>
-{/if}
+{*{if $settings.General.use_email_as_login == "Y" || $nothing_extra || "CHECKOUT"|defined}*}
+	{*<div class="form-field">*}
+		{*<label for="email" class="cm-required cm-email cm-trim">{$lang.email}</label>*}
+		{*<input type="text" id="email" name="user_data[email]" size="32" maxlength="128" value="{$user_data.email}" class="input-text" />*}
+	{*</div>*}
+{*{/if}*}
 
 <div class="form-field">
 	<label for="password1" class="cm-required cm-password">{$lang.password}</label>
@@ -53,6 +53,10 @@
             <label for="phone" class="control-label cm-required ">Ваш телефон</label>
             <input x-autocompletetype="phone-full" type="text" id="phone" name="user_data[phone]" size="32" value="{$user_data.phone}"
                    class="input-text ">
+        </div>
+        <div class="control-group profile-field-wrap phone">
+        <label for="email" class="cm-required cm-email cm-trim">{$lang.email}</label>
+        <input type="text" id="email" name="user_data[email]" size="32" maxlength="128" value="{$user_data.email}" class="input-text" />
         </div>
 
     </div>
