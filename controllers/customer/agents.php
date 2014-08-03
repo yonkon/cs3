@@ -407,7 +407,7 @@ elseif ($mode == 'company_info') {
 
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
     Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses('O'));
-    Registry::get('view')->assign('mode', 'orders');
+    Registry::get('view')->assign('mode', 'company_info');
     Registry::get('view')->assign('where', $_REQUEST['where'] );
     Registry::get('view')->assign('order', $_REQUEST['order'] );
     Registry::get('view')->assign('cities', $cities);

@@ -47,9 +47,9 @@
     <div class="product_div">
         <table>
             <tr>
-                <td> <img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></td>
+                <td> <a href="{'agents/product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></a></td>
                 <td colspan="2">
-                    <h2><a href="{"products.view"|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
+                    <h2><a href="{'agents/product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
                     <div class="'product-description">{$product.full_description|unescape}</div>
                 </td>
                 <td>
@@ -67,7 +67,7 @@
                 </td>
             </tr>
             <tr>
-                <td>{if $product.supplier.description}<img src="{$product.supplier.description}">{/if}</td>
+                <td>{if $product.company.description}<a href="{'agents/product_info'|fn_url}&company_id={$product.company_id}"> <img src="{$product.company.description}"></a>{/if}</td>
                 <td colspan="2"><div>{$product.supplier.description|default|unescape}</div></td>
                 <td><span>{$product.profit}</span><br><button>Сохранить в кабинете</button></td>
             </tr>
