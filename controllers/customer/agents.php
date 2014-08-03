@@ -379,7 +379,21 @@ elseif ($mode == 'add_client_form') {
     Registry::get('view')->assign('mode', 'add_client_form');
     Registry::get('view')->assign('client', $_REQUEST );
     return array(CONTROLLER_STATUS_OK);
+} elseif ($mode == 'collegues') {
+    $collegues = fn_agents_get_collegues($auth['user_id']);
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    Registry::get('view')->assign('mode', 'collegues');
+    Registry::get('view')->assign('collegues', $collegues);
+    Registry::get('view')->assign('client', $_REQUEST );
 }
+
+function fn_agents_get_collegues($user_id) {
+    $query = db_process('SELECT *, timestamp as registration_date FROM ?:users WHERE curator_id = ?i AND user_type = "P"', array($user_id) );
+    $collegues = db_get_array($query);
+    return $collegues;
+}
+
+
         /**
          * Requests usergroup for customer
          *
@@ -1826,4 +1840,21 @@ function fn_agents_get_client_fields_errors($client) {
     }
 
     return $errors;
+}
+
+function fn_generate_guest_password() {
+    return substr(md5(time()), 0, 8);
+}
+
+function fn_restore_processed_user_password(&$destination, &$source)
+{
+    $fields = array(
+        'password', 'password1', 'password2'
+    );
+
+    foreach ($fields as $field) {
+        if (isset($source[$field])) {
+            $destination[$field] = $source[$field];
+        }
+    }
 }

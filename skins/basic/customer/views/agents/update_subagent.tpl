@@ -82,7 +82,7 @@
                     {else}
                         {include file="buttons/save.tpl" but_name="dispatch[agents.update]" but_id="save_profile_but"}
                         <input class="account-cancel" type="reset" name="reset" value="{$lang.revert}" id="shipping_address_reset"/>
-
+{literal}
                         <script type="text/javascript">
                             //<![CDATA[
                             (function(_, $) {
@@ -95,6 +95,7 @@
                             }(Tygh, Tygh.$));
                             //]]>
                         </script>
+{/literal}
                     {/if}
                 </div>
             </form>
