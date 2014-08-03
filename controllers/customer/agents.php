@@ -387,6 +387,7 @@ elseif ($mode == 'add_client_form') {
     Registry::get('view')->assign('client', $_REQUEST );
 }
 
+
 function fn_agents_get_collegues($user_id) {
     $query = db_process('SELECT *, timestamp as registration_date FROM ?:users WHERE curator_id = ?i AND user_type = "P"', array($user_id) );
     $collegues = db_get_array($query);
