@@ -16,7 +16,7 @@
         </thead>
         <tbody>
         {foreach from=$clients item="client"}
-            <tr id="client_row_{$client.profile_id}">
+            <tr id="client_row_{$client.profile_id}" data-id="{$client.profile_id}">
                 <td><input type="text" value="{$client.profile_name}" name="profile_name" class="ajax_input"> </td>
                 <td><input type="text" value="{$client.b_phone}"name="b_phone" class="ajax_input"> </td>
                 <td><input type="text" value="{$client.b_email}" name="b_email" class="ajax_input"> </td>
@@ -27,3 +27,27 @@
         </tbody>
     </table>
 </div>
+<script type="text/javascript">
+    {literal}
+    $(document).ready(function() {
+        $('.ajax_input').each(function(i,el) {
+           $(el).blur(function(){
+               var $this = $(this);
+               $.ajax({
+                   type: "POST",
+                   url: {/literal}"{'agents.update_client'|fn_url}"{literal},
+                   data: { profile_id: $this.parent().parent().data('id'), field: $this.attr("name"), value: $this.val() }
+               })
+               .success(function( msg ) {
+                   alert( "Data Saved: " + msg );
+               })
+               .error(function( msg ) {
+                   alert( "Data not Saved: " + msg );
+               });
+
+           });
+        });
+    });
+    {/literal}
+
+</script>

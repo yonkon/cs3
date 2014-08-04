@@ -418,4 +418,17 @@ elseif ($mode == 'company_info') {
     Registry::get('view')->assign('shipping_descriptions', $shipping_descriptions );
     return array(CONTROLLER_STATUS_OK);
 }
-elseif ($mode == 'saved_orders') {}
+elseif ($mode == 'update_client') {
+    if(empty($_REQUEST["profile_id"]) || empty($_REQUEST["field"]) || empty($_REQUEST["value"]) ) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $field = $_REQUEST['field'];
+    $profile_id = $_REQUEST["profile_id"];
+    $value = $_REQUEST["value"];
+    $res = db_query(db_process("UPDATE ?:user_profiles SET $field = ?s WHERE profile_id = ?i", array($value, $profile_id)  ));
+    if($res) {
+        echo(json_encode(array('status'=>'OK')));
+       die();
+    }
+    return array(CONTROLLER_STATUS_NO_PAGE);
+}
