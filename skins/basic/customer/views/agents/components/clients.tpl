@@ -17,11 +17,11 @@
         <tbody>
         {foreach from=$clients item="client"}
             <tr id="client_row_{$client.profile_id}">
-                <td>{$client.profile_name}</td>
-                <td>{$client.b_phone}</td>
-                <td>{$client.b_email}</td>
+                <td><input type="text" value="{$client.profile_name}" name="profile_name" class="ajax_input"> </td>
+                <td><input type="text" value="{$client.b_phone}"name="b_phone" class="ajax_input"> </td>
+                <td><input type="text" value="{$client.b_email}" name="b_email" class="ajax_input"> </td>
                 <td>{$client.registration_date|date_format:"`$settings.Appearance.date_format`"}</td>
-                <td>{$client.comment}</td>
+                <td><textarea name="comment" class="ajax_input">{$client.comment}</textarea></td>
             </tr>
         {/foreach}
         </tbody>
