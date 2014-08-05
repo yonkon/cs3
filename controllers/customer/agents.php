@@ -308,8 +308,15 @@ elseif($mode == 'office') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif($mode == 'companies_and_products') {
-    $all_products = fn_agent_get_products(array('product_sort'=>'asc'), null, null, false );
+    $all_products = fn_agent_get_products(array('client' => array('company'=>$_REQUEST['client']['company']) ), null, CART_LANGUAGE, null, false );
     $products = fn_agent_get_products($_REQUEST, 10 );
+    foreach($products[0] as &$product) {
+        $product['image']['image_path'] = get_image_full_path($product['image']);
+        $product['company'] = fn_agents_get_company_info($product['company_id']);
+        $product['company']['image_path'] = get_image_full_path($product['company']);
+        $product['description'] = fn_agents_get_product_description($product['product_id']);
+    }
+    unset($product);
     $companies = fn_get_companies(null, $auth);
     Registry::get('view')->assign('all_products', $all_products[0]);
     Registry::get('view')->assign('products', $products[0]);
@@ -390,14 +397,15 @@ elseif ($mode == 'collegues') {
     Registry::get('view')->assign('client', $_REQUEST );
 }
 elseif ($mode == 'orders') {
-    $products = fn_agent_get_products(array('product_sort'=>'asc'), null, null, false );
+    $products = fn_agent_get_products(array('company_id'=>$_REQUEST['where']['company_id'] ), null, CART_LANGUAGE, null, false );
     $companies = fn_get_companies(null, $auth);
-    $orders = fn_agent_get_orders($auth['user_id']);
+    $orders = fn_agent_get_orders($auth['user_id'], $_REQUEST);
+
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses('O'));
+    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
     Registry::get('view')->assign('mode', 'orders');
-    Registry::get('view')->assign('products', $products);
-    Registry::get('view')->assign('companies', $companies);
+    Registry::get('view')->assign('products', $products[0]);
+    Registry::get('view')->assign('companies', $companies[0]);
     Registry::get('view')->assign('where', $_REQUEST['where'] );
     Registry::get('view')->assign('order', $_REQUEST['order'] );
     Registry::get('view')->assign('orders', $orders );
@@ -418,7 +426,66 @@ elseif ($mode == 'company_info') {
     Registry::get('view')->assign('shipping_descriptions', $shipping_descriptions );
     return array(CONTROLLER_STATUS_OK);
 }
-elseif ($mode == 'update_client') {
+elseif ($mode == 'orders_saved') {
+    $products = fn_agent_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
+    $companies = fn_get_companies(null, $auth);
+    $orders = fn_agent_get_saved_orders($auth['user_id'], $_REQUEST);
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
+    Registry::get('view')->assign('mode', 'orders');
+    Registry::get('view')->assign('products', $products[0]);
+    Registry::get('view')->assign('companies', $companies[0]);
+    Registry::get('view')->assign('where', $_REQUEST['where'] );
+    Registry::get('view')->assign('order', $_REQUEST['order'] );
+    Registry::get('view')->assign('orders', $orders );
+    return array(CONTROLLER_STATUS_OK);
+}
+
+elseif ($mode == 'orders_active') {
+    $products = fn_agent_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
+    $companies = fn_get_companies(null, $auth);
+    $orders = fn_agent_get_active_orders($auth['user_id'], $_REQUEST);
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
+    Registry::get('view')->assign('mode', 'orders');
+    Registry::get('view')->assign('products', $products[0]);
+    Registry::get('view')->assign('companies', $companies[0]);
+    Registry::get('view')->assign('where', $_REQUEST['where'] );
+    Registry::get('view')->assign('order', $_REQUEST['order'] );
+    Registry::get('view')->assign('orders', $orders );
+    return array(CONTROLLER_STATUS_OK);
+}
+
+elseif ($mode == 'orders_closed') {
+    $products = fn_agent_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
+    $companies = fn_get_companies(null, $auth);
+    $orders = fn_agent_get_closed_orders($auth['user_id'], $_REQUEST);
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
+    Registry::get('view')->assign('mode', 'orders');
+    Registry::get('view')->assign('products', $products[0]);
+    Registry::get('view')->assign('companies', $companies[0]);
+    Registry::get('view')->assign('where', $_REQUEST['where'] );
+    Registry::get('view')->assign('order', $_REQUEST['order'] );
+    Registry::get('view')->assign('orders', $orders );
+    return array(CONTROLLER_STATUS_OK);
+}
+elseif($mode == 'product_info') {
+    if (empty ($_REQUEST['product_id'])) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $product = fn_agent_get_products(array('product_id' => $_REQUEST['product_id']) );
+    $product = $product[0][0];
+    if(empty ($product)) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $product['description'] = fn_agents_get_product_description($_REQUEST['product_id']);
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
+    Registry::get('view')->assign('mode', 'product_info');
+    Registry::get('view')->assign('product', $product);
+    return array(CONTROLLER_STATUS_OK);
+}elseif ($mode == 'update_client') {
     if(empty($_REQUEST["profile_id"]) || empty($_REQUEST["field"]) || empty($_REQUEST["value"]) ) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }

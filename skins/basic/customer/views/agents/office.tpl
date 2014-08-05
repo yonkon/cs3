@@ -69,10 +69,14 @@
         {include file="views/agents/components/add_client_form.tpl"}
     {elseif $mode == 'orders'}
         {include file="views/agents/components/orders.tpl"}
+    {elseif $mode == 'orders_saved'}
+        {include file="views/agents/components/orders.tpl"}
     {elseif $mode == 'collegues'}
         {include file="views/agents/components/collegues.tpl"}
     {elseif $mode == 'company_info'}
         {include file="views/agents/components/company_info.tpl"}
+    {elseif $mode == 'product_info'}
+        {include file="views/agents/components/product_info.tpl"}
     {/if}
 </div>
 

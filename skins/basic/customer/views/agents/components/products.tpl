@@ -47,9 +47,9 @@
     <div class="product_div">
         <table>
             <tr>
-                <td> <a href="{'agents/product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></a></td>
+                <td> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></a></td>
                 <td colspan="2">
-                    <h2><a href="{'agents/product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
+                    <h2><a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
                     <div class="'product-description">{$product.full_description|unescape}</div>
                 </td>
                 <td>
@@ -62,13 +62,13 @@
                     <div>
                         <button type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
                     </div>
-                    <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="design/themes/basic/templates/views/agents/images/shipping.png">{/if}
+                    <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="skins/basic/customer/views/agents/components/shipping.png">{/if}
                     </div>
                 </td>
             </tr>
             <tr>
-                <td>{if $product.company.description}<a href="{'agents/product_info'|fn_url}&company_id={$product.company_id}"> <img src="{$product.company.description}"></a>{/if}</td>
-                <td colspan="2"><div>{$product.supplier.description|default|unescape}</div></td>
+                <td>{if $product.company.company_description}<a href="{'agents.product_info'|fn_url}&company_id={$product.company_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
+                <td colspan="2"><div>{$product.company.company_description|default|unescape}</div></td>
                 <td><span>{$product.profit}</span><br><button>Сохранить в кабинете</button></td>
             </tr>
         </table>
