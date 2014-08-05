@@ -10,7 +10,7 @@
     </select>
     <select id="product" name="where[product_id]">
         <option value="">- {$lang.select_product} -</option>
-        {foreach from=$all_products item="product" key="code"}
+        {foreach from=$products item="product" key="code"}
             <option {if !empty($where.product_id) && $product.product_id == $where.product_id}selected="selected"{/if}  value="{$product.product_id}">{$product.product}</option>
         {/foreach}
     </select>
@@ -68,7 +68,7 @@
                 </td>
             </tr>
             <tr>
-                <td>{if $order.company_data.image.image_path}<img src="{$order.company_data.image.image_path}">{/if}</td>
+                <td>{if $order.company_data.image_path}<img src="{$order.company_data.image_path}">{/if}</td>
                 <td colspan="2"><div>{$order.company_data.company_description|default|unescape}</div></td>
                 <td>
                     <span>{$order.product_data.profit}</span><br/>
@@ -99,4 +99,5 @@
     </div>
 </form>
 {/foreach}
+    {include file="customer/common_templates/pagination.tpl"}
 </div>

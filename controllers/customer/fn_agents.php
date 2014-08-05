@@ -1,5 +1,6 @@
 <?php
 
+define('PATH_NO_IMAGE',  '/images/no_image.gif');
 
 /**
  * Requests usergroup for customer
@@ -1235,7 +1236,7 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
     }
 //    define('DEBUG_QUERIES', true);
 
-    $products = db_get_array("SELECT $calc_found_rows " . implode(', ', $fields) . " FROM ?:products as products $join WHERE 1 $condition  GROUP BY $group_by $having  $sorting $order $limit");
+    $products = db_get_array(db_process("SELECT $calc_found_rows " . implode(', ', $fields) . " FROM ?:products as products $join WHERE 1 $condition  GROUP BY $group_by $having  $sorting $order $limit") );
 
     if (!empty($params['items_per_page'])) {
         $params['total_items'] = !empty($total)? $total : db_get_found_rows();
@@ -1251,6 +1252,7 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
     }
     if ($need_images) {
         add_images_to_products($products);
+
     }
 
     if (!empty($params['get_frontend_urls'])) {
@@ -1454,14 +1456,19 @@ function fn_agent_get_orders($user_id, $params = array(), $lang_code = CART_LANG
             $_params[$key] = $params[$key];
         }
     }
-    $select = 'SELECT ?:orders.*, ?:order_details.product_id, ?:order_details.extra ';
+    $select = db_process('SELECT ?:orders.*, ?:order_details.product_id, ?:order_details.extra ');
     $from = db_process('FROM ?:orders ');
     $join = db_process('JOIN ?:order_details ON ?:order_details.order_id = ?:orders.order_id ');
 
     if (empty($_params['where'])) {
         $where = db_process('WHERE user_id = ?i ', array($user_id) );
     } else {
-        $where = db_process('WHERE user_id = ?i AND ?e ', array($user_id, $_params['where']) ) . ' ';
+        $where = db_process('WHERE user_id = ?i ', array($user_id));
+        foreach ($_params['where'] as $field=>$value) {
+            if (!empty ($value) ) {
+                $where .= db_process("AND $field IN (?a)", array($value));
+            }
+        }
     }
 
     if (!empty($_params['group']) ) {
@@ -1477,7 +1484,13 @@ function fn_agent_get_orders($user_id, $params = array(), $lang_code = CART_LANG
         if (!is_array($_params['order'])) {
             $_params['order'] = array($_params['order']);
         }
-        $order = 'ORDER BY ' . implode(',', $_params['order']);
+        $order = array();
+        foreach ($_params['order'] as $field=>$value) {
+            if (!empty ($value) ) {
+                $order[] = db_process(" $value ");
+            }
+        }
+        $order = empty($order) ? '' : 'ORDER BY ' . implode(',', $order);
     } else {
         $order = '';
     }
@@ -1502,26 +1515,57 @@ function fn_agent_get_orders($user_id, $params = array(), $lang_code = CART_LANG
         $order['product_data']['product_id'] = $order['product_id'];
         $order['product_data']['description'] = fn_agents_get_product_description($order['product_id']);
         get_images_for_product($order['product_data']);
+        $order['product_data']['image']['image_path'] = get_image_full_path($order['product_data']['image'] /*$order['product_data']['company_id']*/);
         $order['company_data'] = fn_agents_get_company_info($order['company_id']);
+        $order['company_data']['image_path'] = get_image_full_path($order['company_data'] );
+
     }
 
 
     return $agent_orders;
-//    fn_get_products(array('pid' => ))
 
 }
 
+function fn_agent_get_saved_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
+    $saved_orders = db_get_array(db_process('SELECT order_id FROM ?:orders_saved WHERE user_id = ?i', array($user_id) ));
+    if (empty($saved_orders)) {
+        return array();
+    }
+    $saved_orders_ids = array();
+    foreach($saved_orders as $order) {
+        $saved_orders_ids[] = $order['order_id'];
+    }
+    $params['where'][] = db_process(' ?:orders.order_id IN (?a) ', array($saved_orders_ids) );
+    return fn_agent_get_orders($user_id, $params, $lang_code);
+}
+
+
+function fn_agent_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
+    $active_statuses = array('O', 'P',  'B', 'A');
+    $params['where'][] = db_process(' ?:orders.status IN (?a) ', array($active_statuses) );
+    return fn_agent_get_orders($user_id, $params, $lang_code);
+}
+
+function fn_agent_get_closed_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
+    $closed_statuses = array('C', 'F',  'B', 'D');
+    $params['where'][] = db_process(' ?:orders.status IN (?a) ', array($closed_statuses) );
+    return fn_agent_get_orders($user_id, $params, $lang_code);
+}
+
 function fn_agents_get_order_statuses($lang_code = CART_LANGUAGE) {
-    $query = db_process('SELECT status, description, email_subj, email_header, lang_code FROM ?:status_descriptions WHERE lang_code = ?s AND type = "P"', array($lang_code));
+    $query = db_process('SELECT status, description, email_subj, email_header, lang_code FROM ?:status_descriptions WHERE lang_code = ?s AND type = "O"', array($lang_code));
     $statuses = db_get_array($query);
     return $statuses;
 }
 
 function fn_agents_get_company_info($company_id, $lang_code = CART_LANGUAGE) {
     $query = db_process('SELECT c.company_id, c.company, c.email, cd.company_description, c.phone, c.url, c.email, il.image_id, i.* FROM  ?:companies c LEFT JOIN ?:company_descriptions cd ON cd.company_id = c.company_id  LEFT JOIN ?:images_links il ON il.object_id = c.company_id LEFT JOIN ?:images i ON i.image_id = il.image_id WHERE c.company_id = ?i GROUP by c.company_id', array($company_id));
-//    $query = db_process('SELECT c.company_id, c.company, c.email, cd.company_description, c.phone, c.url, c.email, il.image_id, i.* FROM  ?:companies c LEFT JOIN ?:company_descriptions cd ON cd.company_id = c.company_id  LEFT JOIN ?:images_links il ON il.object_id = c.company_id LEFT JOIN ?:images i ON i.image_id = il.image_id WHERE company_id = ?i AND il.object_type = "company" GROUP by c.company_id', array($company_id));
     $company_info = db_get_array($query);
-    return empty($company_info)? array() : $company_info[0] ;
+    if(empty($company_info) ) {
+        return array();
+    } else {
+        return $company_info[0] ;
+    }
 
 }
 
@@ -1553,3 +1597,15 @@ function fn_restore_processed_user_password(&$destination, &$source)
         }
     }
 }
+
+function get_image_full_path($image, $company_id=0) {
+    if(!empty($image['detailed_id']) ) {
+        return "/images/detailed/$company_id/".$image['image_path'];
+    } elseif (!empty($image['image_id'])) {
+        return "/images/thumbnails/$company_id/".$image['image_x']. '/' . $image['image_y'] .'/' . $image['image_path'];
+    } else {
+        return PATH_NO_IMAGE;
+    }
+}
+
+

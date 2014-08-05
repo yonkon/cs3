@@ -1,10 +1,10 @@
 <div id="main_content">
     <form>
-        <div class="company_description_div">
+        <div class="product_description_div">
             <a href="">{$lang.back_to_catalog}</a>
             <img src="" alt="{$lang.logo}">
-            <p class="bold">{$company.company}</p>
-            <p>{$company.company_description}</p>
+            <p class="bold">{$product.product}</p>
+            <p>{$product.description|unescape}</p>
         </div>
         {include file="office_description.tpl"}
 
