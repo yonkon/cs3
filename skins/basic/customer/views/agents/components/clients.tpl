@@ -4,6 +4,8 @@
     <button class="right" type="submit" value="{$lang.Add_new_client}">{$lang.Add_new_client}</button>
 </form>
 <div id="agents_clients_div">
+    <div id="message_success" class="notification-n hidden"><p style="margin-left: 10%;">{$lang.Update_successfull}</p></div>
+    <div id="message_error" class="notification-e hidden"><p style="margin-left: 10%;">{$lang.Update_failed}</p></div>
     <table id="agents_clients_table">
         <thead>
         <tr>
@@ -30,19 +32,32 @@
 <script type="text/javascript">
     {literal}
     $(document).ready(function() {
+        var $message_success = $('#message_success');
+        var $message_error = $('#message_error');
         $('.ajax_input').each(function(i,el) {
            $(el).blur(function(){
                var $this = $(this);
+
                $.ajax({
                    type: "POST",
                    url: {/literal}"{'agents.update_client'|fn_url}"{literal},
                    data: { profile_id: $this.parent().parent().data('id'), field: $this.attr("name"), value: $this.val() }
                })
+
                .success(function( msg ) {
-                   alert( "Data Saved: " + msg );
+                   $message_success.show('fast', function() {
+                       setTimeout(function(){
+                           $message_success.hide();
+                       }, 4000)
+                   });
                })
+
                .error(function( msg ) {
-                   alert( "Data not Saved: " + msg );
+                   $message_error.show('fast', function() {
+                       setTimeout(function(){
+                           $message_error.hide();
+                       }, 4000)
+                   });
                });
 
            });

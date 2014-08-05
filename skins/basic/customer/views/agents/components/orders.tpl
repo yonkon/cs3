@@ -1,4 +1,4 @@
-<div id="product_filters">
+<div id="product_filters" class="clr">
     <form method="post">
     <input type="hidden" name="dispatch" value="agents.orders">
 
@@ -47,7 +47,7 @@
     </div>
 
 
-<div id="orders_div">
+<div id="orders_div" class="clr">
     {foreach from=$orders item="order"}
         <p>{$lang.Order} {$order.order_id} </p>
     <form>
@@ -56,9 +56,13 @@
     <div class="order_div">
         <table>
             <tr>
-                <td> <img class="product-image" src="/images/detailed/1/{$order.product_data.image.image_path}"></td>
+                <td>
+                    <a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">
+                        <img class="product-image" src="/images/detailed/1/{$order.product_data.image.image_path}">
+                    </a>
+                </td>
                 <td colspan="2">
-                    <h2><a href="{"products.view"|fn_url}&product_id={$order.product_id}">{$order.product_data.product}</a></h2>
+                    <h2><a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">{$order.product_data.product}</a></h2>
                     <div class="product-description">{$order.product_data.description|unescape}</div>
                 </td>
                 <td>
@@ -68,7 +72,11 @@
                 </td>
             </tr>
             <tr>
-                <td>{if $order.company_data.image_path}<img src="{$order.company_data.image_path}">{/if}</td>
+                <td>{if $order.company_data.image_path}
+                    <a href="{"agents.company_info"|fn_url}&product_id={$order.product_id}">
+                        <img src="{$order.company_data.image_path}">
+                    </a>{/if}
+                </td>
                 <td colspan="2"><div>{$order.company_data.company_description|default|unescape}</div></td>
                 <td>
                     <span>{$order.product_data.profit}</span><br/>
@@ -78,7 +86,7 @@
             <tr>
                 <td>
                     <p class="underlined">{$order.b_lastname} {$order.b_firstname} {$order.b_midname}</p>
-                    <p class="underlined">{$order.email}<br/> {$order.b_phone}</p>
+                    <p class="underlined">{$order.b_email}<br/> {$order.b_phone}</p>
                     <p class="underlined">{$order.registration_date|date_format}</p>
                 </td>
                 <td>

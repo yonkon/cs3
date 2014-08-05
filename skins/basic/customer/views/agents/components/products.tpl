@@ -67,7 +67,7 @@
                 </td>
             </tr>
             <tr>
-                <td>{if $product.company.company_description}<a href="{'agents.product_info'|fn_url}&company_id={$product.company_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
+                <td>{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
                 <td colspan="2"><div>{$product.company.company_description|default|unescape}</div></td>
                 <td><span>{$product.profit}</span><br><button>Сохранить в кабинете</button></td>
             </tr>

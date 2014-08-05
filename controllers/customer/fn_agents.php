@@ -1321,6 +1321,9 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
 
     if ($step == 2) {
         $client_id = fn_agents_register_customer($order_data['client']);
+        $client = fn_agents_get_clients($auth['user_id'], array('where' => array('profile_id' => $client_id) ) );
+        $client = $client[0];
+        fn_agents_assign_client_to_cart($client, $cart);
         $product_data = array($product_id => array('product_id' => $product_id, 'amount' => $amount) );
         fn_add_product_to_cart($product_data, $cart, $auth);
         fn_save_cart_content($cart, $auth['user_id']);
@@ -1396,6 +1399,13 @@ function fn_agents_get_clients($user_id, $params) {
     $where = db_quote(' WHERE user_id = ?i AND profile_type = ?s', $user_id, PROFILE_TYPE_CLIENT);
     $group = '';
     $order = ' ORDER BY profile_name ASC ';
+    ///FILTERS
+    if(!empty($params['where']) ) {
+        foreach($params['where'] as $field => $value) {
+            $where .= db_process(" AND $field IN (?a) ", array($value));
+        }
+    }
+
     $clients = db_get_array($select . $from . $where . $group . $order);
     if(empty($clients)) {
         $clients = array();
@@ -1608,4 +1618,11 @@ function get_image_full_path($image, $company_id=0) {
     }
 }
 
-
+function fn_agents_assign_client_to_cart($client, &$cart) {
+    $udata = &$cart['user_data'];
+    foreach($client as $field => $value) {
+        if(array_key_exists($field, $udata)) {
+            $udata[$field] = $value;
+        }
+    }
+}

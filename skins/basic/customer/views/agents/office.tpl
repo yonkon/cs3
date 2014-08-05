@@ -45,6 +45,32 @@
         max-width: 100%;
         max-height:100%;
     }
+    .hidden {
+        display: none;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .active, .active:hover  {
+        font-weight: bold;
+        color: darkslategray;
+        text-decoration: none;
+    }
+
+    .clr {
+        clear: both;
+    }
+
+    .inline-block {
+        display: inline-block;
+    }
+
+    .block {
+        display: block;
+    }
+
     {/literal}
 </style>
 
@@ -74,7 +100,7 @@
     {elseif $mode == 'collegues'}
         {include file="views/agents/components/collegues.tpl"}
     {elseif $mode == 'company_info'}
-        {include file="views/agents/components/company_info.tpl"}
+        {include file="views/agents/components/product_info_company.tpl"}
     {elseif $mode == 'product_info'}
         {include file="views/agents/components/product_info.tpl"}
     {/if}
