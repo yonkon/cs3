@@ -87,24 +87,6 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
             return false;
         }
 
-
-
-//        if (fn_allowed_for('ULTIMATE')) {
-//            if (AREA != 'A' || empty($user_data['company_id'])) {
-//                //we should set company_id for the frontdend, in the backend company_id received from form
-//                if ($current_user_data['user_type'] == 'A') {
-//                    if (!isset($user_data['company_id']) || AREA != 'A' || Registry::get('runtime.company_id')) {
-//                        // reset administrator's company if it was not set to root
-//                        $user_data['company_id'] = $current_user_data['company_id'];
-//                    }
-//                } elseif (Registry::get('settings.Stores.share_users') == 'Y') {
-//                    $user_data['company_id'] = $current_user_data['company_id'];
-//                } else {
-//                    $user_data['company_id'] = Registry::ifGet('runtime.company_id', 1);
-//                }
-//            }
-//        }
-
 //        if (fn_allowed_for('MULTIVENDOR')) {
         if (AREA != 'A') {
             //we should set company_id for the frontend
@@ -116,23 +98,8 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
     } else {
         $current_user_data = array(
             'status' => (AREA != 'A' && Registry::get('settings.General.approve_user_profiles') == 'Y') ? 'D' : (!empty($user_data['status']) ? $user_data['status'] : 'A'),
-            'user_type' => 'C', // FIXME?
+            'user_type' => 'P', // FIXME?
         );
-
-//        if (fn_allowed_for('ULTIMATE')) {
-//            if (!empty($user_data['company_id']) || Registry::get('runtime.company_id') || AREA == 'A') {
-//                company_id can be received when we create user account from the backend
-//                $company_id = !empty($user_data['company_id']) ? $user_data['company_id'] : Registry::get('runtime.company_id');
-//                if (empty($company_id)) {
-//                    $company_id = fn_check_user_type_admin_area($user_data['user_type']) ? $user_data['company_id'] : fn_get_default_company_id();
-//                }
-//                $user_data['company_id'] = $current_user_data['company_id'] = $company_id;
-//            } else {
-//                fn_set_notification('W', fn_get_lang_var('warning'), fn_get_lang_var('access_denied'));
-//
-//                return false;
-//            }
-//        }
 
         $action = 'add';
 
@@ -276,10 +243,6 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
         $user_data['phone'] = empty($user_data['phone']) && !empty($user_data[$address_zone . '_phone']) ? $user_data[$address_zone . '_phone'] : $user_data['phone'];
     }
 
-//    if (!fn_allowed_for('ULTIMATE')) {
-//        for ult company_id was set before
-//        fn_set_company_id($user_data);
-//    }
 
     if (!empty($current_user_data['is_root']) && $current_user_data['is_root'] == 'Y') {
         $user_data['is_root'] = 'Y';
@@ -308,8 +271,10 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
         if (!isset($user_data['password_change_timestamp'])) {
             $user_data['password_change_timestamp'] = 1;
         }
+        $user_data['referrer_partner_id'] = $user_data['curator_id'];
 
         $user_id = db_query("INSERT INTO ?:users ?e" , $user_data);
+//        db_query("UPDATE ?:aff_partner_profiles SET referrer_partner_id = ?i WHERE user_id = ?i ", array($user_data['curator_id'] , $user_id));
 
         fn_log_event('users', 'create', array(
             'user_id' => $user_id,
@@ -364,13 +329,13 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
 
     // Send notifications to customer
     if (!empty($notify_user)) {
-        $from = 'company_users_department';
+        $from =   Registry::get('settings.Company.company_users_department');
 
 //        if (fn_allowed_for('MULTIVENDOR')) {
         // Vendor administrator's notification
         // is sent from root users department
         if ($user_data['user_type'] == 'V') {
-            $from = 'default_company_users_department';
+            $from =   Registry::get('settings.Company.company_users_department');
         }
 //        }
 
@@ -1316,6 +1281,22 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
 
     $cart = & $_SESSION['cart'];
 
+    $cart['affiliate']['code'] = empty($auth['user_id']) ? '' : fn_dec2any($auth['user_id']);
+    $_partner_id = $auth['user_id'];//fn_any2dec($cart['affiliate']['code']);
+    $_partner_data = db_get_row("SELECT firstname, lastname, user_id as partner_id FROM ?:users WHERE user_id = ?i AND user_type = 'P'", $_partner_id);
+    if (!empty($_partner_data)) {
+        $cart['affiliate'] = $_partner_data + $cart['affiliate'];
+        $_SESSION['partner_data'] = array(
+            'partner_id' => $cart['affiliate']['partner_id'],
+            'is_payouts' => 'N'
+        );
+    } else {
+        unset($cart['affiliate']['partner_id']);
+        unset($cart['affiliate']['firstname']);
+        unset($cart['affiliate']['lastname']);
+        unset($_SESSION['partner_data']);
+    }
+
     $product_id = $order_data['product_id'];
     $amount = $order_data['item_count'];
 
@@ -1545,20 +1526,21 @@ function fn_agent_get_saved_orders($user_id, $params = array(), $lang_code = CAR
     foreach($saved_orders as $order) {
         $saved_orders_ids[] = $order['order_id'];
     }
-    $params['where'][] = db_process(' ?:orders.order_id IN (?a) ', array($saved_orders_ids) );
+
+    $params['where'][ db_process('?:orders.order_id') ] = $saved_orders_ids;
     return fn_agent_get_orders($user_id, $params, $lang_code);
 }
 
 
 function fn_agent_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $active_statuses = array('O', 'P',  'B', 'A');
-    $params['where'][] = db_process(' ?:orders.status IN (?a) ', array($active_statuses) );
+    $params['where'][db_process('?:orders.status')] = $active_statuses ;
     return fn_agent_get_orders($user_id, $params, $lang_code);
 }
 
 function fn_agent_get_closed_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $closed_statuses = array('C', 'F',  'B', 'D');
-    $params['where'][] = db_process(' ?:orders.status IN (?a) ', array($closed_statuses) );
+    $params['where'][ db_process('?:orders.status')] = $closed_statuses;
     return fn_agent_get_orders($user_id, $params, $lang_code);
 }
 

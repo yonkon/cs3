@@ -1,6 +1,6 @@
 {strip}
 {** block-description:affiliate **}
-{if $auth.is_affiliate}
+{if true || $auth.is_affiliate}
 <ul class="arrows-list">
 	<li><a href="{"banners_manager.manage?banner_type=T"|fn_url}">{$lang.text_banners}</a></li>
 	<li><a href="{"banners_manager.manage?banner_type=G"|fn_url}">{$lang.graphic_banners}</a></li>

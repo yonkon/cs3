@@ -107,5 +107,5 @@
     </div>
 </form>
 {/foreach}
-    {include file="customer/common_templates/pagination.tpl"}
+
 </div>

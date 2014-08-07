@@ -68,17 +68,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($res) {
             list($user_id, $profile_id) = $res;
 
-            // Cleanup user info stored in cart
-            if (!empty($_SESSION['cart']) && !empty($_SESSION['cart']['user_data'])) {
-                unset($_SESSION['cart']['user_data']);
-            }
+//             Cleanup user info stored in cart
+//            if (!empty($_SESSION['cart']) && !empty($_SESSION['cart']['user_data'])) {
+//                unset($_SESSION['cart']['user_data']);
+//            }
 
             // Delete anonymous authentication
-            if ($cu_id = fn_get_session_data('cu_id') && !empty($auth['user_id'])) {
-                fn_delete_session_data('cu_id');
-            }
+//            if ($cu_id = fn_get_session_data('cu_id') && !empty($auth['user_id'])) {
+//                fn_delete_session_data('cu_id');
+//            }
 
-            Session::regenerateId();
+//            Session::regenerateId();
 
             if (!empty($_REQUEST['return_url'])) {
                 return array(CONTROLLER_STATUS_OK, $_REQUEST['return_url']);
@@ -279,19 +279,29 @@ elseif ($mode == 'usergroups') {
 
     if (fn_request_usergroup($auth['user_id'], $_REQUEST['usergroup_id'], $_REQUEST['type'])) {
         $user_data = fn_get_user_info($auth['user_id']);
-
-        Mailer::Send(array(
-            'to' => 'default_company_users_department',
-            'from' => 'default_company_users_department',
-            'reply_to' => $user_data['email'],
-            'data' => array(
-                'user_data' => $user_data,
-                'usergroups' => fn_get_usergroups('F', Registry::get('settings.Appearance.backend_default_language')),
-                'usergroup_id' => $_REQUEST['usergroup_id']
-            ),
-            'tpl' => 'profiles/usergroup_request.tpl',
-            'company_id' => $user_data['company_id'],
-        ), 'A', Registry::get('settings.Appearance.backend_default_language'));
+        fn_send_mail(
+            Registry::get('settings.Company.company_users_department'),
+            Registry::get('settings.Company.company_users_department'),
+            'support/new_ticket_subj.tpl',
+            'profiles/profile_activated.tpl',
+            null,
+            CART_LANGUAGE,
+            $user_data['email'],
+            true,
+            $user_data['company_id']
+        );
+//        Mailer::Send(array(
+//            'to' => 'default_company_users_department',
+//            'from' => 'default_company_users_department',
+//            'reply_to' => $user_data['email'],
+//            'data' => array(
+//                'user_data' => $user_data,
+//                'usergroups' => fn_get_usergroups('F', Registry::get('settings.Appearance.backend_default_language')),
+//                'usergroup_id' => $_REQUEST['usergroup_id']
+//            ),
+//            'tpl' => 'profiles/usergroup_request.tpl',
+//            'company_id' => $user_data['company_id'],
+//        ), 'A', Registry::get('settings.Appearance.backend_default_language'));
     }
 
     return array(CONTROLLER_STATUS_OK, "profiles.update");
