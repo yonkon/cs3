@@ -326,7 +326,8 @@ elseif($mode == 'companies_and_products') {
 
     $pagination = array(
         'page' => $_REQEST['page'],
-        'pages' => ceil(count($all_products[0]) / $limit)
+        'pages' => ceil(count($all_products[0]) / $limit),
+        'url' => fn_url('agents.companies_and_products')
     );
 
     $companies = fn_get_companies(null, $auth);
@@ -338,6 +339,7 @@ elseif($mode == 'companies_and_products') {
     Registry::get('view')->assign('pagination', $pagination);
     Registry::get('view')->assign('client', $_REQUEST['client']);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+
 
     return array(CONTROLLER_STATUS_OK);
 }
