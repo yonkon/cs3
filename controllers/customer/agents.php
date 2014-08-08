@@ -331,8 +331,21 @@ elseif($mode == 'companies_and_products') {
 elseif ($mode == 'order_make') {
 
     $step = empty($_REQUEST['step']) ? 1 : intval($_REQUEST['step'])+1 ;
+    if(empty($_REQUEST['client']['notify'])) {
+        $email_fields = array();
+    } else {
+        $email_fields = array('email');
+    }
+    $errors = fn_agents_get_client_fields_errors($_REQUEST['client'], array('email_fields' => $email_fields) );
+
     if ($step == 2) {
-        fn_agents_process_order($_REQUEST, $step, $auth);
+        if(!empty($errors)){
+            fn_agents_display_errors($errors);
+            $step = 1;
+        }
+        else{
+            fn_agents_process_order($_REQUEST, $step, $auth);
+        }
     }
     if ($step == 3) {
         fn_agents_process_order($_REQUEST, $step, $auth);
@@ -413,12 +426,7 @@ elseif ($mode == 'add_client_form') {
         if (empty($errors) ) {
             $client_id = fn_agents_register_customer($client_data);
         } else {
-            foreach ($errors as $field=>$field_errors) {
-                foreach($field_errors as $error) {
-                    $error_text = fn_get_lang_var('field') . ' "' . fn_get_lang_var($field) . '" ' . fn_get_lang_var($error);
-                    fn_set_notification('E', fn_get_lang_var('error'), $error_text);
-                }
-            }
+           fn_agents_display_errors($errors);
         }
         if(!empty($client_id)) {
             fn_set_notification('N', fn_get_lang_var('notice'), fn_get_lang_var('agents_new_client_registered'));
@@ -566,3 +574,4 @@ elseif ($mode == 'update_client') {
     }
     return array(CONTROLLER_STATUS_NO_PAGE);
 }
+
