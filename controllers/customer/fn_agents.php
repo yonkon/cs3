@@ -1405,18 +1405,28 @@ function fn_agents_get_clients($user_id, $params) {
     return $clients;
 }
 
-function fn_agents_get_client_fields_errors($client) {
+function fn_agents_get_client_fields_errors($client, $params = array()) {
     $not_empty_fields = array(
         'affiliate_id',
         'fio',
         'phone'
     );
+    if(isset($params['not_empty_fields'])) {
+        $not_empty_fields = $params['not_empty_fields'];
+    }
     $email_fields = array(
         'email'
     );
+    if(isset($params['email_fields'])) {
+        $email_fields = $params['email_fields'];
+    }
     $integer_fields = array(
-        'affiliate_id'
+        'affiliate_id',
+        'phone'
     );
+    if(isset($params['integer_fields'])) {
+        $integer_fields = $params['integer_fields'];
+    }
     $errors = array();
 
     foreach ($not_empty_fields as $not_empty) {
@@ -1427,7 +1437,7 @@ function fn_agents_get_client_fields_errors($client) {
 
     foreach ($email_fields as $email) {
         $_at = mb_strpos($client[$email], '@');
-        $_dot = mb_strpos($client[$email], '.', $_at);
+        $_dot = mb_strrpos($client[$email], '.', $_at);
         $_after_dot_length = mb_strlen($client[$email]) - $_dot - 1;
         if($_at < 1 || $_dot < $_at || $_after_dot_length < 2 ) {
             $errors[$email][] = 'invalid_email';
@@ -1443,6 +1453,14 @@ function fn_agents_get_client_fields_errors($client) {
     return $errors;
 }
 
+function fn_agents_display_errors($errors){
+    foreach ($errors as $field=>$field_errors) {
+        foreach($field_errors as $error) {
+            $error_text = fn_get_lang_var('field') . ' "' . fn_get_lang_var($field) . '" ' . fn_get_lang_var($error);
+            fn_set_notification('E', fn_get_lang_var('error'), $error_text);
+        }
+    }
+}
 
 function fn_agent_get_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $_params = array(
