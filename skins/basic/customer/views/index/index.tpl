@@ -27,9 +27,9 @@
         </div>
         <div id="content_social">вставь сюда полностью!</div>
         <div id="content_affiliate_program">
-            {$lang.affiliate_program}
-            Карусель, карусель, это радость для нас...
-            <button>{$lang.view_all}</button>
+            <div>{$lang.affiliate_program}</div>
+            <div>Карусель, карусель, это радость для нас...</div>
+            <div><button>{$lang.view_all}</button></div>
         </div>
     </div>
 
@@ -37,3 +37,18 @@
 
     </div>
 </div>
+
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.3.6/slick.css"/>
+<script type="text/javascript" src="/slick.js"></script>
+{literal}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#content_affiliate_program').slick({
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 2000
+    });
+    });
+</script>
+{/literal}

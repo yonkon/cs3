@@ -290,18 +290,7 @@ elseif ($mode == 'usergroups') {
             true,
             $user_data['company_id']
         );
-//        Mailer::Send(array(
-//            'to' => 'default_company_users_department',
-//            'from' => 'default_company_users_department',
-//            'reply_to' => $user_data['email'],
-//            'data' => array(
-//                'user_data' => $user_data,
-//                'usergroups' => fn_get_usergroups('F', Registry::get('settings.Appearance.backend_default_language')),
-//                'usergroup_id' => $_REQUEST['usergroup_id']
-//            ),
-//            'tpl' => 'profiles/usergroup_request.tpl',
-//            'company_id' => $user_data['company_id'],
-//        ), 'A', Registry::get('settings.Appearance.backend_default_language'));
+
     }
 
     return array(CONTROLLER_STATUS_OK, "profiles.update");
@@ -349,12 +338,56 @@ elseif ($mode == 'order_make') {
         fn_agents_process_order($_REQUEST, $step, $auth);
 
     }
-    Registry::get('view')->assign('step', $step, $auth );
+    Registry::get('view')->assign('step', $step );
     Registry::get('view')->assign('product', array(
         'product_id' => $_REQUEST['product_id'],
         'amount' => ($_REQUEST['item_count'] || 1) )
     );
     Registry::get('view')->assign('mode', 'order_make');
+    Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
+    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    return array(CONTROLLER_STATUS_OK);
+}
+elseif ($mode == 'order_save') {
+    if (empty($_SESSION['cart'])) {
+        fn_clear_cart($_SESSION['cart']);
+    }
+
+    $cart = & $_SESSION['cart'];
+    fn_clear_cart($cart);
+    fn_agents_add_affiliate_data_to_cart($cart, $auth);
+
+//    $cart['affiliate']['code'] = empty($auth['user_id']) ? '' : fn_dec2any($auth['user_id']);
+//    $_partner_id = $auth['user_id'];
+//    $_partner_data = db_get_row("SELECT firstname, lastname, user_id as partner_id FROM ?:users WHERE user_id = ?i AND user_type = 'P'", $_partner_id);
+//    if (!empty($_partner_data)) {
+//        $cart['affiliate'] = $_partner_data + $cart['affiliate'];
+//        $_SESSION['partner_data'] = array(
+//            'partner_id' => $cart['affiliate']['partner_id'],
+//            'is_payouts' => 'N'
+//        );
+//    } else {
+//        unset($cart['affiliate']['partner_id']);
+//        unset($cart['affiliate']['firstname']);
+//        unset($cart['affiliate']['lastname']);
+//        unset($_SESSION['partner_data']);
+//    }
+
+    $product_data = array(
+        'product_id' => $_REQUEST['product_id'],
+        'amount' => ($_REQUEST['item_count'] || 1)
+    );
+
+    fn_add_product_to_cart($product_data, $cart, $auth);
+    fn_save_cart_content($cart, $auth['user_id']);
+    fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
+    fn_agents_save_order($cart, $auth);
+    fn_clear_cart($cart);
+    fn_save_cart_content($cart, $auth['user_id']);
+
+
+    Registry::get('view')->assign('product', $product );
+    Registry::get('view')->assign('mode', 'order_save');
     Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
     return array(CONTROLLER_STATUS_OK);

@@ -34,11 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			foreach ($_REQUEST['partner_ids'] as $partner_id) {
 
 				$_data = fn_get_partner_data($partner_id);
-
+                $_data['referrer_partner_id'] = $_data['curator_id'];
 				if (empty($_data['approved']) || $_data['approved'] != 'A') {
 					$p_data = array('approved' => 'A');
+                    if(!empty($_data['referrer_partner_id']) && intval($_data['referrer_partner_id']) ) {
+                        $p_data['referrer_partner_id'] = $_data['referrer_partner_id'];
+                    }
 					fn_update_partner_profile($partner_id, $p_data);
 					$user_data = fn_get_user_info($partner_id);
+
 					$view_mail->assign('user_data', $user_data);
 
 					// Send notification to partners

@@ -41,7 +41,7 @@
     </div>
 
     {foreach from=$products item="product"}
-    <form>
+    <form id="form_{$product.product_id}">
         <input type="hidden" name="product_id" value="{$product.product_id}">
         <input type="hidden" name="dispatch" value="agents.order_make">
     <div class="product_div">
@@ -69,9 +69,18 @@
             <tr>
                 <td>{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
                 <td colspan="2"><div>{$product.company.company_description|default|unescape}</div></td>
-                <td><span>{$product.profit}</span><br><button>Сохранить в кабинете</button></td>
+                <td><span>{$product.profit}</span><br><button onclick="save_order({$product.product_id});">Сохранить в кабинете</button></td>
             </tr>
         </table>
     </div>
 </form>
 {/foreach}
+{literal}
+<script type="text/javascript">
+    function save_order(product_id) {
+        var $form = $('#form_'+product_id);
+        $('input[name=dispatch]', $form).val('agents.order_save');
+        $form.submit();
+    }
+</script>
+{/literal}

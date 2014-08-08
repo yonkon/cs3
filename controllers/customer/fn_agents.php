@@ -1280,22 +1280,23 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
     }
 
     $cart = & $_SESSION['cart'];
+    $_partner_data = fn_agents_add_affiliate_data_to_cart($cart, $auth);
 
-    $cart['affiliate']['code'] = empty($auth['user_id']) ? '' : fn_dec2any($auth['user_id']);
-    $_partner_id = $auth['user_id'];//fn_any2dec($cart['affiliate']['code']);
-    $_partner_data = db_get_row("SELECT firstname, lastname, user_id as partner_id FROM ?:users WHERE user_id = ?i AND user_type = 'P'", $_partner_id);
-    if (!empty($_partner_data)) {
-        $cart['affiliate'] = $_partner_data + $cart['affiliate'];
-        $_SESSION['partner_data'] = array(
-            'partner_id' => $cart['affiliate']['partner_id'],
-            'is_payouts' => 'N'
-        );
-    } else {
-        unset($cart['affiliate']['partner_id']);
-        unset($cart['affiliate']['firstname']);
-        unset($cart['affiliate']['lastname']);
-        unset($_SESSION['partner_data']);
-    }
+//    $cart['affiliate']['code'] = empty($auth['user_id']) ? '' : fn_dec2any($auth['user_id']);
+//    $_partner_id = $auth['user_id'];//fn_any2dec($cart['affiliate']['code']);
+//    $_partner_data = db_get_row("SELECT firstname, lastname, user_id as partner_id FROM ?:users WHERE user_id = ?i AND user_type = 'P'", $_partner_id);
+//    if (!empty($_partner_data)) {
+//        $cart['affiliate'] = $_partner_data + $cart['affiliate'];
+//        $_SESSION['partner_data'] = array(
+//            'partner_id' => $cart['affiliate']['partner_id'],
+//            'is_payouts' => 'N'
+//        );
+//    } else {
+//        unset($cart['affiliate']['partner_id']);
+//        unset($cart['affiliate']['firstname']);
+//        unset($cart['affiliate']['lastname']);
+//        unset($_SESSION['partner_data']);
+//    }
 
     $product_id = $order_data['product_id'];
     $amount = $order_data['item_count'];
@@ -1304,6 +1305,7 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
         $client_id = fn_agents_register_customer($order_data['client']);
         $client = fn_agents_get_clients($auth['user_id'], array('where' => array('profile_id' => $client_id) ) );
         $client = $client[0];
+        fn_clear_cart($cart);
         fn_agents_assign_client_to_cart($client, $cart);
         $product_data = array($product_id => array('product_id' => $product_id, 'amount' => $amount) );
         fn_add_product_to_cart($product_data, $cart, $auth);
@@ -1366,12 +1368,16 @@ function fn_agents_register_customer ($customer_data) {
 
     return $user_data['profile_id'];
 
-//    fn_update_user_profile()
-    return $client_id;
+
 }
 
 function fn_agents_new_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
     fn_place_order($cart, $auth, $action, $parent_order_id);
+}
+function fn_agents_save_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
+    $order_id = fn_place_order($cart, $auth, $action, $parent_order_id);
+    db_query(db_process('UPDATE ?:orders SET status = B WHERE order_id = ?i', array($order_id)) );
+    db_query(db_process('INSERT INTO ?:order_saved (`id`, `order_id`, `user_id`) VALUES (NULL, ?i, ?i)', array($order_id, $auth['user_id']) ) );
 }
 
 function fn_agents_get_clients($user_id, $params) {
@@ -1607,4 +1613,22 @@ function fn_agents_assign_client_to_cart($client, &$cart) {
             $udata[$field] = $value;
         }
     }
+}
+function fn_agents_add_affiliate_data_to_cart(&$cart, $auth) {
+    $cart['affiliate']['code'] = empty($auth['user_id']) ? '' : fn_dec2any($auth['user_id']);
+    $_partner_id = $auth['user_id'];
+    $_partner_data = db_get_row("SELECT firstname, lastname, user_id as partner_id FROM ?:users WHERE user_id = ?i AND user_type = 'P'", $_partner_id);
+    if (!empty($_partner_data)) {
+        $cart['affiliate'] = $_partner_data + $cart['affiliate'];
+        $_SESSION['partner_data'] = array(
+            'partner_id' => $cart['affiliate']['partner_id'],
+            'is_payouts' => 'N'
+        );
+    } else {
+        unset($cart['affiliate']['partner_id']);
+        unset($cart['affiliate']['firstname']);
+        unset($cart['affiliate']['lastname']);
+        unset($_SESSION['partner_data']);
+    }
+    return $_partner_data;
 }

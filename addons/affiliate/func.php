@@ -443,7 +443,7 @@ function fn_get_partner_data($partner_id, $approved_only = false)
 		$where_condition = " AND approved = 'A'";
 	}
 
-	$partner = db_get_row("SELECT ?:users.user_id, ?:users.user_login, ?:users.timestamp, ?:users.user_type, ?:users.status, ?:users.title, ?:users.firstname, ?:users.lastname, ?:users.company, ?:users.email, ?:users.phone, ?:users.fax, ?:aff_partner_profiles.approved, ?:aff_partner_profiles.plan_id, ?:aff_partner_profiles.balance, ?:affiliate_plans.min_payment FROM ?:users LEFT JOIN ?:aff_partner_profiles ON ?:aff_partner_profiles.user_id = ?:users.user_id LEFT JOIN ?:affiliate_plans ON ?:affiliate_plans.plan_id = ?:aff_partner_profiles.plan_id WHERE ?:users.user_id = ?i AND user_type = 'P' $where_condition", $partner_id);
+	$partner = db_get_row("SELECT ?:users.user_id, ?:users.user_login, ?:users.timestamp, ?:users.user_type, ?:users.status, ?:users.title, ?:users.firstname, ?:users.lastname, ?:users.company, ?:users.email, ?:users.phone, ?:users.fax, ?:users.curator_id, ?:aff_partner_profiles.approved, ?:aff_partner_profiles.plan_id, ?:aff_partner_profiles.balance, ?:affiliate_plans.min_payment FROM ?:users LEFT JOIN ?:aff_partner_profiles ON ?:aff_partner_profiles.user_id = ?:users.user_id LEFT JOIN ?:affiliate_plans ON ?:affiliate_plans.plan_id = ?:aff_partner_profiles.plan_id WHERE ?:users.user_id = ?i AND user_type = 'P' $where_condition", $partner_id);
 
 	if (!empty($partner['plan_id'])) {
 		$partner['plan'] = db_get_field("SELECT object FROM ?:common_descriptions WHERE object_id = ?i AND object_holder = ?s AND lang_code = ?s", $partner['plan_id'], 'affiliate_plans', CART_LANGUAGE);
