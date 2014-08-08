@@ -299,7 +299,7 @@ elseif ($mode == 'usergroups') {
 elseif ($mode == 'success_add') {
 
     if (empty($auth['user_id'])) {
-        return array(CONTROLLER_STATUS_REDIRECT, "profiles.add");
+        return array(CONTROLLER_STATUS_REDIRECT, "agents.add");
     }
 
     fn_add_breadcrumb(fn_get_lang_var('registration'));
@@ -308,6 +308,12 @@ elseif($mode == 'office') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif($mode == 'companies_and_products') {
+    if ( empty($_REQUEST['limit']) || !intval(($_REQUEST['limit']) )) {
+        $limit =  10;
+    } else {
+        $limit = $_REQUEST['limit'];
+    }
+
     $all_products = fn_agent_get_products(array('client' => array('company'=>$_REQUEST['client']['company']) ), null, CART_LANGUAGE, null, false );
     $products = fn_agent_get_products($_REQUEST, 10 );
     foreach($products[0] as &$product) {
@@ -317,12 +323,19 @@ elseif($mode == 'companies_and_products') {
         $product['description'] = fn_agents_get_product_description($product['product_id']);
     }
     unset($product);
+
+    $pagination = array(
+        'page' => $_REQEST['page'],
+        'pages' => ceil(count($all_products[0]) / $limit)
+    );
+
     $companies = fn_get_companies(null, $auth);
     Registry::get('view')->assign('all_products', $all_products[0]);
     Registry::get('view')->assign('products', $products[0]);
     Registry::get('view')->assign('products_param', $products[1]);
     Registry::get('view')->assign('companies', $companies[0]);
     Registry::get('view')->assign('mode', 'products');
+    Registry::get('view')->assign('pagination', $pagination);
     Registry::get('view')->assign('client', $_REQUEST['client']);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
 
@@ -373,10 +386,10 @@ elseif ($mode == 'order_save') {
 //        unset($_SESSION['partner_data']);
 //    }
 
-    $product_data = array(
+    $product_data = array($_REQUEST['product_id'] => array(
         'product_id' => $_REQUEST['product_id'],
-        'amount' => ($_REQUEST['item_count'] || 1)
-    );
+        'amount' => (empty($_REQUEST['item_count']) ? 1 : $_REQUEST['item_count']  )
+    ));
 
     fn_add_product_to_cart($product_data, $cart, $auth);
     fn_save_cart_content($cart, $auth['user_id']);

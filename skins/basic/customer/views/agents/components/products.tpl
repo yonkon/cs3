@@ -84,3 +84,5 @@
     }
 </script>
 {/literal}
+<!-- PRODUCTS END -->
+{include file="views/agents/pagination.tpl"}

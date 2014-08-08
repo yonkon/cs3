@@ -1376,8 +1376,13 @@ function fn_agents_new_order(&$cart, &$auth, $action = '', $parent_order_id = 0)
 }
 function fn_agents_save_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
     $order_id = fn_place_order($cart, $auth, $action, $parent_order_id);
-    db_query(db_process('UPDATE ?:orders SET status = B WHERE order_id = ?i', array($order_id)) );
-    db_query(db_process('INSERT INTO ?:order_saved (`id`, `order_id`, `user_id`) VALUES (NULL, ?i, ?i)', array($order_id, $auth['user_id']) ) );
+    $order_id = $order_id[0];
+    if($order_id) {
+        db_query(db_process('UPDATE ?:orders SET status = "B" WHERE order_id = ?i', array($order_id)) );
+        db_query(db_process('INSERT INTO ?:orders_saved (`id`, `order_id`, `user_id`) VALUES (NULL, ?i, ?i)', array($order_id, $auth['user_id']) ) );
+    }
+    return $order_id;
+
 }
 
 function fn_agents_get_clients($user_id, $params) {
