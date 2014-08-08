@@ -1416,7 +1416,8 @@ function fn_agents_get_client_fields_errors($client, $params = array()) {
         $email_fields = $params['email_fields'];
     }
     $integer_fields = array(
-        'affiliate_id'
+        'affiliate_id',
+        'phone'
     );
     if(isset($params['integer_fields'])) {
         $integer_fields = $params['integer_fields'];
