@@ -25,7 +25,7 @@
             <select id="client_company" name="client[company]">
                 <option value="">- {$lang.select_company} -</option>
                 {foreach from=$companies item="company" key="code"}
-                    <option {if $company == $client.company}selected="selected"{/if}  value="{$code}">{$company}</option>
+                    <option {if $company.company_id == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>
                 {/foreach}
             </select>
         </div>
@@ -35,7 +35,7 @@
             <select id="client_region" name="client[region]">
                 <option value="">- {$lang.select_region} -</option>
                 {foreach from=$regions item="region"  key="code"}
-                    <option {if $region == $client.region} selected="selected"{/if} value="{$code}">{$region}</option>
+                    <option {if $region.RegionID == $client.region} selected="selected"{/if} value="{$region.RegionID}">{$region.name}</option>
                 {/foreach}
             </select>
         </div>
@@ -44,7 +44,7 @@
             <select id="client_city" name="client[city]">
                 <option value="">- {$lang.select_city} -</option>
                 {foreach from=$cities item="city"  key="code"}
-                    <option {if $city == $client.city} selected="selected"{/if} value="{$code}">{$city}</option>
+                    <option {if $city.CityId == $client.city} selected="selected"{/if} value="{$city.CityId}">{$city.name}</option>
                 {/foreach}
             </select>
         </div>

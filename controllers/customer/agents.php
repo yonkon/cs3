@@ -366,6 +366,13 @@ elseif ($mode == 'order_make') {
         fn_agents_process_order($_REQUEST, $step, $auth);
 
     }
+    $regions = fn_agents_get_all_regions();
+    Registry::get('view')->assign('regions', $regions );
+    $companies = fn_get_companies(null, $auth);
+    Registry::get('view')->assign('companies', $companies[0]);
+    $cities = fn_agents_get_all_cities($_REQUEST['client']);
+    Registry::get('view')->assign('cities', $cities);
+
     Registry::get('view')->assign('step', $step );
     Registry::get('view')->assign('product', array(
         'product_id' => $_REQUEST['product_id'],
@@ -582,6 +589,12 @@ elseif ($mode == 'update_client') {
     $field = $_REQUEST['field'];
     $profile_id = $_REQUEST["profile_id"];
     $value = $_REQUEST["value"];
+    $errors = fn_agents_get_field_errors($field, $value);
+    if (!empty($errors)) {
+        echo(json_encode(array('status'=>'error',
+        'data' => $errors)));
+        die();
+    }
     $res = db_query(db_process("UPDATE ?:user_profiles SET $field = ?s WHERE profile_id = ?i", array($value, $profile_id)  ));
     if($res) {
         echo(json_encode(array('status'=>'OK')));

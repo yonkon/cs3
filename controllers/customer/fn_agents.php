@@ -1436,10 +1436,11 @@ function fn_agents_get_client_fields_errors($client, $params = array()) {
     }
 
     foreach ($email_fields as $email) {
-        $_at = mb_strpos($client[$email], '@');
-        $_dot = mb_strrpos($client[$email], '.', $_at);
-        $_after_dot_length = mb_strlen($client[$email]) - $_dot - 1;
-        if($_at < 1 || $_dot < $_at || $_after_dot_length < 2 ) {
+//        $_at = mb_strpos($client[$email], '@');
+//        $_dot = mb_strrpos($client[$email], '.', $_at);
+//        $_after_dot_length = mb_strlen($client[$email]) - $_dot - 1;
+//        if($_at < 1 || $_dot < $_at || $_after_dot_length < 2 ) {
+        if(!fn_validate_email($client[$email])) {
             $errors[$email][] = 'invalid_email';
         }
     }
@@ -1452,6 +1453,47 @@ function fn_agents_get_client_fields_errors($client, $params = array()) {
 
     return $errors;
 }
+
+
+
+function fn_agents_get_field_errors($field, $value) {
+    $not_empty_fields = array(
+        'affiliate_id',
+        'fio',
+        'phone',
+        'b_phone',
+        'profile_name'
+    );
+    $email_fields = array(
+        'email',
+        'b_email'
+    );
+    $integer_fields = array(
+        'affiliate_id',
+        'phone',
+        'b_phone'
+    );
+    $errors = array();
+    if(in_array($field,  $not_empty_fields) ) {
+        if(empty($value)) {
+            $errors[] = 'is_empty';
+        }
+    }
+    if(in_array($field,  $integer_fields) ) {
+        $value = intval($value);
+        if(empty($value)) {
+            $errors[] = 'invalid_value';
+        }
+    }
+    if(in_array($field,  $email_fields) ) {
+        if(!fn_validate_email($value)) {
+            $errors[] = 'invalid_email';
+        }
+    }
+
+    return $errors;
+}
+
 
 function fn_agents_display_errors($errors){
     foreach ($errors as $field=>$field_errors) {
@@ -1654,4 +1696,24 @@ function fn_agents_add_affiliate_data_to_cart(&$cart, $auth) {
         unset($_SESSION['partner_data']);
     }
     return $_partner_data;
+}
+
+function fn_agents_get_all_cities($params = array(), $lang = CART_LANGUAGE, $full_select = false) {
+    if($full_select) {
+        $select = 'SELECT c.*, cl.* ';
+    } else {
+        $select = 'SELECT c.CityId, c.CountryId, c.RegionId, cl.name ';
+    }
+    $query = $select. db_process(' FROM Cities c LEFT JOIN Cities_lang cl ON cl.parent_id = c.CityId WHERE cl.lang_id = ?s AND c.CountryID = 203 ', array($lang) );
+    if(!empty($params['region'])) {
+        $query .= db_process(' AND RegionID = ?i', array($params['region']));
+    }
+    $cities = db_get_array($query);
+    return $cities;
+}
+
+function fn_agents_get_all_regions($lang = CART_LANGUAGE) {
+    $query = db_process('SELECT r.*, rl.*  FROM Regions r LEFT JOIN Regions_lang rl ON rl.parent_id = r.RegionID WHERE rl.lang_id = ?s AND r.CountryId = 203 GROUP BY rl.name', array($lang) );
+    $regions = db_get_array($query);
+    return $regions;
 }

@@ -31,38 +31,44 @@
 </div>
 <script type="text/javascript">
     {literal}
-    $(document).ready(function() {
-        var $message_success = $('#message_success');
-        var $message_error = $('#message_error');
-        $('.ajax_input').each(function(i,el) {
-           $(el).blur(function(){
-               var $this = $(this);
+$(document).ready(function() {
+    var $message_success = $('#message_success');
+    var $message_error = $('#message_error');
+    $('.ajax_input').each(function(i,el) {
+        $(el).blur(function(){
+            var $this = $(this);
 
-               $.ajax({
-                   type: "POST",
-                   url: {/literal}"{'agents.update_client'|fn_url}"{literal},
-                   data: { profile_id: $this.parent().parent().data('id'), field: $this.attr("name"), value: $this.val() }
-               })
+            $.ajax({
+                type: "POST",
+                url: {/literal}"{'agents.update_client'|fn_url}"{literal},
+                data: { profile_id: $this.parent().parent().data('id'), field: $this.attr("name"), value: $this.val() }
+            })
 
-               .success(function( msg ) {
-                   $message_success.show('fast', function() {
-                       setTimeout(function(){
-                           $message_success.hide();
-                       }, 4000)
-                   });
-               })
+            .success(function( msg ) {
+                if(typeof msg != 'undefined') {
+                    var data = JSON.parse(msg);
+                    if(typeof data.status != 'undefined' && data.status == 'OK') {
+                        agents_popup($message_success, 'fast', 4000);
+                    } else {
+                        agents_popup($message_error, 'fast', 4000);
+                    }
+                }
+            })
 
-               .error(function( msg ) {
-                   $message_error.show('fast', function() {
-                       setTimeout(function(){
-                           $message_error.hide();
-                       }, 4000)
-                   });
-               });
+            .error(function( msg ) {
+                agents_popup($message_error, 'fast', 4000);
+            });
 
-           });
         });
     });
+});
+function agents_popup(element, show, hide) {
+    element.show(show, function() {
+        setTimeout(function(){
+            element.hide();
+        }, hide)
+    });
+}
     {/literal}
 
 </script>

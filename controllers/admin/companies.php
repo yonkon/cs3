@@ -221,13 +221,15 @@ if ($mode == 'manage') {
 	$view->assign('countries', fn_get_countries(CART_LANGUAGE, true));
 	$view->assign('states', fn_get_all_states());
 
-} elseif ($mode == 'delete') {
+}
+ elseif ($mode == 'delete') {
 
 	fn_delete_company($_REQUEST['company_id']);
 
 	return array(CONTROLLER_STATUS_REDIRECT);
 	
-} elseif ($mode == 'update' || $mode == 'add') {
+}
+ elseif ($mode == 'update' || $mode == 'add') {
 
 	$company_id = !empty($_REQUEST['company_id']) ? $_REQUEST['company_id'] : 0;
 	$company_data = !empty($company_id) ? fn_get_company_data($company_id) : array();
@@ -296,7 +298,8 @@ if ($mode == 'manage') {
 			'js' => true
 		);
 		
-	} elseif (PRODUCT_TYPE == 'ULTIMATE') {
+	}
+ elseif (PRODUCT_TYPE == 'ULTIMATE') {
 		$tabs['regions'] = array (
 			'title' => fn_get_lang_var('regions'),
 			'js' => true
@@ -331,7 +334,8 @@ if ($mode == 'manage') {
 		Registry::set('navigation.tabs', $tabs);
 	}
 	// [/Page sections]
-} elseif ($mode == 'merge') {
+}
+ elseif ($mode == 'merge') {
 
 	if (!isset($_SESSION['auth']['is_root']) || $_SESSION['auth']['is_root'] != 'Y' || defined('COMPANY_ID')) {
 		return array(CONTROLLER_STATUS_DENIED);
@@ -367,7 +371,8 @@ if ($mode == 'manage') {
 	}
 	fn_add_breadcrumb(fn_get_lang_var($lang_var), 'companies.manage');
 	// [/Breadcrumbs]
-} elseif ($mode == 'balance') {
+}
+ elseif ($mode == 'balance') {
 	if (PRODUCT_TYPE == 'MULTIVENDOR' || PRODUCT_TYPE == 'ULTIMATE') {
 		$params = $_REQUEST;
 		list($payouts, $search, $total) = fn_companies_get_payouts($params);
@@ -376,7 +381,8 @@ if ($mode == 'manage') {
 		$view->assign('search', $search);
 		$view->assign('total', $total);
 	}
-} elseif ($mode == 'update_status') {
+}
+ elseif ($mode == 'update_status') {
 
 	$notification = !empty($_REQUEST['notify_user']) && $_REQUEST['notify_user'] == 'Y';
 
@@ -389,7 +395,8 @@ if ($mode == 'manage') {
 
 	exit;
 
-} elseif ($mode == 'picker') {
+}
+ elseif ($mode == 'picker') {
 	list($companies, $search) = fn_get_companies($_REQUEST, $auth, Registry::get('settings.Appearance.admin_elements_per_page'));
 	
 	$view->assign('companies', $companies);
