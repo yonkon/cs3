@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			if (defined('AJAX_REQUEST') && Registry::get('settings.General.checkout_style') != 'multi_page') {
 				$redirect_url = "checkout.checkout";
 			} elseif (!empty($_REQUEST['return_url'])) {
-				$redirect_url = $_REQUEST['return_url'];
+				$redirect_url = $user_data['user_type'] == 'P' ? fn_url('agents.office') : $_REQUEST['return_url'];
 			}
 
 			if (AREA == 'C') {
@@ -266,6 +266,9 @@ if ($mode == 'login_form') {
 	}
 
 	if (!empty($auth['user_id'])) {
+        if($auth['user_type'] == 'P') {
+            return array(CONTROLLER_STATUS_REDIRECT, fn_url('agents.office'));
+        }
 		return array(CONTROLLER_STATUS_REDIRECT, $index_script);
 	}
 

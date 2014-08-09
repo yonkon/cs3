@@ -553,10 +553,10 @@ li.small-description {
 
 /* Main styles */
 .header {
-	background: #fcfcfc url(images/top_bg.png) bottom repeat-x;
+	/*background: #fcfcfc url(images/top_bg.png) bottom repeat-x;*/
 }
 .main {
-	background: #fff url(images/central_bg.png) top repeat-x;
+	/*background: #fff url(images/central_bg.png) top repeat-x;*/
 }
 .header-helper-container {
 	height: 101px;
@@ -565,10 +565,10 @@ li.small-description {
 
 /* Footer styles */
 .footer {
-	background: #f2f2f2 url(images/footer_bg.png) repeat-x;
+	/*background: #f2f2f2 url(images/footer_bg.png) repeat-x;*/
 }
 .footer-menu {
-	background: url(images/footer_line.png) bottom repeat-x;
+	/*background: url(images/footer_line.png) bottom repeat-x;*/
 }
 .footer a:link, .footer a:visited {
 	color: #737373;
@@ -3175,4 +3175,36 @@ a.secondary-link {
 #button_submit_upload {
     padding-left: 35%;
     margin-top: 15px;
+}
+ul.hr {
+
+    padding: 7px;
+}
+ul.hr li {
+    display: inline; /* Отображать как строчный элемент */
+    margin-right: 5px; /* Отступ слева */
+    border: 1px solid #000; /* Рамка вокруг текста */
+    padding: 3px; /* Поля вокруг текста */
+}
+
+#content_top {
+    background-image: url(http://last-gamer.com/uploads/posts/2013-11/1383381058_archeage.jpg);
+    height: 200px;
+    width: 100%;
+
+}
+
+#login {
+    margin-left: 55%;
+}
+
+#footer {
+    background-color: #808080;
+    width: 100%;
+    height: 30px;
+
+}
+
+#top {
+    background-color: #808080;
 }

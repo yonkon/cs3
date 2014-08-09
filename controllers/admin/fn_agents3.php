@@ -1719,6 +1719,7 @@ function fn_agents_get_all_cities($params = array(), $lang = CART_LANGUAGE, $ful
         $query .= db_process(' AND RegionID = ?i', array($params['region']));
     }
     $query .= ' ORDER BY cl.name ASC';
+
     $cities = db_get_array($query);
     return $cities;
 }
@@ -1729,58 +1730,4 @@ function fn_agents_get_all_regions($lang = CART_LANGUAGE) {
 
     $regions = db_get_array($query);
     return $regions;
-}
-
-function fn_agents_get_company_offices($company_id, $params = array()) {
-    $query = db_process('SELECT * FROM ?:company_offices WHERE company_id = ?i', array($company_id) );
-    $offices = db_get_array($query);
-    return $offices;
-}
-
-function fn_agents_get_office_fields_errors($office) {
-    $not_empty_fields = array(
-        'office_name',
-        'email',
-        'phone',
-        'city_id',
-        'address'
-    );
-    if(isset($params['not_empty_fields'])) {
-        $not_empty_fields = $params['not_empty_fields'];
-    }
-    $email_fields = array(
-        'email'
-    );
-    if(isset($params['email_fields'])) {
-        $email_fields = $params['email_fields'];
-    }
-    $integer_fields = array(
-        'company_id',
-        'phone',
-        'city_id'
-    );
-    if(isset($params['integer_fields'])) {
-        $integer_fields = $params['integer_fields'];
-    }
-    $errors = array();
-
-    foreach ($not_empty_fields as $not_empty) {
-        if(empty($office[$not_empty]) ) {
-            $errors[$not_empty][] = 'is_empty';
-        }
-    }
-
-    foreach ($email_fields as $email) {
-        if(!fn_validate_email($office[$email])) {
-            $errors[$email][] = 'invalid_email';
-        }
-    }
-
-    foreach ($integer_fields as $numeric) {
-        if (!is_numeric($office[$numeric])) {
-            $errors[$numeric][] = 'invalid_value';
-        }
-    }
-
-    return $errors;
 }

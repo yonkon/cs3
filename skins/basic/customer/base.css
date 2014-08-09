@@ -728,7 +728,7 @@ a.dashed:hover {
 /* Footer styles */
 .footer {
 	min-height: 70px;
-	background-color: #f2f2f2;
+	/*background-color: #f2f2f2;*/
 	font-size: 95%;
 }
 .footer-menu {
@@ -2892,7 +2892,7 @@ ul.subpages-list li, .wysiwyg-content ul.subpages-list li {
 	position: relative;  	
 	z-index: 10;
 }
--/* /Payment iFrame box */
+/* /Payment iFrame box */
 
 /* Entry page */
 .entry-page {
