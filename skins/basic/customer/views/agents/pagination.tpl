@@ -1,18 +1,19 @@
 <div class="pagination-div">
-{if !empty($pagination) }
-    {if empty($page)}{assign var='page' value=1}{/if}
-    {if $page != 1}
-        <a class="pagination previous" href="{$pagination.url}?page={$page-1}"
+{if !empty($pagination.pages) }
+    {if empty($pagination.page)}{assign var='pagination.page' value=1}{/if}
+    {if $pagination.page != 1}
+        <a class="pagination previous" href="{$pagination.url}&page={$pagination.page-1}">{$lang.Back}</a>
     {/if}
-    page = {$page}
-    {section name=cu loop=$pages start=1}
-        <a
-        class="pagination {if $page == $smarty.section.cu.index}active{/if}"
-        href="{$pagination.url}?page={$smarty.section.cu.index}"
-        >
-            {$smarty.section.cu.index}
-        </a>
-        {*i={$smarty.section.cu.index}*}
-    {/section}
+   {foreach from=$pagination.pages item='pg'}
+       <a
+               class="pagination{if $pagination.page == $pg} active{/if}"
+               href="{$pagination.url}&page={$pg}"
+               >{$pg}
+       </a>
+   {/foreach}
+    {if $pagination.page < $pagination.total_pages }
+        <a class="pagination next" href="{$pagination.url}&page={$pagination.page+1}">{$lang.Next}</a>
+    {/if}
+
 {/if}
 </div>

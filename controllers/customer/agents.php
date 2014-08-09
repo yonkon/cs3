@@ -309,13 +309,20 @@ elseif($mode == 'office') {
 }
 elseif($mode == 'companies_and_products') {
     if ( empty($_REQUEST['limit']) || !intval(($_REQUEST['limit']) )) {
-        $limit =  10;
+        $limit = $_REQUEST['limit'] =  10;
     } else {
         $limit = $_REQUEST['limit'];
     }
+    $page = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
 
     $all_products = fn_agent_get_products(array('client' => array('company'=>$_REQUEST['client']['company']) ), null, CART_LANGUAGE, null, false );
-    $products = fn_agent_get_products($_REQUEST, 10 );
+    $products = fn_agent_get_products($_REQUEST, $limit );
+    $count_params = $_REQUEST;
+    unset($count_params['limit']);
+    unset($count_params['items_per_page']);
+    unset($count_params['page']);
+    $products_count = fn_agent_get_products($count_params);
+    $products_count = count($products_count[0]);
     foreach($products[0] as &$product) {
         $product['image']['image_path'] = get_image_full_path($product['image']);
         $product['company'] = fn_agents_get_company_info($product['company_id']);
@@ -323,10 +330,11 @@ elseif($mode == 'companies_and_products') {
         $product['description'] = fn_agents_get_product_description($product['product_id']);
     }
     unset($product);
-
+    $total_pages = ceil($products_count / $limit);
     $pagination = array(
-        'page' => $_REQEST['page'],
-        'pages' => ceil(count($all_products[0]) / $limit),
+        'page' => $page,
+        'total_pages' =>$total_pages,
+        'pages' => range(1, $total_pages ),
         'url' => fn_url('agents.companies_and_products')
     );
 
@@ -556,13 +564,6 @@ elseif($mode == 'product_info' || $mode == 'company_info') {
 
     $product['image']['image_path'] = get_image_full_path($product['image']);
     $product['description'] = fn_agents_get_product_description($_REQUEST['product_id']);
-//    $company = fn_get_companies(array('company_id' => $product['company_id']), $auth);
-//
-//    if(empty($company[0]) || count($company[0]) != 1) {
-//        $company = array();
-//    } else {
-//        $company = $company[0][0];
-//    }
     $company = fn_agents_get_company_info($product['company_id']);
     $company['image_path'] = get_image_full_path($company);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
