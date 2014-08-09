@@ -1176,10 +1176,20 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
         return array($fields, $join, $condition);
     }
 
-    if (!empty($params['limit'])) {
-        $limit = db_quote(" LIMIT 0, ?i", $params['limit']);
-    } elseif (!empty($params['items_per_page'])) {
+    if (!empty($params['items_per_page'])) {
         $limit = fn_paginate($params['page'], $params['items_per_page']);
+    }
+
+    if (!empty($params['limit']) ) {
+        $limit = 'LIMIT ';
+        if(!empty($params['page'])) {
+            $limit .= ($params['page'] - 1) * $params['limit'] . ',' . $params['limit'];
+        } else {
+            $limit .= $params['limit'];
+        }
+        $limit .= ' ';
+    } else {
+        $limit = '';
     }
 
     $calc_found_rows = '';
