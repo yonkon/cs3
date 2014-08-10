@@ -17,7 +17,7 @@
     <p class="bold">{$office.address}</p>
     <p>{$lang.phone}</p>
     <p>{$office.phone}</p>
-    <p>{$office.shipment_description}</p>
+    <p>{$office.shipment_description|unescape}</p>
 
     <div class="gmap"></div>
 </div>
@@ -26,7 +26,7 @@
     <h2>{$lang.Shipping}</h2>
     {foreach from=$shipping_descriptions item='shipping'}
         <p class="bold">{$shipping.name}</p>
-        <p>{$shipping.description}</p>
+        <p>{$shipping.description|unescape}</p>
     {/foreach}
 </div>
 

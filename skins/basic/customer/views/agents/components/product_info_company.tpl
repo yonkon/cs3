@@ -3,6 +3,6 @@
     <a href="">{$lang.back_to_catalog}</a>
     <img src="{$company.image_path}" alt="{$lang.logo}">
     <p class="bold">{$company.company}</p>
-    <p>{$company.company_description}</p>
+    <p>{$company.company_description|unescape}</p>
 </div>
 {/if}

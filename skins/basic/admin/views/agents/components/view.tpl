@@ -1,3 +1,4 @@
+<h1 class="center h1">{$lang.Company_offices}</h1>
 <div id="company_offices_list">
     <div class="right">
         <form action="{'agents.offices_add'|fn_url}">
@@ -27,10 +28,11 @@
                     <td>{$office.address}</td>
                     <td>{$office.description|unescape}</td>
                     <td>
+                        <a href="{'agents.office_shippings'|fn_url}&office_id={$office.office_id}" target="_blank">{$lang.Edit}</a>
                         {foreach from=$office.shippings item='shipping'}
                             <div class="shipping-table-info">
-                                <p class="bold">$shipping.shipping_name</p>
-                                <p class="description">$shipping.shipping_description</p>
+                                <p class="bold">{$shipping.shipping_name}</p>
+                                <p class="description">{$shipping.shipping_description|unescape}</p>
                             </div>
                         {/foreach}
                     </td>

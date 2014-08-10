@@ -391,7 +391,7 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
 
 }
 
-function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAGE, $need_images = true)
+function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAGE, $need_images = true)
 {
     /**
      * Changes params for selecting products
@@ -917,6 +917,9 @@ function fn_agent_get_products($params, $items_per_page = 0, $lang_code = CART_L
     if (isset($params['client']['company']) && $params['client']['company'] != '') {
         $condition .= db_quote(' AND products.company_id = ?i ', $params['client']['company']);
     }
+    if (isset($params['product_id']) && $params['product_id'] != '') {
+        $condition .= db_quote(' AND products.product_id = ?i ', $params['product_id']);
+    }
 
     if (isset($params['client']['product']) && $params['client']['product'] != '') {
         $condition .= db_quote(' AND products.product_id = ?i ', $params['client']['product']);
@@ -1292,22 +1295,6 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
     $cart = & $_SESSION['cart'];
     $_partner_data = fn_agents_add_affiliate_data_to_cart($cart, $auth);
 
-//    $cart['affiliate']['code'] = empty($auth['user_id']) ? '' : fn_dec2any($auth['user_id']);
-//    $_partner_id = $auth['user_id'];//fn_any2dec($cart['affiliate']['code']);
-//    $_partner_data = db_get_row("SELECT firstname, lastname, user_id as partner_id FROM ?:users WHERE user_id = ?i AND user_type = 'P'", $_partner_id);
-//    if (!empty($_partner_data)) {
-//        $cart['affiliate'] = $_partner_data + $cart['affiliate'];
-//        $_SESSION['partner_data'] = array(
-//            'partner_id' => $cart['affiliate']['partner_id'],
-//            'is_payouts' => 'N'
-//        );
-//    } else {
-//        unset($cart['affiliate']['partner_id']);
-//        unset($cart['affiliate']['firstname']);
-//        unset($cart['affiliate']['lastname']);
-//        unset($_SESSION['partner_data']);
-//    }
-
     $product_id = $order_data['product_id'];
     $amount = $order_data['item_count'];
 
@@ -1317,6 +1304,10 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
         $client = $client[0];
         fn_clear_cart($cart);
         fn_agents_assign_client_to_cart($client, $cart);
+
+        $company_office = fn_agents_get_company_offices(null, array('office_id' => $order_data['client']['office']));
+        $company_office = $company_office[0];
+        fn_agents_assign_company_office_to_cart($company_office, $cart);
         $product_data = array($product_id => array('product_id' => $product_id, 'amount' => $amount) );
         fn_add_product_to_cart($product_data, $cart, $auth);
         fn_save_cart_content($cart, $auth['user_id']);
@@ -1689,6 +1680,15 @@ function fn_agents_assign_client_to_cart($client, &$cart) {
         }
     }
 }
+
+function fn_agents_assign_company_office_to_cart($office, &$cart) {
+    $udata = &$cart['user_data'];
+    foreach($office as $field => $value) {
+        if(array_key_exists('s_'.$field, $udata)) {
+            $udata[$field] = $value;
+        }
+    }
+}
 function fn_agents_add_affiliate_data_to_cart(&$cart, $auth) {
     $cart['affiliate']['code'] = empty($auth['user_id']) ? '' : fn_dec2any($auth['user_id']);
     $_partner_id = $auth['user_id'];
@@ -1732,9 +1732,52 @@ function fn_agents_get_all_regions($lang = CART_LANGUAGE) {
 }
 
 function fn_agents_get_company_offices($company_id, $params = array(), $lang = CART_LANGUAGE) {
-    $query = db_process('SELECT co.*, cl.name AS city FROM ?:company_offices co LEFT JOIN Cities_lang cl ON cl.parent_id = co.city_id WHERE co.company_id = ?i AND cl.lang_id = ?s ORDER BY city ASC', array($company_id, $lang) );
-    $offices = db_get_array($query);
+    $select = db_process('SELECT co.*, cl.name AS city FROM ?:company_offices co LEFT JOIN Cities_lang cl ON cl.parent_id = co.city_id ');
+    $company_condition = empty($company_id) ? '' : db_process('co.company_id = ?i AND', $company_id );
+    $where = ' WHERE ' . $company_condition . db_process(' cl.lang_id = ?s ', array( $lang) );
+    $order = ' ORDER BY city ASC ';
+
+    if(!empty($params['office_id'])) {
+        $where .= db_process(' AND co.office_id = ?i', array($params['office_id']) );
+    }
+    if(!empty($params['city_id'])) {
+        $where .= db_process(' AND co.city_id = ?i' , array($params['city_id']) );
+    }
+    if(!empty($params['city'])) {
+        $where .= db_process(' AND cl.city LIKE %?s%' , array($params['city']) );
+    }
+
+    $offices = db_get_array($select . $where . $order);
     return $offices;
+}
+
+function fn_agents_get_company_offices_with_shippings($company_id, $params = array(), $lang = CART_LANGUAGE) {
+    $offices = fn_agents_get_company_offices($company_id, $params, $lang );
+    foreach($offices as &$office) {
+        $office['shippings'] = fn_agents_get_company_office_shippings($office['office_id'], $params, $lang);
+    }
+    unset($office);
+    return $offices;
+}
+
+function fn_agents_get_fields_errors($params, $fields) {
+    $not_empty_fields = $params['not_empty_fields'];
+    $email_fields = $params['email_fields'];
+    $integer_fields = $params['integer_fields'];
+    $errors = array();
+    foreach ($not_empty_fields as $not_empty) {
+        if(empty($fields[$not_empty]) ) {
+            $errors[$not_empty][] = 'is_empty';        }    }
+
+    foreach ($email_fields as $email) {
+        if(!fn_validate_email($fields[$email])) {
+            $errors[$email][] = 'invalid_email';        }    }
+
+    foreach ($integer_fields as $numeric) {
+        if (!is_numeric($fields[$numeric])) {
+            $errors[$numeric][] = 'invalid_value';        }    }
+
+    return $errors;
 }
 
 function fn_agents_get_office_fields_errors($office) {
@@ -1777,10 +1820,26 @@ function fn_agents_get_office_fields_errors($office) {
     }
 
     foreach ($integer_fields as $numeric) {
-        if (!is_numeric($office[$numeric])) {
+        if (isset($office[$numeric]) && !is_numeric($office[$numeric]) ) {
             $errors[$numeric][] = 'invalid_value';
         }
     }
 
     return $errors;
 }
+function fn_agents_get_shipping_fields_errors($shipping) {
+    $rules = array(
+        'not_empty_fields' => array('shipping_name'),
+        'integer_fields' => array('office_id')
+    );
+    $errors = fn_agents_get_fields_errors($rules, $shipping);
+
+    return $errors;
+}
+
+function fn_agents_get_company_office_shippings($office_id, $params = array(), $lang = CART_LANGUAGE) {
+    $query = db_process('SELECT * FROM ?:company_office_shippings WHERE office_id = ?i ORDER BY shipping_name ASC', array($office_id));
+    $shippings = db_get_array($query);
+    return $shippings;
+}
+
