@@ -68,18 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($res) {
             list($user_id, $profile_id) = $res;
 
-//             Cleanup user info stored in cart
-//            if (!empty($_SESSION['cart']) && !empty($_SESSION['cart']['user_data'])) {
-//                unset($_SESSION['cart']['user_data']);
-//            }
-
-            // Delete anonymous authentication
-//            if ($cu_id = fn_get_session_data('cu_id') && !empty($auth['user_id'])) {
-//                fn_delete_session_data('cu_id');
-//            }
-
-//            Session::regenerateId();
-
             if (!empty($_REQUEST['return_url'])) {
                 return array(CONTROLLER_STATUS_OK, $_REQUEST['return_url']);
             }

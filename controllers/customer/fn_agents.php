@@ -1731,8 +1731,8 @@ function fn_agents_get_all_regions($lang = CART_LANGUAGE) {
     return $regions;
 }
 
-function fn_agents_get_company_offices($company_id, $params = array()) {
-    $query = db_process('SELECT * FROM ?:company_offices WHERE company_id = ?i', array($company_id) );
+function fn_agents_get_company_offices($company_id, $params = array(), $lang = CART_LANGUAGE) {
+    $query = db_process('SELECT co.*, cl.name AS city FROM ?:company_offices co LEFT JOIN Cities_lang cl ON cl.parent_id = co.city_id WHERE co.company_id = ?i AND cl.lang_id = ?s ORDER BY city ASC', array($company_id, $lang) );
     $offices = db_get_array($query);
     return $offices;
 }
