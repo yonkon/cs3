@@ -53,7 +53,7 @@
             <select id="client_office" name="client[office]">
                 <option value="">- {$lang.select_office} -</option>
                 {foreach from=$offices item="office"  key="code"}
-                    <option {if $office == $client.office} selected="selected"{/if} value="{$code}">{$office}</option>
+                    <option {if $office.office_id == $client.office} selected="selected"{/if} value="{$office.office_id}">{$office.office_name}</option>
                 {/foreach}
             </select>
         </div>
