@@ -1,3 +1,4 @@
+
 <div class="left_agent_menu_section">
     <div class="left_agent_menu_logo"> {$user_data.logo}</div>
 </div>

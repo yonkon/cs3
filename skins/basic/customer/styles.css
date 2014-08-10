@@ -3195,7 +3195,7 @@ ul.hr li {
 }
 
 #login {
-    margin-left: 55%;
+    margin-left: 50%;
 }
 
 #footer {
@@ -3212,6 +3212,20 @@ ul.hr li {
 #see_all {
     margin-left: 40%;
 }
+#left_agent_menu {
+    background-color: #808080;
+    min-height: 500px;
+}
+#office_content {
+    width: 100%;
+    min-height: 500px;
+}
+#footer_office{
+    background-color: lawngreen;
+    margin-left: 40%;
+}
 
-
+#social_office {
+    margin-left: 5%;
+}
 

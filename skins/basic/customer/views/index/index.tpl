@@ -47,7 +47,7 @@
 
     <div id="footer">
         <ul class="hr">
-            <li><a>{$lang.for_affiliates}</a></li>
+            <li><a href="/index.php?dispatch=agents.office">{$lang.for_affiliates}</a></li>
             <li><a>{$lang.About_project}</a></li>
             <li><a>{$lang.map_site}</a></li>
             <li><a>{$lang.Feedback}</a></li>
