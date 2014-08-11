@@ -3188,7 +3188,7 @@ ul.hr li {
 }
 
 #content_top {
-    background-image: url(http://ourway.biz/1383381058_archeage.jpg);
+    /*background-image: url(http://ourway.biz/1383381058_archeage.jpg);*/
     height: 200px;
     width: 100%;
 
@@ -3199,7 +3199,7 @@ ul.hr li {
 }
 
 #footer {
-    background-color: lawngreen;
+    /*background-color: lawngreen;*/
     width: 100%;
     height: 30px;
 
