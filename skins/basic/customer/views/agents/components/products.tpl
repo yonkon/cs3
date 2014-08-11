@@ -15,23 +15,23 @@
         {/foreach}
     </select>
 
-        Sort by name <select name="sort_name">
+        {$lang.Sort_by_name} <select name="sort_name">
             <option></option>
             <option {if !empty($client.sort_name) && $client.sort_name == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($client.sort_name) && $client.sort_name == 'desc'}selected="selected" {/if}>desc</option>
         </select>
 
-        price <select name="sort_price">
+        {$lang.price} <select name="sort_price">
             <option></option>
             <option {if !empty($client.sort_price) && $client.sort_price == 'asc'}selected="selected" {/if}>asc</option>
             <option{if !empty($client.sort_price) && $client.sort_price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        profit <select name="sort_profit">
+        {$lang.profit} <select name="sort_profit">
             <option></option>
             <option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        Location <select name="filter_city">
+        {$lang.City} <select name="filter_city">
             <option>Current city</option>
             <option>Other city1</option>
             <option>Other city2</option>
@@ -50,7 +50,7 @@
                 <td> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></a></td>
                 <td colspan="2">
                     <h2><a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
-                    <div class="'product-description">{$product.full_description|unescape}</div>
+                    <div class="'product-description">{$product.full_description|unescape|truncate:360}</div>
                 </td>
                 <td>
                     <div class="product-count-buttons">
@@ -58,7 +58,7 @@
                         <a href="#" class="decrease" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
                         <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
                     </div>
-                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval}$</span>
+                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}$</span>
                     <div>
                         <button type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
                     </div>
@@ -68,7 +68,7 @@
             </tr>
             <tr>
                 <td>{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
-                <td colspan="2"><div>{$product.company.company_description|default|unescape}</div></td>
+                <td colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
                 <td><span>{$product.profit}</span><br><button onclick="save_order({$product.product_id});">Сохранить в кабинете</button></td>
             </tr>
         </table>
