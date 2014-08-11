@@ -1,24 +1,24 @@
 {* Don't delete it *}
 <div id="main_content">
-    <div id="top">
-        <ul class="hr">
-            <li><a>{$lang.main}</a></li>
-            <li><a>{$lang.company}</a></li>
-            <li><a>{$lang.how_its_work}</a></li>
-            <li><a>{$lang.contacts}</a></li>
+    {*<div id="top">*}
+        {*<ul class="hr">*}
+            {*<li><a>{$lang.main}</a></li>*}
+            {*<li><a>{$lang.company}</a></li>*}
+            {*<li><a>{$lang.how_its_work}</a></li>*}
+            {*<li><a>{$lang.contacts}</a></li>*}
             {*<li id="login"><a  href="/index.php?dispatch=auth.login_form&return_url=index.php">{$lang.login}</a></li>*}
-            {if $auth.user_id}
-               <li id="login"> <a href="{"auth.logout?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="account">{$lang.sign_out}</a></li>
-            {else}
-            <li id="login"> <a href="{"auth.login_form?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="account">{$lang.sign_in}</a></li>
-            {/if}
+            {*{if $auth.user_id}*}
+               {*<li id="login"> <a href="{"auth.logout?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="account">{$lang.sign_out}</a></li>*}
+            {*{else}*}
+            {*<li id="login"> <a href="{"auth.login_form?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="account">{$lang.sign_in}</a></li>*}
+            {*{/if}*}
 
-        </ul>
-    </div>
+        {*</ul>*}
+    {*</div>*}
 
     <div id="content">
-        <div id="content_top"></div>
-        <div id="content_top_menu">Неизвестный контейнер</div>
+        {*<div id="content_top"></div>*}
+        {*<div id="content_top_menu">Неизвестный контейнер</div>*}
         <div id="content_company">{$lang.Companies_which_you_can_collaborate}</div>
            <div> Карусель компаний </div>
         <div id="content_registration">
@@ -45,15 +45,15 @@
         </div>
     </div>
 
-    <div id="footer">
-        <ul class="hr">
-            <li><a href="/index.php?dispatch=agents.office">{$lang.for_affiliates}</a></li>
-            <li><a>{$lang.About_project}</a></li>
-            <li><a>{$lang.map_site}</a></li>
-            <li><a>{$lang.Feedback}</a></li>
-            <li><a>{$lang.Partnership_Agreement}</a></li>
-        </ul>
-    </div>
+    {*<div id="footer">*}
+        {*<ul class="hr">*}
+            {*<li><a href="/index.php?dispatch=agents.office">{$lang.for_affiliates}</a></li>*}
+            {*<li><a>{$lang.About_project}</a></li>*}
+            {*<li><a>{$lang.map_site}</a></li>*}
+            {*<li><a>{$lang.Feedback}</a></li>*}
+            {*<li><a>{$lang.Partnership_Agreement}</a></li>*}
+        {*</ul>*}
+    {*</div>*}
 </div>
 
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.3.6/slick.css"/>
