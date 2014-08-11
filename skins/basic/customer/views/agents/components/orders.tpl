@@ -63,11 +63,11 @@
                 </td>
                 <td colspan="2">
                     <h2><a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">{$order.product_data.product}</a></h2>
-                    <div class="product-description">{$order.product_data.description|unescape}</div>
+                    <div class="product-description">{$order.product_data.description|unescape|truncate:360}</div>
                 </td>
                 <td>
-                    <span id="item_{$order.product_data.product_id}_count_text" class="price">{$order.product_data.base_price|floatval}$</span>
-                    <div class="shipping">{if true || $order.product_data.free_shipping || $order.product_data.edp_shipping || $order.product_data.shipping_freight}<img class="shipping-img" src="design/themes/basic/templates/views/agents/images/shipping.png">{/if}
+                    <span id="item_{$order.product_data.product_id}_count_text" class="price">{$order.product_data.base_price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span>
+                    <div class="shipping">{if true || $order.product_data.free_shipping || $order.product_data.edp_shipping || $order.product_data.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/images/shipping.png">{/if}
                     </div>
                 </td>
             </tr>
@@ -77,10 +77,10 @@
                         <img src="{$order.company_data.image_path}">
                     </a>{/if}
                 </td>
-                <td colspan="2"><div>{$order.company_data.company_description|default|unescape}</div></td>
+                <td colspan="2"><div>{$order.company_data.company_description|default|unescape|truncate:360}</div></td>
                 <td>
                     <span>{$order.product_data.profit}</span><br/>
-                    <span class="status">{$order.status}</span>
+                    <span class="status">{$order.status_description}</span>
                 </td>
             </tr>
             <tr>

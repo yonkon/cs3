@@ -342,6 +342,7 @@
 {hook name="companies:tabs_content"}{/hook}
 
 {** Form submit section **}
+<a class="block" href="{'agents.offices'|fn_url}&company_id={$company_data.company_id}"><button type="button">{$lang.Manage_company_offices}</button> </a>
 
 <div class="buttons-container cm-toggle-button buttons-bg">
 	{if $mode == "add"}
@@ -349,6 +350,8 @@
 	{else}
 		{include file="buttons/save_cancel.tpl" but_name="dispatch[companies.update]"}
 	{/if}
+
+
 </div>
 {** /Form submit section **}
 

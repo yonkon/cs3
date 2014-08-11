@@ -1505,7 +1505,7 @@ function fn_agents_display_errors($errors){
     }
 }
 
-function fn_agent_get_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
+function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $_params = array(
         'limit'     => '20',
         'page'      => '0',
@@ -1573,6 +1573,7 @@ function fn_agent_get_orders($user_id, $params = array(), $lang_code = CART_LANG
     $query_string = "$select  $from $join $where  $group  $order  $limit";
 
     $agent_orders = db_get_array($query_string);
+    $status_descriptions = array();
     foreach ($agent_orders as &$order) {
         $order['product_data'] = unserialize($order['extra']);
         $order['product_data']['product_id'] = $order['product_id'];
@@ -1581,6 +1582,11 @@ function fn_agent_get_orders($user_id, $params = array(), $lang_code = CART_LANG
         $order['product_data']['image']['image_path'] = get_image_full_path($order['product_data']['image'] /*$order['product_data']['company_id']*/);
         $order['company_data'] = fn_agents_get_company_info($order['company_id']);
         $order['company_data']['image_path'] = get_image_full_path($order['company_data'] );
+        if (empty($status_descriptions[$order['status']]) ) {
+            $status_descriptions[$order['status']] = fn_agents_get_order_statuses($order['status']);
+            $status_descriptions[$order['status']] = $status_descriptions[$order['status']][0]['description'];
+        }
+        $order['status_description'] = $status_descriptions[$order['status']];
 
     }
 
@@ -1600,24 +1606,32 @@ function fn_agent_get_saved_orders($user_id, $params = array(), $lang_code = CAR
     }
 
     $params['where'][ db_process('?:orders.order_id') ] = $saved_orders_ids;
-    return fn_agent_get_orders($user_id, $params, $lang_code);
+    return fn_agents_get_orders($user_id, $params, $lang_code);
 }
 
 
 function fn_agent_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $active_statuses = array('O', 'P',  'B', 'A');
     $params['where'][db_process('?:orders.status')] = $active_statuses ;
-    return fn_agent_get_orders($user_id, $params, $lang_code);
+    return fn_agents_get_orders($user_id, $params, $lang_code);
 }
 
 function fn_agent_get_closed_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $closed_statuses = array('C', 'F',  'B', 'D');
     $params['where'][ db_process('?:orders.status')] = $closed_statuses;
-    return fn_agent_get_orders($user_id, $params, $lang_code);
+    return fn_agents_get_orders($user_id, $params, $lang_code);
 }
 
-function fn_agents_get_order_statuses($lang_code = CART_LANGUAGE) {
+function fn_agents_get_order_statuses($status = null, $lang_code = CART_LANGUAGE) {
+
     $query = db_process('SELECT status, description, email_subj, email_header, lang_code FROM ?:status_descriptions WHERE lang_code = ?s AND type = "O"', array($lang_code));
+    if(!empty($status)) {
+        if (!is_array($status)) {
+            $query .= db_process(' AND status = ?s', array($status));
+        } else {
+            $query .= db_process(' AND status IN (?a)', array($status));
+        }
+    }
     $statuses = db_get_array($query);
     return $statuses;
 }
@@ -1709,14 +1723,21 @@ function fn_agents_add_affiliate_data_to_cart(&$cart, $auth) {
 }
 
 function fn_agents_get_all_cities($params = array(), $lang = CART_LANGUAGE, $full_select = false) {
-    if($full_select) {
+    if ($full_select) {
         $select = 'SELECT c.*, cl.* ';
     } else {
         $select = 'SELECT c.CityId, c.CountryId, c.RegionId, cl.name ';
     }
     $query = $select. db_process(' FROM Cities c LEFT JOIN Cities_lang cl ON cl.parent_id = c.CityId WHERE cl.lang_id = ?s AND c.CountryID = 203 ', array($lang) );
-    if(!empty($params['region'])) {
+    if (!empty($params['region'])) {
         $query .= db_process(' AND RegionID = ?i', array($params['region']));
+    }
+    if (!empty($params['city_id'])) {
+        if (is_array ($params['city_id']) ) {
+            $query .= db_process(' AND c.CityId IN (?a)', array($params['city_id']) );
+        } else {
+            $query .= db_process(' AND CityId = ?i', array($params['city_id']));
+        }
     }
     $query .= ' ORDER BY cl.name ASC';
     $cities = db_get_array($query);
@@ -1877,4 +1898,18 @@ function fn_agents_locations_to_address($locations, $with_address = false) {
     }
     $address .= $locations['city'] . ', ' . $locations['country'] . ', ' . $locations['region'];
     return $address;
+}
+function fn_agents_extract_cities_from_offices($offices, $full_info = true) {
+    $cities = array();
+    foreach($offices as $office) {
+        $cities[$office['city_id']] = array(
+            'city_id' => $office['city_id'],
+            'city' => $office['city']
+        );
+    }
+    if($full_info) {
+        $cities_ids = array_keys($cities);
+        $cities = fn_agents_get_all_cities(array('city_id' => $cities_ids), CART_LANGUAGE, true);
+    }
+    return $cities;
 }
