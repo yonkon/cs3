@@ -25,7 +25,7 @@
         </div>
         <div>
             <span>{$lang.address}</span>
-            <span id="client_address">{$client.city }, {$client.country}, {$client.region} </span>
+            <span id="client_address">{$client.address} </span>
         </div>
         <div>
             <span>{$lang.Phone}</span>

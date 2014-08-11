@@ -435,6 +435,8 @@ elseif ($mode == 'order_make') {
             'amount' => ($_REQUEST['item_count'] || 1) )
     );
     Registry::get('view')->assign('mode', 'order_make');
+    $locations = $_REQUEST['client']['locations'] = fn_agents_process_order_address($_REQUEST['client']);
+    $_REQUEST['address'] = fn_agents_locations_to_address($locations);
     Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
     return array(CONTROLLER_STATUS_OK);

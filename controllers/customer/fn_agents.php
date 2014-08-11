@@ -1292,7 +1292,7 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
         fn_clear_cart($_SESSION['cart']);
     }
 
-    $cart = & $_SESSION['cart'];
+    $cart = &$_SESSION['cart'];
     $_partner_data = fn_agents_add_affiliate_data_to_cart($cart, $auth);
 
     $product_id = $order_data['product_id'];
@@ -1675,9 +1675,9 @@ function get_image_full_path($image, $company_id=0) {
 function fn_agents_assign_client_to_cart($client, &$cart) {
     $udata = &$cart['user_data'];
     foreach($client as $field => $value) {
-        if(array_key_exists($field, $udata)) {
+//        if(array_key_exists($field, $udata)) {
             $udata[$field] = $value;
-        }
+//        }
     }
 }
 
@@ -1685,7 +1685,7 @@ function fn_agents_assign_company_office_to_cart($office, &$cart) {
     $udata = &$cart['user_data'];
     foreach($office as $field => $value) {
         if(array_key_exists('s_'.$field, $udata)) {
-            $udata[$field] = $value;
+            $udata['s_'.$field] = $value;
         }
     }
 }
@@ -1843,3 +1843,38 @@ function fn_agents_get_company_office_shippings($office_id, $params = array(), $
     return $shippings;
 }
 
+function fn_agents_process_order_address($order_fields, $params = array(), $lang = CART_LANGUAGE) {
+    $office = fn_agents_get_company_offices(null, array('office_id' => $order_fields['office']) );
+    $office = $office[0];
+    $address = $office['address'];
+    $query = db_process(
+        'SELECT
+            c.CityId as city_id,
+            rl.parent_id as region_id,
+            cnl.parent_id as country_id,
+            cl.name as city,
+            rl.name as region,
+            cnl.Country as country
+        FROM Cities c
+        LEFT JOIN Cities_lang cl ON cl.parent_id = c.CityId
+        LEFT JOIN Regions_lang rl ON rl.parent_id = c.RegionID
+        LEFT JOIN Countries_lang cnl ON cnl.parent_id = c.CountryID
+        WHERE c.CityId = ?i
+            AND cl.lang_id = ?s
+            AND rl.lang_id = ?s
+            AND cnl.lang_id = ?s',
+        array($office['city_id'], $lang, $lang, $lang) );
+    $locations = db_get_array($query);
+    $locations = $locations[0];
+    $locations['address'] = $address;
+    return $locations;
+}
+
+function fn_agents_locations_to_address($locations, $with_address = false) {
+    $address = '';
+    if($with_address) {
+        $address .= $locations['address'] . ', ';
+    }
+    $address .= $locations['city'] . ', ' . $locations['country'] . ', ' . $locations['region'];
+    return $address;
+}
