@@ -14,27 +14,27 @@
     <input type="hidden" id="client_comment" name="client[comment]" value="{$client.comment}">
     <input type="hidden" name="step" value="{$step}">
     <div id="order_make_top">
-        <h2 class="lightbox-header-text">{$lang.New_order_Approvement}</h2>
-        <img src="/images/close.png" class="close" alt="{$lang.close}">
+        <h2 id="h2" class="lightbox-header-text">{$lang.New_order_Approvement}</h2>
+        {*<img src="/images/close.png" class="close" alt="{$lang.close}">*}
         <p>{$lang.Verify_client_data_please}</p>
     </div>
     <div id="order_make_content">
         <div>
-            <span>{$lang.FIO}</span>
-            <span id="client_fio" >{$client.fio }</span>
+            <span class="client_filds_add_product_label">{$lang.FIO}</span>
+            <span class="client_filds_add_product" id="client_fio" >{$client.fio }</span>
         </div>
         <div>
-            <span>{$lang.address}</span>
-            <span id="client_address">{$client.address} </span>
+            <span class="client_filds_add_product_label">{$lang.address}</span>
+            <span class="client_filds_add_product" id="client_address">{$client.address} </span>
         </div>
         <div>
-            <span>{$lang.Phone}</span>
-            <span id="client_phone">{$client.phone } </span>
+            <span class="client_filds_add_product_label">{$lang.Phone}</span>
+            <span class="client_filds_add_product" id="client_phone">{$client.phone } </span>
         </div>
 
     </div>
     <div id="order_make_bottom">
-        <button onclick="window.history.back();">{$lang.Edit}</button>      <button type="submit">{$lang.Send}</button>
+        <button id="button_product" onclick="window.history.back();">{$lang.Edit}</button>      <button id="button_product" type="submit">{$lang.Send}</button>
     </div>
     </form>
 </div>

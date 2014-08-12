@@ -10,7 +10,7 @@
         <p class="bold">{$product.product}</p>
         <p>{$product.description|unescape}</p>
         <p>{$lang.Price}{$product.price|format_price:$currencies.$secondary_currency:'price':"price big":true}</p>
-        <p>{$lang.Profit}{$product.profit|format_price:$currencies.$secondary_currency:'profit':"price big":true}</p>
+        {*<p>{$lang.Profit}{$product.profit|format_price:$currencies.$secondary_currency:'profit':"price big":true}</p>*}
 
         <input type="hidden" name="product_id" value="{$product.product_id}">
         <button type="submit" value="submit" name="submit">{$lang.Make_order}</button>

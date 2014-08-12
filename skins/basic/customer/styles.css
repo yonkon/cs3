@@ -3302,7 +3302,7 @@ ul.hr li {
 }
 
 .yashare-auto-init {
-    margin-left: 35%;
+    /*margin-left: 35%;*/
 }
 
 #product_image{
@@ -3345,4 +3345,30 @@ ul.hr li {
 
 .price {
     font-size: 30px;
+}
+
+#h2 {
+    font-size: 20px;
+}
+
+.client_filds_add_product_label {
+    display: inline-block;
+    width: 15%;
+}
+
+.client_filds_add_product {
+
+    width: 300px;
+    margin: 5px;
+}
+
+.client_filds_add_product_area {
+
+    width: 500px;
+    margin: 5px;
+}
+
+.client_filds_add_product_label_mail {
+    display: inline-block;
+    width: 40%;
 }
