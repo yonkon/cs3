@@ -258,7 +258,6 @@ elseif ($mode == 'update') {
     if (Registry::get('settings.General.user_multiple_profiles') == 'Y') {
         Registry::get('view')->assign('user_profiles', fn_get_user_profiles($auth['user_id']));
     }
-
 }
 elseif ($mode == 'usergroups') {
     if (empty($auth['user_id']) || empty($_REQUEST['type']) || empty($_REQUEST['usergroup_id'])) {
@@ -566,4 +565,16 @@ elseif ($mode == 'update_client') {
     }
     return array(CONTROLLER_STATUS_NO_PAGE);
 }
-
+elseif ($mode == 'ajax_get_offices') {
+    $company_id = $_REQUEST['company_id'];
+    $city_id = $_REQUEST['city_id'];
+    if(empty($company_id) || empty($city_id) ) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $offices = fn_agents_get_company_offices_with_shippings($company_id, array('city_id' => $city_id) );
+    if(empty($offices)) {
+        echo (json_encode(array('status' => 'empty')));
+    }
+    echo json_encode(array('status' => 'OK', 'data' => $offices) );
+    die();
+}

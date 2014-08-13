@@ -15,6 +15,9 @@
     </div>
     <div class="offices_descriptions_div" style="width: 350px; float: left">
         <h2>{$lang.offices}</h2>
+        <div id="office_names_and_descriptions">
+
+
         {foreach from=$offices item='office'}
             <p class="office_name no-padding">
                 {$office.office_name}
@@ -23,13 +26,15 @@
                 {$office_description|unescape}
             </p>
         {/foreach}
-
+        </div>
         <h2>{$lang.Addresses_and_phones}</h2>
+        <div id="adresses_and_phones">
         {foreach from=$offices item='office'}
             <p class="bold no-padding office_address">{$office.address}</p>
             <p class="no-padding">{$office.phone}</p>
             <br/>
         {/foreach}
+        </div>
     </div>
 
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
@@ -39,12 +44,14 @@
 </div>
 <div class="office_shipping_div clr">
     <h2>{$lang.Shipping}</h2>
+    <div id="shipping_names_and_descriptions">
     {foreach from=$offices item='office'}
         {foreach from=$office.shippings item='shipping'}
             <p class="bold">{$shipping.shipping_name}</p>
             <p>{$shipping.shipping_description|unescape}</p>
         {/foreach}
     {/foreach}
+    </div>
 </div>
 
 {literal}
@@ -65,6 +72,9 @@
     function set_map_coords(gmap) {
         gmap.removeMarkers();
         var $city = $('#select_city option:selected');
+        if(!parseInt($city.val())) {
+            return false;
+        }
         gmap.setCenter($city.data('lat'), $city.data('lng'));
         $('.office_address').each(function(i, el) {
             var $el = $(el);
@@ -91,7 +101,78 @@
         lng: 37.583
     });
     $(document).ready(function() {
-        $('#select_city').change(function(){set_map_coords(gmap);});
+        $('#select_city').change(function(){
+            var city_id = $(this).val();
+
+            if(parseInt(city_id)) {
+                var url = '{/literal}{'agents.ajax_get_offices'|fn_url}{literal}';
+                var data = {
+                    {/literal}
+                    company_id: {$company.company_id},
+                    city_id: city_id,
+                    {literal}
+                };
+
+                var callback = function(data) {
+                    var $names_and_descr = $('#office_names_and_descriptions');
+                    var $adresses_and_phones = $('#adresses_and_phones');
+                    var $shippings = $('#shipping_names_and_descriptions');
+                    $adresses_and_phones.html('');
+                    $names_and_descr.html('');
+                    $shippings.html('');
+                    for(var i=0; i<data.length; i++) {
+                        var dt = data[i];
+
+                        var p = document.createElement('p');
+                        $names_and_descr.append(p);
+                        var $p = $(p);
+                        $p.addClass('office_name no-padding');
+                        $p.text(dt.office_name);
+
+                        p = document.createElement('p');
+                        $names_and_descr.append(p);
+                        $p = $(p);
+                        $p.addClass('office_description no-padding');
+                        $p.html(dt.description);
+
+                        var br = document.createElement('br');
+                        $names_and_descr.append(br);
+
+                        p = document.createElement('p');
+                        $adresses_and_phones.append(p);
+                        $p = $(p);
+                        $p.addClass('bold no-padding office_address');
+                        $p.text(dt.address);
+
+                        p = document.createElement('p');
+                        $adresses_and_phones.append(p);
+                        $p = $(p);
+                        $p.addClass('no-padding');
+                        $p.text(dt.phone);
+
+                        br = document.createElement('br');
+                        $adresses_and_phones.append(br);
+
+                        for(var j=0; j<dt.shippings.length; j++) {
+                            var sh = dt.shippings[j];
+                            p = document.createElement('p');
+                            $shippings.append(p);
+                            $p = $(p);
+                            $p.addClass('bold');
+                            $p.text(sh.shipping_name);
+
+                            p = document.createElement('p');
+                            $shippings.append(p);
+                            $p = $(p);
+                            $p.html(sh.shipping_description);
+                        }
+                    }
+
+                };
+                ajax_get_data(url, data, callback);
+            }
+            set_map_coords(gmap);
+        });
     });
 </script>
 {/literal}
