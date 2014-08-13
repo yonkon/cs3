@@ -1754,21 +1754,50 @@ function fn_agents_get_all_regions($lang = CART_LANGUAGE) {
 
 function fn_agents_get_company_offices($company_id, $params = array(), $lang = CART_LANGUAGE) {
     $select = db_process('SELECT co.*, cl.name AS city FROM ?:company_offices co LEFT JOIN Cities_lang cl ON cl.parent_id = co.city_id ');
+    $join = '';
     $company_condition = empty($company_id) ? '' : db_process('co.company_id = ?i AND', $company_id );
     $where = ' WHERE ' . $company_condition . db_process(' cl.lang_id = ?s ', array( $lang) );
     $order = ' ORDER BY city ASC ';
 
     if(!empty($params['office_id'])) {
-        $where .= db_process(' AND co.office_id = ?i', array($params['office_id']) );
+        $where .= db_process(' AND co.office_id = ?i ', array($params['office_id']) );
+    }
+    if(!empty($params['region_id'])) {
+        $join .= db_process(' LEFT JOIN Cities c ON c.CityId = co.city_id');
+        $where .= db_process(' AND c.RegionID = ?i ' , array($params['region_id']) );
     }
     if(!empty($params['city_id'])) {
-        $where .= db_process(' AND co.city_id = ?i' , array($params['city_id']) );
+        $where .= db_process(' AND co.city_id = ?i ' , array($params['city_id']) );
     }
     if(!empty($params['city'])) {
-        $where .= db_process(' AND cl.city LIKE %?s%' , array($params['city']) );
+        $where .= db_process(' AND cl.city LIKE %?s% ' , array($params['city']) );
     }
 
-    $offices = db_get_array($select . $where . $order);
+    $offices = db_get_array($select . $join .  $where . $order);
+    return $offices;
+}
+
+function fn_agents_get_company_offices_with_regions($company_id, $params = array(), $lang = CART_LANGUAGE) {
+    $select = db_process('SELECT co.*, rl.parent_id AS region_id, rl.name AS region FROM ?:company_offices co LEFT JOIN Cities c ON c.CityId = co.city_id LEFT JOIN Regions_lang rl ON rl.parent_id = c.RegionID ');
+    $join = '';
+    $company_condition = empty($company_id) ? '' : db_process('co.company_id = ?i AND', $company_id );
+    $where = ' WHERE ' . $company_condition . db_process(' rl.lang_id = ?s ', array( $lang) );
+    $order = ' ORDER BY city ASC ';
+
+    if(!empty($params['office_id'])) {
+        $where .= db_process(' AND co.office_id = ?i ', array($params['office_id']) );
+    }
+    if(!empty($params['region_id'])) {
+        $where .= db_process(' AND c.RegionID = ?i ' , array($params['region_id']) );
+    }
+    if(!empty($params['city_id'])) {
+        $where .= db_process(' AND co.city_id = ?i ' , array($params['city_id']) );
+    }
+    if(!empty($params['region'])) {
+        $where .= db_process(' AND rl.region LIKE %?s% ' , array($params['region']) );
+    }
+
+    $offices = db_get_array($select . $join .  $where . $order);
     return $offices;
 }
 
@@ -1912,4 +1941,17 @@ function fn_agents_extract_cities_from_offices($offices, $full_info = true) {
         $cities = fn_agents_get_all_cities(array('city_id' => $cities_ids), CART_LANGUAGE, true);
     }
     return $cities;
+}
+
+function fn_agents_prepare_ajax_options($source_array, $value_key, $text_key, $data_keys=array()) {
+    $ajaxResult = array();
+    foreach($source_array as $el) {
+        $ajaxResult[$el[$value_key]] = array('value' => $el[$value_key], 'text' => $el[$text_key]);
+        foreach($data_keys as $ajax_key => $source_key) {
+            $ajaxResult[$el[$value_key]]['data'][$ajax_key] = $source_array[$source_key];
+        }
+    }
+    $ajaxResult = array_values($ajaxResult);
+    $ajaxResult['length'] = count($ajaxResult);
+    return $ajaxResult;
 }
