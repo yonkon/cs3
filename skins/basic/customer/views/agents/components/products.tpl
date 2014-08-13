@@ -26,16 +26,16 @@
             <option {if !empty($client.sort_price) && $client.sort_price == 'asc'}selected="selected" {/if}>asc</option>
             <option{if !empty($client.sort_price) && $client.sort_price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        {$lang.profit} <select style="width: 70px;" name="sort_profit">
-            <option></option>
-            <option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>
-            <option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>
-        </select>
-        {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city">
-            <option>Current city</option>
-            <option>Other city1</option>
-            <option>Other city2</option>
-        </select>
+        {*{$lang.profit} <select style="width: 70px;" name="sort_profit">*}
+            {*<option></option>*}
+            {*<option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>*}
+            {*<option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>*}
+        {*</select>*}
+        {*{$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city">*}
+            {*<option>Current city</option>*}
+            {*<option>Other city1</option>*}
+            {*<option>Other city2</option>*}
+        {*</select>*}
         <button style="width: 85px;color: white;    background-color: green;    border-radius: 30px;" type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
         </form>
     </div>
@@ -58,7 +58,7 @@
                         <a href="#" class="decrease" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
                         <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
                     </div>
-                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}$</span>
+                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span>
                     <div>
                         <button id="button_product" type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
                     </div>
@@ -82,6 +82,17 @@
         $('input[name=dispatch]', $form).val('agents.order_save');
         $form.submit();
     }
+    $('#client_company').change(function() {
+        {/literal}
+        var url = '{'agents.ajax_get_products'|fn_url}';
+        {literal}
+        var company_id = $('#client_company').val();
+        var data = {
+            company_id : company_id
+        };
+        ajax_get_options(url, data, '#client_product');
+    });
+
 </script>
 {/literal}
 <!-- PRODUCTS END -->

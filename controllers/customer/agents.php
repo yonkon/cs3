@@ -608,3 +608,19 @@ elseif ($mode == 'ajax_get_regions') {
     echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
     die();
 }
+
+elseif ($mode == 'ajax_get_products') {
+    $company_id = $_REQUEST['company_id'];
+    if(empty($company_id) ) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $products = fn_agents_get_products(array('company_id' => $company_id));
+    if(empty($products)) {
+        echo (json_encode(array('status' => 'empty')));
+        die();
+    }
+    $products = $products[0];
+    $ajaxResult = fn_agents_prepare_ajax_options($products, 'product_id', 'product');
+    echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
+    die();
+}

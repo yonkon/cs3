@@ -1955,3 +1955,8 @@ function fn_agents_prepare_ajax_options($source_array, $value_key, $text_key, $d
     $ajaxResult['length'] = count($ajaxResult);
     return $ajaxResult;
 }
+
+function fn_agents_get_total_agents() {
+    $count = db_get_field(db_process('SELECT COUNT(*) FROM ?:users WHERE user_type = "P" AND status = "A"'));
+    return $count;
+}
