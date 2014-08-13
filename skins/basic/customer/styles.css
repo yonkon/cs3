@@ -3210,7 +3210,13 @@ ul.hr li {
 }
 
 #see_all {
-    margin-left: 40%;
+    margin-left: 35%;
+    width: 250px;
+    height: 40px;
+    color: white;
+    background-color: green;
+    border-radius: 30px;
+    font-size: 20px;
 }
 #left_agent_menu {
     /*background-color: #808080;*/
@@ -3229,3 +3235,114 @@ ul.hr li {
     margin-left: 5%;
 }
 
+#content_affiliate_program img{
+    width: 100%;
+    height: 70%;
+
+}
+#content_affiliate_program div {
+    width: 95%;
+    height: 95%;
+    margin-left: 20px;
+    left: -25px;
+
+
+}
+#content_affiliate_program {
+    width: 800px;
+    height: 200px;
+    margin-left: 5%;
+
+}
+
+#content_affiliate_program div.slick-slide{
+    border: solid 2px #808080;
+
+}
+
+#content_affiliate_program .slick-prev:before,#content_affiliate_program .slick-next:before {
+    color: firebrick;
+}
+
+#company_slaider img{
+    width: 100%;
+    height: 100%;
+
+}
+#company_slaider div {
+    width: 95%;
+    height: 95%;
+    margin-left: 20px;
+    left: -25px;
+
+
+}
+#company_slaider {
+    width: 800px;
+    height: 80px;
+    margin-left: 5%;
+
+}
+
+
+
+
+#company_slaider .slick-prev:before,  #company_slaider .slick-next:before {
+    color: firebrick;
+}
+
+#regisration_button {
+    float: right;
+    width: 250px;
+    height: 40px;
+    color: white;
+    background-color: green;
+    border-radius: 30px;
+    font-size: 20px;
+}
+
+.yashare-auto-init {
+    margin-left: 35%;
+}
+
+#product_image{
+    height: 100px;
+    width: 100px;
+}
+#product_name{
+    height: 110px;
+    width: 300px;
+}
+
+#product_buy {
+    height: 110px;
+    width: 300px;
+}
+
+#company_img {
+    height: 70px;
+    width: 100px;
+}
+
+#company_desc {
+    height: 70px;
+    width: 300px;
+}
+
+#add_to_save {
+    height: 70px;
+    width: 300px;
+}
+
+#button_product {
+    width: 200px;
+    height: 40px;
+    color: white;
+    background-color: green;
+    border-radius: 30px;
+    font-size: 15px;
+}
+
+.price {
+    font-size: 30px;
+}

@@ -5,7 +5,7 @@
 <div class="left_agent_menu_section">
     <div class="left_agent_menu_profile">
         <img src={if $user_data.avatar} "{$user_data.avatar}" {else}"noavatar.gif"{/if} class="avatar-small">
-        <a href="{"agents.profile"|fn_url}" rel="nofollow" class="underlined h2 level-0">{$lang.agents_profile}</a>
+        <a href="{"profiles.update"|fn_url}" rel="nofollow" class="underlined h2 level-0">{$lang.agents_profile}</a>
     </div>
 </div>
 <div class="left_agent_menu_section">
