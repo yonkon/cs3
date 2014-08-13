@@ -2,47 +2,48 @@
     <form method="post">
     <input type="hidden" name="dispatch" value="agents.orders">
 
-        <select id="company" name="where[company_id]">
+        <select style="width: 250px;margin: 8px;" id="company" name="where[company_id]">
         <option value="">- {$lang.select_company} -</option>
         {foreach from=$companies item="company" key="code"}
             <option {if !empty($where.company_id) && $company.company_id == $where.company_id}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>
         {/foreach}
     </select>
-    <select id="product" name="where[product_id]">
+    <select style="width: 250px;margin: 8px;" id="product" name="where[product_id]">
         <option value="">- {$lang.select_product} -</option>
         {foreach from=$products item="product" key="code"}
             <option {if !empty($where.product_id) && $product.product_id == $where.product_id}selected="selected"{/if}  value="{$product.product_id}">{$product.product}</option>
         {/foreach}
     </select>
-
-        Sort by name <select name="order[name]">
+<br>
+        {$lang.Sort_by_name} <select style="width: 70px;" name="order[name]">
             <option></option>
             <option {if !empty($order.name) && $order.name == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($order.name) && $order.name == 'desc'}selected="selected" {/if}>desc</option>
         </select>
 
-        price <select name="order[price]">
+        {$lang.price} <select style="width: 70px;" name="order[price]">
             <option></option>
             <option {if !empty($order.price) && $order.price == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($order.price) && $order.price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        profit <select name="order[profit]">
+        {$lang.profit} <select style="width: 70px;" name="order[profit]">
             <option></option>
             <option {if !empty($order.profit) && $order.profit == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($order.profit) && $order.profit == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        Location <select {*name="where[city]"*}>
+        {$lang.City} <select style="width: 150px;margin: 8px;" {*name="where[city]"*}>
             <option>Current city</option>
             <option>Other city1</option>
             <option>Other city2</option>
         </select>
-        Status <select name="where[status]">
+        <br>
+        {$lang.Status} <select style="width: 150px;" name="where[status]">
             <option value="">{$lang.Status}</option>
             {foreach from=$order_statuses item="status" key="code" }
                 <option value="{$status.status}" {if !empty($where.status) && $status.status == $where.status}selected="selected"{/if}  >{$status.description}</option>
             {/foreach}
         </select>
-        <button type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
+        <button style="width: 85px;color: white;    background-color: green;    border-radius: 30px;" type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
         </form>
     </div>
 
@@ -56,12 +57,12 @@
     <div class="order_div">
         <table>
             <tr>
-                <td>
+                <td style="width: 100px">
                     <a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">
                         <img class="product-image" src="/images/detailed/1/{$order.product_data.image.image_path}">
                     </a>
                 </td>
-                <td colspan="2">
+                <td style="width: 300px" colspan="2">
                     <h2><a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">{$order.product_data.product}</a></h2>
                     <div class="product-description">{$order.product_data.description|unescape|truncate:360}</div>
                 </td>

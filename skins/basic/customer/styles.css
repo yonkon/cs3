@@ -3372,3 +3372,11 @@ ul.hr li {
     display: inline-block;
     width: 40%;
 }
+
+.control-group.profile-field-wrap.mid-name {
+    width: 47%;
+}
+
+#h1 {
+    font-size: 30px;
+}

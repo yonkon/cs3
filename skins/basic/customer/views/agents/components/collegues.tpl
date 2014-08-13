@@ -1,17 +1,17 @@
-<h1 class="center">{$lang.collegues}</h1>
+<h1 id="h1" class="center">{$lang.collegues}</h1>
 <form method="post" action="{'agents.add_subagent'|fn_url}">
     <input type="hidden" name="dispatch" value="agents.add_collegue_form">
-    <button class="right" type="submit" value="submit">{$lang.Register_subagent}</button>
+    <button id="button_product" style="float: right; text-align: center;" class="right" type="submit" value="submit">{$lang.Register_subagent}</button>
 </form>
 <div id="agents_collegues_div">
     <table id="agents_collegues_table">
         <thead>
         <tr>
-            <th>{$lang.FIO}</th>
-            <th>{$lang.Phone}</th>
-            <th>{$lang.Mail}</th>
-            <th>{$lang.Registration_date}</th>
-            <th>{$lang.Comment}</th>
+            <th style="width: 30%">{$lang.FIO}</th>
+            <th style="width: 15%">{$lang.Phone}</th>
+            <th style="width: 20%">{$lang.Mail}</th>
+            <th style="width: 15%">{$lang.Registration_date}</th>
+            <th style="width: 20%">{$lang.Comment}</th>
         </tr>
         </thead>
         <tbody>

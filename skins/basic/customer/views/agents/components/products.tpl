@@ -2,41 +2,41 @@
     <form method="post">
     <input type="hidden" name="dispatch" value="agents.companies_and_products">
 
-        <select id="client_company" name="client[company]">
+        <select style="width: 250px;margin: 8px;" id="client_company" name="client[company]">
         <option value="">- {$lang.select_company} -</option>
         {foreach from=$companies item="company" key="code"}
             <option {if !empty($client.company) && $company.company_id == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>
         {/foreach}
     </select>
-    <select id="client_product" name="client[product]">
+    <select style="width: 250px;" id="client_product" name="client[product]">
         <option value="">- {$lang.select_product} -</option>
         {foreach from=$all_products item="product" key="code"}
             <option {if !empty($client.product) && $product.product_id == $client.product}selected="selected"{/if}  value="{$product.product_id}">{$product.product}</option>
         {/foreach}
     </select>
-
-        {$lang.Sort_by_name} <select name="sort_name">
+<br>
+        {$lang.Sort_by_name} <select style="width: 70px;" name="sort_name">
             <option></option>
             <option {if !empty($client.sort_name) && $client.sort_name == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($client.sort_name) && $client.sort_name == 'desc'}selected="selected" {/if}>desc</option>
         </select>
 
-        {$lang.price} <select name="sort_price">
+        {$lang.price} <select style="width: 70px;" name="sort_price">
             <option></option>
             <option {if !empty($client.sort_price) && $client.sort_price == 'asc'}selected="selected" {/if}>asc</option>
             <option{if !empty($client.sort_price) && $client.sort_price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        {$lang.profit} <select name="sort_profit">
+        {$lang.profit} <select style="width: 70px;" name="sort_profit">
             <option></option>
             <option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        {$lang.City} <select name="filter_city">
+        {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city">
             <option>Current city</option>
             <option>Other city1</option>
             <option>Other city2</option>
         </select>
-        <button type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
+        <button style="width: 85px;color: white;    background-color: green;    border-radius: 30px;" type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
         </form>
     </div>
 
