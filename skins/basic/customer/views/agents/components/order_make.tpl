@@ -80,3 +80,29 @@ margin-top: 5%;" type="submit">{$lang.Next}</button>
     </div>
     </form>
 </div>
+
+<script type="text/javascript">
+
+    {literal}
+    $('#client_company').change(function() {
+        {/literal}
+        var url = '{'agents.ajax_get_regions'|fn_url}';
+        {literal}
+        var data = {
+            company_id : $(this).val()
+        };
+        ajax_get_options(url, data, '#client_region');
+    });
+    $('#client_region').change(function() {
+        {/literal}
+        url = '{'agents.ajax_get_cities'|fn_url}';
+        {literal}
+        var company_id = $('#client_company').val();
+        var data = {
+            company_id : company_id,
+            region_id : $(this).val()
+        };
+        ajax_get_options(url, data, '#client_city');
+    });
+</script>
+{/literal}

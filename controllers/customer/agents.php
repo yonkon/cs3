@@ -575,6 +575,36 @@ elseif ($mode == 'ajax_get_offices') {
     if(empty($offices)) {
         echo (json_encode(array('status' => 'empty')));
     }
+    $offices['length'] = count($offices);
     echo json_encode(array('status' => 'OK', 'data' => $offices) );
+    die();
+}
+elseif ($mode == 'ajax_get_cities') {
+    $company_id = $_REQUEST['company_id'];
+    $region_id = $_REQUEST['region_id'];
+    if(empty($company_id) || empty($region_id) ) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $cities = fn_agents_get_company_offices($company_id, array('region_id' => $region_id) );
+    if(empty($cities)) {
+        echo (json_encode(array('status' => 'empty')));
+        die();
+    }
+    $ajaxResult = fn_agents_prepare_ajax_options($cities, 'city_id', 'city');
+    echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
+    die();
+}
+elseif ($mode == 'ajax_get_regions') {
+    $company_id = $_REQUEST['company_id'];
+    if(empty($company_id) ) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $regions = fn_agents_get_company_offices_with_regions($company_id);
+    if(empty($regions)) {
+        echo (json_encode(array('status' => 'empty')));
+        die();
+    }
+    $ajaxResult = fn_agents_prepare_ajax_options($regions, 'region_id', 'region');
+    echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
     die();
 }
