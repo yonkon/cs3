@@ -265,9 +265,11 @@ $.extend({
 			if (jelm.hasClass('cm-dialog-opener') || jelm.parents('.cm-dialog-opener').length) {
 
 				var _e = jelm.hasClass('cm-dialog-opener') ? jelm : jelm.parents('.cm-dialog-opener');
+                var e_href = _e[0].href;
+                var e_rev = _e[0].rev;
 
 				var params = {
-					href: _e.attr('href'),
+					href: e_href,
 					keepInPlace: _e.hasClass('cm-dialog-keep-in-place')
 				};
 
@@ -279,7 +281,7 @@ $.extend({
 					params.width = 'auto';
 				}
 
-				$('#' + _e.attr('rev')).ceDialog('open', params);
+				$('#' + e_rev).ceDialog('open', params);
 
 				return false;
 			}
@@ -638,7 +640,7 @@ $.extend({
 		// Dispatch submit event
 		} else if (e.type == 'submit') {
 
-			if (!elm.f) { // workaround for IE when the form has one input only
+			if (false && !elm.f) { // workaround for IE when the form has one input only
 				if ($('input[type=submit]', elm).length) {
 					$('input[type=submit]', elm).click();
 				} else if ($('input[type=image]', elm).length) {
@@ -2713,7 +2715,7 @@ function fn_get_listed_lang(langs)
 	var methods = {
 		open: function(params) {
 			var container = $(this);
-			if (container.dialog('isOpen')) {
+			if (false && container.dialog('isOpen')) {
 				container.dialog('close');
 			}
 
@@ -2778,11 +2780,10 @@ function fn_get_listed_lang(langs)
 		},
 
 		_optimize: function(action, container, params) {
+            if (!tmpCont) {
+                tmpCont = $('<div class="hidden" id="dialog_tmp" />').appendTo('body');
+            }
 			if (action == 'move') {
-				if (!tmpCont) {
-					tmpCont = $('<div class="hidden" id="dialog_tmp" />').appendTo('body');
-				}
-
 				// Do not use optimization for auto-sized dialogs
 				if (!params.dragOptimize) {
 					container.data('skipDialogOptimization', true);
@@ -3057,14 +3058,16 @@ function fn_get_listed_lang(langs)
 
 				return params.getWidget ? dlg.dialog('widget') : dlg;
 
-			} else if (action == 'fit_elements') {
+			}
+            else if (action == 'fit_elements') {
 				var jelm = params.jelm;
 
 				if (jelm.parents('.cm-picker-options-container').length) {
 					$.ceDialog('get_last').data('dialog')._trigger('resize');
 				}
 
-			} else if (action == 'reload_parent') {
+			}
+            else if (action == 'reload_parent') {
 				var jelm = params.jelm;
 
 				var reload_dialog = jelm.parents('.ui-dialog-content:first');
@@ -3072,7 +3075,8 @@ function fn_get_listed_lang(langs)
 					reload_dialog.ceDialog('reload');
 				}
 
-			} else if (action == 'inside_dialog') {
+			}
+            else if (action == 'inside_dialog') {
 				return (params.elm.parents('.ui-dialog-content').length != 0);
 			}
 		}

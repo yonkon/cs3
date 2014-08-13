@@ -73,6 +73,7 @@
 
     {/literal}
 </style>
+{script src="js/ajax_get.js"}
 {*<div id="main_content">*}
     {*<div id="top">*}
         {*<ul class="hr">*}
