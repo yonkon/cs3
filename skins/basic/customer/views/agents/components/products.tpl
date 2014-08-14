@@ -1,7 +1,7 @@
 <div id="product_filters">
-    <form method="post">
+    <form method="post" id="filters">
     <input type="hidden" name="dispatch" value="agents.companies_and_products">
-
+        <input type="hidden" id="page" name="page" value="{$pagination.page|default:1}">
         <select style="width: 250px;margin: 8px;" id="client_company" name="client[company]">
         <option value="">- {$lang.select_company} -</option>
         {foreach from=$companies item="company" key="code"}
@@ -80,6 +80,7 @@
 <script type="text/javascript">
     function save_order(product_id) {
         var $form = $('#form_'+product_id);
+
         $('input[name=dispatch]', $form).val('agents.order_save');
         $form.submit();
     }

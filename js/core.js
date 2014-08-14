@@ -653,7 +653,7 @@ $.extend({
 				}
 			}
 
-			return elm.f.check();
+			return (typeof elm.f != 'undefined' ) ? elm.f.check() : true;
 
 		} else if (e.type == 'keydown') {
 

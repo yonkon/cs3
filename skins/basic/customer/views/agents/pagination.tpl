@@ -8,6 +8,7 @@
        <a
                class="pagination{if $pagination.page == $pg} active{/if}"
                href="{$pagination.url}&page={$pg}"
+               onclick="agents_go_to_page({$pg})"
                >{$pg}
        </a>
    {/foreach}
@@ -17,3 +18,17 @@
 
 {/if}
 </div>
+
+{literal}
+<script type="text/javascript">
+    function agents_go_to_page(page, submit_selector, page_selector) {
+        submit_selector = submit_selector ? submit_selector : '#filters button[type=submit]';
+        page_selector = page_selector ? page_selector : '#page';
+        $(page_selector).val(page);
+        $(submit_selector).click();
+        event.preventDefault();
+
+        return false;
+    }
+</script>
+{/literal}
