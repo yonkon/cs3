@@ -1399,7 +1399,20 @@ function fn_agents_get_clients($user_id, $params) {
         }
     }
 
-    $clients = db_get_array($select . $from . $where . $group . $order);
+    $limit = '';
+    if (!empty($params['limit']) ) {
+        $limit = 'LIMIT ';
+        if(!empty($params['page'])) {
+            $limit .= ($params['page'] - 1) * $params['limit'] . ',' . $params['limit'];
+        } else {
+            $limit .= $params['limit'];
+        }
+        $limit .= ' ';
+    } else {
+        $limit = '';
+    }
+
+    $clients = db_get_array($select . $from . $where . $group  . $order . $limit);
     if(empty($clients)) {
         $clients = array();
     }
@@ -1511,7 +1524,7 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
         'page'      => '0',
         'where'     => '',
         'group'     => '',
-        'order'     => array('order_id asc')
+        'order'     => array('order_id DESC')
     );
 
     foreach($_params as $key => $value) {
@@ -1529,7 +1542,13 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
         $where = db_process('WHERE user_id = ?i ', array($user_id));
         foreach ($_params['where'] as $field=>$value) {
             if (!empty ($value) ) {
-                $where .= db_process("AND $field IN (?a)", array($value));
+                if($field == 'not') {
+                    foreach ($value as $not_field => $not_value) {
+                        $where .= db_process("AND $not_field NOT IN (?a)", array($not_value));
+                    }
+                } else {
+                    $where .= db_process("AND $field IN (?a)", array($value));
+                }
             }
         }
     }
@@ -1555,7 +1574,7 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
         }
         $order = empty($order) ? '' : 'ORDER BY ' . implode(',', $order);
     } else {
-        $order = '';
+        $order = ' ORDER BY order_id DESC';
     }
 
     if (!empty($_params['limit']) ) {
@@ -1959,4 +1978,20 @@ function fn_agents_prepare_ajax_options($source_array, $value_key, $text_key, $d
 function fn_agents_get_total_agents() {
     $count = db_get_field(db_process('SELECT COUNT(*) FROM ?:users WHERE user_type = "P" AND status = "A"'));
     return $count;
+}
+
+function fn_agents_paginate_clients($user_id, $count_params, $limit=10, $page=1) {
+    unset($count_params['limit']);
+    unset($count_params['items_per_page']);
+    unset($count_params['page']);
+    $count = fn_agents_get_clients($user_id, $count_params);
+    $count = count($count);
+    $total_pages = ceil($count / $limit);
+    $pagination = array(
+        'page' => $page,
+        'total_pages' =>$total_pages,
+        'pages' => range(1, $total_pages ),
+        'url' => fn_url('agents.clients')
+    );
+    return $pagination;
 }

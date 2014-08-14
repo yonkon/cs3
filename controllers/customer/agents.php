@@ -343,9 +343,18 @@ elseif ($mode == 'companies_and_products') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'clients') {
+    if ( empty($_REQUEST['limit']) || !intval(($_REQUEST['limit']) )) {
+        $limit = $_REQUEST['limit'] =  10;
+    } else {
+        $limit = $_REQUEST['limit'];
+    }
+    $page = $_REQUEST['page'] = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
+    $pagination = fn_agents_paginate_clients($auth['user_id'], $_REQUEST, $limit, $page);
+
     $clients = fn_agents_get_clients($auth['user_id'], $_REQUEST);
     Registry::get('view')->assign('mode', 'clients');
     Registry::get('view')->assign('clients', $clients );
+    Registry::get('view')->assign('pagination', $pagination );
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
     return array(CONTROLLER_STATUS_OK);
 }
@@ -386,11 +395,13 @@ elseif ($mode == 'collegues') {
 elseif ($mode == 'orders') {
     $products = fn_agents_get_products(array('company_id'=>$_REQUEST['where']['company_id'] ), null, CART_LANGUAGE, null, false );
     $companies = fn_get_companies(null, $auth);
+    $_REQUEST['where']['not'] = array ('status' => 'B' );
     $orders = fn_agents_get_orders($auth['user_id'], $_REQUEST);
-
+    $cities = fn_agents_get_all_cities($_REQUEST);
     Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
     Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
     Registry::get('view')->assign('mode', 'orders');
+    Registry::get('view')->assign('products', $cities[0]);
     Registry::get('view')->assign('products', $products[0]);
     Registry::get('view')->assign('companies', $companies[0]);
     Registry::get('view')->assign('where', $_REQUEST['where'] );
@@ -487,6 +498,7 @@ elseif ($mode == 'orders_saved') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'orders_active') {
+    $_REQUEST['where']['not'] = array ('status' => 'B' );
     $products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
     $companies = fn_get_companies(null, $auth);
     $orders = fn_agent_get_active_orders($auth['user_id'], $_REQUEST);
@@ -501,6 +513,7 @@ elseif ($mode == 'orders_active') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'orders_closed') {
+    $_REQUEST['where']['not'] = array ('status' => 'B' );
     $products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
     $companies = fn_get_companies(null, $auth);
     $orders = fn_agent_get_closed_orders($auth['user_id'], $_REQUEST);
@@ -572,23 +585,21 @@ elseif ($mode == 'update_client') {
 elseif ($mode == 'ajax_get_offices') {
     $company_id = $_REQUEST['company_id'];
     $city_id = $_REQUEST['city_id'];
-    if(empty($company_id) || empty($city_id) ) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
     $offices = fn_agents_get_company_offices_with_shippings($company_id, array('city_id' => $city_id) );
     if(empty($offices)) {
         echo (json_encode(array('status' => 'empty')));
     }
     $offices['length'] = count($offices);
-    echo json_encode(array('status' => 'OK', 'data' => $offices) );
+    if(!empty($_REQUEST['is_options']) ) {
+        $ajaxResult = fn_agents_prepare_ajax_options($regions, 'city_id', 'city');
+    } else {
+        echo json_encode(array('status' => 'OK', 'data' => $offices) );
+    }
     die();
 }
 elseif ($mode == 'ajax_get_cities') {
     $company_id = $_REQUEST['company_id'];
     $region_id = $_REQUEST['region_id'];
-//    if(empty($company_id) || empty($region_id) ) {
-//        return array(CONTROLLER_STATUS_NO_PAGE);
-//    }
     $cities = fn_agents_get_company_offices($company_id, array('region_id' => $region_id) );
     if(empty($cities)) {
         echo (json_encode(array('status' => 'empty')));
@@ -600,9 +611,6 @@ elseif ($mode == 'ajax_get_cities') {
 }
 elseif ($mode == 'ajax_get_regions') {
     $company_id = $_REQUEST['company_id'];
-//    if(empty($company_id) ) {
-//        return array(CONTROLLER_STATUS_NO_PAGE);
-//    }
     $regions = fn_agents_get_company_offices_with_regions($company_id);
     if(empty($regions)) {
         echo (json_encode(array('status' => 'empty')));

@@ -28,9 +28,13 @@
         {/foreach}
         </tbody>
     </table>
+    {include file="views/agents/pagination.tpl"}
 </div>
+
+
+
+{literal}
 <script type="text/javascript">
-    {literal}
 $(document).ready(function() {
     var $message_success = $('#message_success');
     var $message_error = $('#message_error');

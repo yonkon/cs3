@@ -26,15 +26,16 @@
             <option {if !empty($order.price) && $order.price == 'asc'}selected="selected" {/if}>asc</option>
             <option {if !empty($order.price) && $order.price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        {$lang.profit} <select style="width: 70px;" name="order[profit]">
-            <option></option>
-            <option {if !empty($order.profit) && $order.profit == 'asc'}selected="selected" {/if}>asc</option>
-            <option {if !empty($order.profit) && $order.profit == 'desc'}selected="selected" {/if}>desc</option>
-        </select>
-        {$lang.City} <select style="width: 150px;margin: 8px;" {*name="where[city]"*}>
-            <option>Current city</option>
-            <option>Other city1</option>
-            <option>Other city2</option>
+        {*{$lang.profit} <select style="width: 70px;" name="order[profit]">*}
+            {*<option></option>*}
+            {*<option {if !empty($order.profit) && $order.profit == 'asc'}selected="selected" {/if}>asc</option>*}
+            {*<option {if !empty($order.profit) && $order.profit == 'desc'}selected="selected" {/if}>desc</option>*}
+        {*</select>*}
+        {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city" id="city">
+            <option value="">- {$lang.select_city} -</option>
+            {foreach from=$all_cities item="city" key="code"}
+                <option {if !empty($client.city) && $city.city_id == $client.city}selected="selected"{/if}  value="{$city.city_id}">{$city.city}</option>
+            {/foreach}
         </select>
         <br>
         {$lang.Status} <select style="width: 150px;" name="where[status]">
@@ -80,7 +81,7 @@
                 </td>
                 <td colspan="2"><div>{$order.company_data.company_description|default|unescape|truncate:360}</div></td>
                 <td>
-                    <span>{$order.product_data.profit}</span><br/>
+                    {*<span>{$order.product_data.profit}</span><br/>*}
                     <span class="status">{$order.status_description}</span>
                 </td>
             </tr>
@@ -108,5 +109,35 @@
     </div>
 </form>
 {/foreach}
+    {include file="views/agents/pagination.tpl"}
 
 </div>
+
+{literal}
+<script type="text/javascript">
+    {/literal}
+    var url_products = '{'agents.ajax_get_products'|fn_url}';
+    var url_cities = '{'agents.ajax_get_cities'|fn_url}';
+    {literal}
+
+    $('#company').change(function() {
+        var company_id = $('#company').val();
+        var data = {
+            company_id : company_id
+        };
+        ajax_get_options(url_products, data, '#product');
+        ajax_get_options(url_cities, data, '#city');
+        ajax_get_options(url_offices, data, '#office');
+    });
+    $('#city').change(function() {
+        var company_id = $('#company').val();
+        var data = {
+            company_id : company_id,
+            city_id : $(this).val()
+        };
+        ajax_get_options(url_products, data, '#product');
+        ajax_get_options(url_offices, data, '#office');
+    })
+
+</script>
+{/literal}

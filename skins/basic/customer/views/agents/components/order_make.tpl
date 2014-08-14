@@ -82,27 +82,38 @@ margin-top: 5%;" type="submit">{$lang.Next}</button>
 </div>
 
 <script type="text/javascript">
+    var url_regions = '{'agents.ajax_get_regions'|fn_url}';
+    var url_cities = '{'agents.ajax_get_cities'|fn_url}';
+    var url_offices = '{'agents.ajax_get_offices'|fn_url}';
 
     {literal}
     $('#client_company').change(function() {
-        {/literal}
-        var url = '{'agents.ajax_get_regions'|fn_url}';
-        {literal}
         var data = {
+            is_options :true,
             company_id : $(this).val()
         };
-        ajax_get_options(url, data, '#client_region');
+        ajax_get_options(url_regions, data, '#client_region');
+        ajax_get_options(url_cities, data, '#client_city');
+        ajax_get_options(url_offices, data, '#client_office');
     });
     $('#client_region').change(function() {
-        {/literal}
-        url = '{'agents.ajax_get_cities'|fn_url}';
-        {literal}
         var company_id = $('#client_company').val();
         var data = {
+            is_options :true,
             company_id : company_id,
             region_id : $(this).val()
         };
-        ajax_get_options(url, data, '#client_city');
+        ajax_get_options(url_cities, data, '#client_city');
+        ajax_get_options(url_offices, data, '#client_office');
+    });
+    $('#client_city').change(function() {
+        var company_id = $('#client_company').val();
+        var data = {
+            is_options :true,
+            company_id : company_id,
+            city_id : $(this).val()
+        };
+        ajax_get_options(url_offices, data, '#client_office');
     });
 </script>
 {/literal}
