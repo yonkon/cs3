@@ -1611,13 +1611,13 @@ function fn_agent_get_saved_orders($user_id, $params = array(), $lang_code = CAR
 
 
 function fn_agent_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
-    $active_statuses = array('O', 'P',  'B', 'A');
+    $active_statuses = array('O', 'P',  'A');
     $params['where'][db_process('?:orders.status')] = $active_statuses ;
     return fn_agents_get_orders($user_id, $params, $lang_code);
 }
 
 function fn_agent_get_closed_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
-    $closed_statuses = array('C', 'F',  'B', 'D');
+    $closed_statuses = array('C', 'F', 'D');
     $params['where'][ db_process('?:orders.status')] = $closed_statuses;
     return fn_agents_get_orders($user_id, $params, $lang_code);
 }

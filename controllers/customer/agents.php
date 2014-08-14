@@ -302,6 +302,9 @@ elseif ($mode == 'companies_and_products') {
     }
     $page = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
 
+    $offices = fn_agents_get_company_offices($_REQUEST['client']['company']);
+    $cities = fn_agents_extract_cities_from_offices($offices);
+
     $all_products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['client']['company']) ), null, CART_LANGUAGE, null, false );
     $products = fn_agents_get_products($_REQUEST, $limit );
     $count_params = $_REQUEST;
@@ -326,6 +329,7 @@ elseif ($mode == 'companies_and_products') {
     );
 
     $companies = fn_get_companies(null, $auth);
+    Registry::get('view')->assign('all_cities', $cities);
     Registry::get('view')->assign('all_products', $all_products[0]);
     Registry::get('view')->assign('products', $products[0]);
     Registry::get('view')->assign('products_param', $products[1]);
@@ -582,9 +586,9 @@ elseif ($mode == 'ajax_get_offices') {
 elseif ($mode == 'ajax_get_cities') {
     $company_id = $_REQUEST['company_id'];
     $region_id = $_REQUEST['region_id'];
-    if(empty($company_id) || empty($region_id) ) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
+//    if(empty($company_id) || empty($region_id) ) {
+//        return array(CONTROLLER_STATUS_NO_PAGE);
+//    }
     $cities = fn_agents_get_company_offices($company_id, array('region_id' => $region_id) );
     if(empty($cities)) {
         echo (json_encode(array('status' => 'empty')));
@@ -596,9 +600,9 @@ elseif ($mode == 'ajax_get_cities') {
 }
 elseif ($mode == 'ajax_get_regions') {
     $company_id = $_REQUEST['company_id'];
-    if(empty($company_id) ) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
+//    if(empty($company_id) ) {
+//        return array(CONTROLLER_STATUS_NO_PAGE);
+//    }
     $regions = fn_agents_get_company_offices_with_regions($company_id);
     if(empty($regions)) {
         echo (json_encode(array('status' => 'empty')));
@@ -608,12 +612,11 @@ elseif ($mode == 'ajax_get_regions') {
     echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
     die();
 }
-
 elseif ($mode == 'ajax_get_products') {
     $company_id = $_REQUEST['company_id'];
-    if(empty($company_id) ) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
+//    if(empty($company_id) ) {
+//        return array(CONTROLLER_STATUS_NO_PAGE);
+//    }
     $products = fn_agents_get_products(array('company_id' => $company_id));
     if(empty($products)) {
         echo (json_encode(array('status' => 'empty')));

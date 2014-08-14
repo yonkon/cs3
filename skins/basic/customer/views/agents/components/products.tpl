@@ -31,11 +31,12 @@
             {*<option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>*}
             {*<option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>*}
         {*</select>*}
-        {*{$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city">*}
-            {*<option>Current city</option>*}
-            {*<option>Other city1</option>*}
-            {*<option>Other city2</option>*}
-        {*</select>*}
+        {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city" id="client_city">
+            <option value="">- {$lang.select_city} -</option>
+            {foreach from=$all_cities item="city" key="code"}
+                <option {if !empty($client.city) && $city.city_id == $client.city}selected="selected"{/if}  value="{$city.city_id}">{$city.city}</option>
+            {/foreach}
+        </select>
         <button style="width: 85px;color: white;    background-color: green;    border-radius: 30px;" type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
         </form>
     </div>
@@ -82,16 +83,29 @@
         $('input[name=dispatch]', $form).val('agents.order_save');
         $form.submit();
     }
+
+    {/literal}
+    var url_products = '{'agents.ajax_get_products'|fn_url}';
+    var url_cities = '{'agents.ajax_get_cities'|fn_url}';
+    {literal}
+
     $('#client_company').change(function() {
-        {/literal}
-        var url = '{'agents.ajax_get_products'|fn_url}';
-        {literal}
         var company_id = $('#client_company').val();
         var data = {
             company_id : company_id
         };
-        ajax_get_options(url, data, '#client_product');
+        ajax_get_options(url_products, data, '#client_product');
+        ajax_get_options(url_cities, data, '#client_city');
     });
+    $('#client_city').change(function() {
+        var company_id = $('#client_company').val();
+        var data = {
+            company_id : company_id,
+            city_id : $(this).val()
+        };
+        ajax_get_options(url_products, data, '#client_product');
+
+    })
 
 </script>
 {/literal}
