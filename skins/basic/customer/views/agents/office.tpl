@@ -137,6 +137,6 @@
     </div>
     <div>
         <img src=""><a href="/index.php?dispatch=support.add_ticket">{$lang.support_helpdesk}</a>
-        <img src=""><a>{$lang.Partnership_Agreement}</a>
+        <img src=""><a href="/index.php?dispatch=pages.view&page_id=48">{$lang.Partnership_Agreement}</a>
     </div>
     </div>
