@@ -14,7 +14,7 @@
     <input type="hidden" id="client_comment" name="client[comment]" value="{$client.comment}">
     <input type="hidden" name="step" value="{$step}">
     <div id="order_make_top">
-        <h2 id="h2" class="lightbox-header-text">{$lang.New_order_Approvement}</h2>
+        <h2 id="h2 lightbox-header-text">{$lang.New_order_Approvement}</h2>
         {*<img src="/images/close.png" class="close" alt="{$lang.close}">*}
         <p>{$lang.Verify_client_data_please}</p>
     </div>

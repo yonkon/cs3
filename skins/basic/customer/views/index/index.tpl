@@ -22,7 +22,7 @@
             <img src="" alt=""/>
             <img src="" alt=""/>
             <img src="" alt=""/>
-            <a href="/index.php?dispatch=profiles.add&user_type=C"><button id="regisration_button" style="float: right;">{$lang.registration}</button></a>
+            <a href="/index.php?dispatch=profiles.add&user_type=C"><button id="registration_button" class="big green float-right button">{$lang.registration}</button></a>
         </div>
         <script type="text/javascript" src="//yandex.st/share/share.js"
                 charset="utf-8"></script>
@@ -39,7 +39,7 @@
 
 
     </div>
-        <div><button id="see_all">{$lang.view_all}</button></div>
+        <div><button id="see_all" class="big green button center-block block">{$lang.view_all}</button></div>
 
 </div>
 </div>

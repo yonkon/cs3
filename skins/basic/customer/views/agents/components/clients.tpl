@@ -1,7 +1,7 @@
-<h1 id="h1" class="center">{$lang.Clients}</h1>
+<h1 class="h1 center">{$lang.Clients}</h1>
 <form method="post" action="{'agents.add_client_form'|fn_url}">
     <input type="hidden" name="dispatch" value="agents.add_client_form">
-    <button id="button_product" style="float: right; text-align: center;" class="right" type="submit" value="{$lang.Add_new_client}">{$lang.Add_new_client}</button>
+    <button class="button big green float-right center"  type="submit" value="{$lang.Add_new_client}">{$lang.Add_new_client}</button>
 </form>
 <div id="agents_clients_div">
     <div id="message_success" class="notification-n hidden"><p style="margin-left: 10%;">{$lang.Update_successfull}</p></div>

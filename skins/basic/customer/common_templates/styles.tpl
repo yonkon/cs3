@@ -7,6 +7,7 @@
 <link href="{$config.skin_path}/base.css" rel="stylesheet" type="text/css" />
 <link href="{$config.skin_path}/styles.css" rel="stylesheet" type="text/css" />
 <link href="{$config.skin_path}/print.css" rel="stylesheet" media="print" type="text/css" />
+<link href="{$config.skin_path}/agents.css" rel="stylesheet" type="text/css" />
 {if "TRANSLATION_MODE"|defined || "CUSTOMIZATION_MODE"|defined}
 <link href="{$config.skin_path}/design_mode.css" rel="stylesheet" type="text/css" />
 {/if}

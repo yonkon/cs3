@@ -21,14 +21,19 @@
 
 {literal}
 <script type="text/javascript">
-    function agents_go_to_page(page, submit_selector, page_selector) {
-        submit_selector = submit_selector ? submit_selector : '#filters button[type=submit]';
+    function agents_go_to_page(page, form_selector, page_selector) {
+        form_selector = form_selector ? form_selector : '#filters';
         page_selector = page_selector ? page_selector : '#page';
-        $(page_selector).val(page);
-        $(submit_selector).click();
-        event.preventDefault();
-
-        return false;
+        $pageInput = $(page_selector);
+        $pageInput.val(page);
+        $form = $(form_selector);
+        if($form && $pageInput) {
+            $form.submit();
+            event.preventDefault();
+            return false;
+        } else {
+           return true;
+        }
     }
 </script>
 {/literal}

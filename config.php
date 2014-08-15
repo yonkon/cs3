@@ -115,9 +115,9 @@ define('INSTALL_DB_EXECUTION', SECONDS_IN_HOUR); // 1 hour
 //define('MYSQL5', true);
 
 // Uncomment to enable code profiles
-// define('PROFILER', true);
-// define('PROFILER_SQL', true);
-// define('PROFILER_FOR_ADMIN', true);
+ define('PROFILER', true);
+ define('PROFILER_SQL', true);
+ define('PROFILER_FOR_ADMIN', true);
 
 // Skin description file name
 define('SKIN_MANIFEST', 'manifest.ini');
@@ -141,7 +141,7 @@ define('LAST_EDITED_ITEMS_COUNT', 10);
 define('AUTO_META_DESCRIPTION', true);
 
 // Debug mode (displays report a bug button)
- define('DEBUG_MODE', true);
+// define('DEBUG_MODE', true);
 
 // Database default tables prefix
 define('DEFAULT_TABLE_PREFIX', 'cscart_');

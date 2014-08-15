@@ -1,6 +1,6 @@
 <div id="order_make_div">
     <div id="order_make_top">
-        <h2 class="lightbox-header-text" id="h2">{$lang.New_order_Main_info}</h2>
+        <h2 class="lightbox-header-text h2">{$lang.New_order_Main_info}</h2>
         {*<img src="/images/close.png" class="close" alt="{$lang.close}">*}
         <p class="graytext">{$lang.Fill_client_data_please}</p>
     </div>
@@ -75,7 +75,7 @@
         </div>
     </div>
     <div id="order_make_bottom">
-        <button id="button_product" style="margin-left: 25%;
+        <button id="order_make_submit" class="button big green center-block" style="
 margin-top: 5%;" type="submit">{$lang.Next}</button>
     </div>
     </form>

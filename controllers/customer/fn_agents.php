@@ -1420,24 +1420,39 @@ function fn_agents_get_clients($user_id, $params) {
 }
 
 function fn_agents_get_client_fields_errors($client, $params = array()) {
+    $field_types = array(
+        'not_empty_fields',
+        'email_fields',
+        'integer_fields'
+    );
     $not_empty_fields = array(
         'affiliate_id',
         'fio',
         'phone'
     );
-    if(isset($params['not_empty_fields'])) {
-        $not_empty_fields = $params['not_empty_fields'];
-    }
     $email_fields = array(
         'email'
     );
-    if(isset($params['email_fields'])) {
-        $email_fields = $params['email_fields'];
-    }
     $integer_fields = array(
         'affiliate_id',
         'phone'
     );
+    foreach ($field_types as $field_type) {
+        if(isset($params[$field_type])) {
+            if(!empty($params[$field_type]['default'])) {
+                unset ($params[$field_type]['default']);
+                $$field_type = array_merge($$field_type, $params[$field_type]);
+            } else {
+                $$field_type = $params[$field_type];
+            }
+        }
+    }
+
+
+    if(isset($params['email_fields'])) {
+        $email_fields = $params['email_fields'];
+    }
+
     if(isset($params['integer_fields'])) {
         $integer_fields = $params['integer_fields'];
     }
@@ -1450,10 +1465,6 @@ function fn_agents_get_client_fields_errors($client, $params = array()) {
     }
 
     foreach ($email_fields as $email) {
-//        $_at = mb_strpos($client[$email], '@');
-//        $_dot = mb_strrpos($client[$email], '.', $_at);
-//        $_after_dot_length = mb_strlen($client[$email]) - $_dot - 1;
-//        if($_at < 1 || $_dot < $_at || $_after_dot_length < 2 ) {
         if(!fn_validate_email($client[$email])) {
             $errors[$email][] = 'invalid_email';
         }
@@ -1949,6 +1960,9 @@ function fn_agents_locations_to_address($locations, $with_address = false) {
 }
 function fn_agents_extract_cities_from_offices($offices, $full_info = true) {
     $cities = array();
+    if (empty($offices)) {
+        return $cities;
+    }
     foreach($offices as $office) {
         $cities[$office['city_id']] = array(
             'city_id' => $office['city_id'],

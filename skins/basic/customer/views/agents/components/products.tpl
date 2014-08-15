@@ -37,7 +37,14 @@
                 <option {if !empty($client.city) && $city.city_id == $client.city}selected="selected"{/if}  value="{$city.city_id}">{$city.city}</option>
             {/foreach}
         </select>
-        <button style="width: 85px;color: white;    background-color: green;    border-radius: 30px;" type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
+        <button
+                class="green button"
+                type="submit"
+                value="filter"
+                {literal}
+                onclick="function(){$('#page').val('');}"
+                {/literal}
+                >{$lang.apply_filter}</button>
         </form>
     </div>
 
@@ -59,7 +66,8 @@
                         <a href="#" class="decrease" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
                         <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
                     </div>
-                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span>
+                    {assign var="price_id" value='price_'|cat:$product.product_id}
+                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span>
                     <div>
                         <button id="button_product" type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
                     </div>
@@ -78,9 +86,20 @@
 {/foreach}
 {literal}
 <script type="text/javascript">
+    function increase_count(product_id, amount, price) {
+        amount = parseInt(amount);
+        price = parseInt(price);
+        var $form = $('#form_'+product_id);
+        var $input = $('#item_' + product_id + '_count');
+        var $cost = $('#sec_price_' + product_id);
+        var base_amount = $input.val();
+        $input.val(parseInt(base_amount) + amount);
+        var base_cost = parseInt($cost.text());
+        $cost.text(base_cost + amount*price);
+    }
+
     function save_order(product_id) {
         var $form = $('#form_'+product_id);
-
         $('input[name=dispatch]', $form).val('agents.order_save');
         $form.submit();
     }

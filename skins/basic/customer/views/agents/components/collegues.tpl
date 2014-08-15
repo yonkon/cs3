@@ -1,7 +1,7 @@
-<h1 id="h1" class="center">{$lang.collegues}</h1>
+<h1 class="h1 center">{$lang.collegues}</h1>
 <form method="post" action="{'agents.add_subagent'|fn_url}">
     <input type="hidden" name="dispatch" value="agents.add_collegue_form">
-    <button id="button_product" style="float: right; text-align: center;" class="right" type="submit" value="submit">{$lang.Register_subagent}</button>
+    <button class="button big green float-right center" type="submit" value="submit">{$lang.Register_subagent}</button>
 </form>
 <div id="agents_collegues_div">
     <table id="agents_collegues_table">

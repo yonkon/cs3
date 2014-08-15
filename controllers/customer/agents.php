@@ -417,7 +417,19 @@ elseif ($mode == 'order_make') {
     } else {
         $email_fields = array('email');
     }
-    $errors = fn_agents_get_client_fields_errors($_REQUEST['client'], array('email_fields' => $email_fields) );
+    $errors = fn_agents_get_client_fields_errors($_REQUEST['client'],
+        array(
+            'email_fields' => $email_fields,
+            'not_empty_fields' => array(
+                'default' => true,
+                'office'
+            ),
+            'integer_fields' => array(
+                'default' => true,
+                'office'
+            ),
+        )
+    );
 
     if ($step == 2) {
         if(!empty($errors)){
@@ -437,11 +449,15 @@ elseif ($mode == 'order_make') {
     $company_id = $product['company_id'];
     $regions = fn_agents_get_all_regions();
     Registry::get('view')->assign('regions', $regions );
-    $companies = fn_get_companies(null, $auth);
+    $companies = fn_get_companies(array('company_id' => $company_id), $auth);
     Registry::get('view')->assign('companies', $companies[0]);
     $cities = fn_agents_get_all_cities($_REQUEST['client']);
     Registry::get('view')->assign('cities', $cities);
     $offices = fn_agents_get_company_offices_with_shippings($company_id);
+    if(empty($offices)) {
+        fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('company_have_no_offices'));
+        return array(CONTROLLER_STATUS_REDIRECT, 'agents.companies_and_products' );
+    }
     Registry::get('view')->assign('offices' , $offices);
     Registry::get('view')->assign('step', $step );
     Registry::get('view')->assign('product', array(
@@ -589,10 +605,11 @@ elseif ($mode == 'ajax_get_offices') {
     if(empty($offices)) {
         echo (json_encode(array('status' => 'empty')));
     }
-    $offices['length'] = count($offices);
     if(!empty($_REQUEST['is_options']) ) {
-        $ajaxResult = fn_agents_prepare_ajax_options($regions, 'city_id', 'city');
+        $ajaxResult = fn_agents_prepare_ajax_options($offices, 'office_id', 'office_name');
+        echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
     } else {
+        $offices['length'] = count($offices);
         echo json_encode(array('status' => 'OK', 'data' => $offices) );
     }
     die();

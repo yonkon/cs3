@@ -44,7 +44,7 @@
                 <option value="{$status.status}" {if !empty($where.status) && $status.status == $where.status}selected="selected"{/if}  >{$status.description}</option>
             {/foreach}
         </select>
-        <button style="width: 85px;color: white;    background-color: green;    border-radius: 30px;" type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
+        <button class="button green"  type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
         </form>
     </div>
 
@@ -91,7 +91,7 @@
                     <p class="underlined">{$order.b_email}<br/> {$order.b_phone}</p>
                     <p class="underlined">{$order.registration_date|date_format}</p>
                 </td>
-                <td>
+                <td colspan="2">
                     {$lang.Comment}:
                     <p class="comment" id="comment_{$order_order_id}">
                         {$order_comment}
