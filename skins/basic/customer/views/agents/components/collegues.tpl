@@ -26,4 +26,7 @@
         {/foreach}
         </tbody>
     </table>
+    {include file="views/agents/pagination.tpl"}
+
 </div>
+

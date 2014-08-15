@@ -1480,7 +1480,6 @@ function fn_agents_get_client_fields_errors($client, $params = array()) {
 }
 
 
-
 function fn_agents_get_field_errors($field, $value) {
     $not_empty_fields = array(
         'affiliate_id',
@@ -1518,7 +1517,6 @@ function fn_agents_get_field_errors($field, $value) {
 
     return $errors;
 }
-
 
 function fn_agents_display_errors($errors){
     foreach ($errors as $field=>$field_errors) {
@@ -1682,8 +1680,10 @@ function fn_agents_get_product_description($product_id, $lang_code = CART_LANGUA
     return $description;
 }
 
-function fn_agents_get_collegues($user_id) {
-    $query = db_process('SELECT *, timestamp as registration_date FROM ?:users WHERE curator_id = ?i AND user_type = "P"', array($user_id) );
+function fn_agents_get_collegues($user_id, $params = array()) {
+    $order = 'ORDER BY lastname ASC';
+    $limit = '';
+    $query = db_process('SELECT *, timestamp as registration_date FROM ?:users WHERE curator_id = ?i AND user_type = "P" ' . $order . $limit, array($user_id) );
     $collegues = db_get_array($query);
     return $collegues;
 }
@@ -1999,6 +1999,22 @@ function fn_agents_paginate_clients($user_id, $count_params, $limit=10, $page=1)
     unset($count_params['items_per_page']);
     unset($count_params['page']);
     $count = fn_agents_get_clients($user_id, $count_params);
+    $count = count($count);
+    $total_pages = ceil($count / $limit);
+    $pagination = array(
+        'page' => $page,
+        'total_pages' =>$total_pages,
+        'pages' => range(1, $total_pages ),
+        'url' => fn_url('agents.clients')
+    );
+    return $pagination;
+}
+
+function fn_agents_paginate_collegues($user_id, $count_params, $limit=10, $page=1) {
+    unset($count_params['limit']);
+    unset($count_params['items_per_page']);
+    unset($count_params['page']);
+    $count = fn_agents_get_collegues($user_id, $count_params);
     $count = count($count);
     $total_pages = ceil($count / $limit);
     $pagination = array(
