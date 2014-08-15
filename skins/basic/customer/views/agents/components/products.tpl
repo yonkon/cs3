@@ -69,7 +69,7 @@
                     {assign var="price_id" value='price_'|cat:$product.product_id}
                     <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span>
                     <div>
-                        <button id="button_product" type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
+                        <button id="order_submit_{$product.product_id}" class="big green button" type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
                     </div>
                     <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="skins/basic/customer/views/agents/components/shipping.png">{/if}
                     </div>
@@ -78,7 +78,14 @@
             <tr>
                 <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
                 <td id="company_desc" colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
-                <td id="add_to_save"><span>{$product.profit}</span><br><button id="button_product" onclick="save_order({$product.product_id});">Сохранить в кабинете</button></td>
+                <td id="add_to_save">
+                    {*<span>{$product.profit}</span><br>*}
+                    <button id="order_save_submit_{$product.product_id}"
+                            class="big green button"
+                            onclick="save_order({$product.product_id});">
+                        Сохранить в кабинете
+                    </button>
+                </td>
             </tr>
         </table>
     </div>

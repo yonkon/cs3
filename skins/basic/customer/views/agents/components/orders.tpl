@@ -93,16 +93,16 @@
                 </td>
                 <td colspan="2">
                     {$lang.Comment}:
-                    <p class="comment" id="comment_{$order_order_id}">
-                        {$order_comment}
+                    <p class="comment" id="comment_{$order.order_id}">
+                        {$order.comment}
                     </p>
-                    <p class="bold">
-                        {$lang.Add_comment}
-                    </p>
-                    <input type="text" name="comment">
+                    {*<p class="bold">*}
+                        {*{$lang.Add_comment}*}
+                    {*</p>*}
+                    {*<input type="text" name="comment">*}
                 </td>
                 <td>
-                    <button type="submit" name="submit" value="submit">{$lang.Send}</button>
+                    <button class="green button" type="submit" name="submit" value="submit">{$lang.Send}</button>
                 </td>
             </tr>
         </table>
