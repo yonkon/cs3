@@ -4,16 +4,15 @@
     <div id="content">
         {*<div id="content_top"></div>*}
         {*<div id="content_top_menu">Неизвестный контейнер</div>*}
-        <div id="content_company">{$lang.Companies_which_you_can_collaborate}</div>
-           <div id="company_slaider">
-               <div><img src="http://bestcoldness.com.ua/wp-content/uploads/logotip-samsung-150x150.jpg"></div>
-               <div><img src="http://bestcoldness.com.ua/wp-content/uploads/logotip-samsung-150x150.jpg"></div>
-               <div><img src="http://bestcoldness.com.ua/wp-content/uploads/logotip-samsung-150x150.jpg"></div>
-               <div><img src="http://bestcoldness.com.ua/wp-content/uploads/logotip-samsung-150x150.jpg"></div>
-               <div><img src="http://bestcoldness.com.ua/wp-content/uploads/logotip-samsung-150x150.jpg"></div>
-               <div><img src="http://bestcoldness.com.ua/wp-content/uploads/logotip-samsung-150x150.jpg"></div>
-               <div><img src="http://bestcoldness.com.ua/wp-content/uploads/logotip-samsung-150x150.jpg"></div>
-           </div>
+        <div id="content_company" class="h2">{$lang.Companies_which_you_can_collaborate}</div>
+        <div id="company_slaider">
+            {foreach from=$company_slider.images item='image'}
+                <div>
+                    <img src="{$image.filename}" alt="{$image.company}">
+                    {*<span class="company_name">{$image.company}</span>*}
+                </div>
+            {/foreach}
+        </div>
         <div id="content_registration">
             {$lang.works_representatives}
             <img src="" alt=""/>
@@ -30,32 +29,32 @@
              data-yashareQuickServices="vkontakte,facebook,twitter,odnoklassniki,moimir,gplus" data-yashareTheme="counter"
 
                 ></div>
-        <div>{$lang.affiliate_program}</div>
+        <div class="h2 clear-both padding-top-2em">{$lang.affiliate_program}</div>
         <div id="content_affiliate_program">
-            <div><img src="http://sabsait.ru/wp-content/uploads/2014/05/Partnerskaya-programma-ot-uslugi-150x150.jpg">вамвам</div>
-            <div><img src="http://sabsait.ru/wp-content/uploads/2014/05/Partnerskaya-programma-ot-uslugi-150x150.jpg">вамвам</div>
-            <div><img src="http://sabsait.ru/wp-content/uploads/2014/05/Partnerskaya-programma-ot-uslugi-150x150.jpg">вамвамва</div>
-            <div><img src="http://sabsait.ru/wp-content/uploads/2014/05/Partnerskaya-programma-ot-uslugi-150x150.jpg">вамвамвам</div>
-
-
-    </div>
+            {foreach from=$company_slider.images item='image'}
+                <div>
+                    <img src="{$image.filename}">
+                    <span class="company_name">{$image.company}</span>
+                </div>
+            {/foreach}
+        </div>
         <div><button id="see_all" class="big green button center-block block">{$lang.view_all}</button></div>
 
-</div>
+    </div>
 </div>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.3.6/slick.css"/>
 <script type="text/javascript" src="/slick.js"></script>
 {literal}
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('#content_affiliate_program').slick({
-            slidesToShow: 3,
-            slidesToScroll: 1,
-            autoplay: true,
-            autoplaySpeed: 2000
-    });
-    });
-</script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#content_affiliate_program').slick({
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 2000
+            });
+        });
+    </script>
 {/literal}
 {literal}
     <script type="text/javascript">

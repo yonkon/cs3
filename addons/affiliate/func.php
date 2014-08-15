@@ -1518,4 +1518,24 @@ function  fn_affiliate_get_feedback_data(&$fdata)
 
 /** [/HOOKS] **/
 
+function fn_agents_get_company_logos() {
+    $query = db_process('SELECT * FROM ?:companies WHERE 1');
+    $companies = db_get_array($query);
+    $logos = array();
+    foreach($companies as $company) {
+        $logo_data = unserialize($company['logos']);
+        if (empty($logo_data['Customer_logo'])) {
+            continue;
+        }
+        $logo = $logo_data['Customer_logo'];
+        $logo['filename'] = REAL_URL . 'images/' . $logo['filename'];
+        $logos[] = array_merge($logo , array(
+                'company_id' => $company['company_id'],
+                'company' => $company['company']
+            )
+        );
+    }
+    return $logos;
+}
+
 ?>

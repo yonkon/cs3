@@ -19,7 +19,6 @@ use Tygh\Session;
 
 if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
-
 //function fn_generate_guest_password() {
 //    return substr(md5(time()), 0, 8);
 //}

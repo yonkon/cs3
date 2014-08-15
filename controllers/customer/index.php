@@ -22,6 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	return array(CONTROLLER_STATUS_NO_PAGE);
 }
 
+if ($mode == 'index') {
+    $images = fn_agents_get_company_logos();
+    Registry::get('view')->assign('company_slider', array('images' => $images));
+}
+
 
 
 ?>

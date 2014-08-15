@@ -367,3 +367,48 @@ ul.hr li {
 .block {
     display: block;
 }
+
+#agents_collegues_div {
+    clear: both;
+    margin-top: 1em;
+}
+
+#agents_collegues_div th {
+    padding: 10px;
+}
+
+#agents_collegues_div td {
+    padding: 10px;
+}
+
+
+#agents_clients_table th {
+    padding-bottom: 10px;
+}
+
+#agents_clients_table td {
+    padding-bottom: 10px;
+}
+
+#agents_clients_table {
+    padding-top: 1em;
+}
+
+#agents_clients_div {
+    clear: both;
+    padding-top: 1em;
+}
+
+.padding-top-1em {
+    padding-top: 1em;
+}
+
+.padding-top-2em {
+    padding-top: 2em;
+}
+
+#content_registration {
+    padding-top: 1em;
+    line-height: 40px;
+    vertical-align: bottom;
+}
