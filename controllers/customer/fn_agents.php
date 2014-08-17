@@ -2060,7 +2060,6 @@ function fn_agents_prepare_pagination_count_params(&$count_params) {
 }
 
 function fn_agents_get_plan_product_profit($plan, $product) {
-    $profit = fn_affiliate_place_order()
     return rand(0, 100000);
 }
 
