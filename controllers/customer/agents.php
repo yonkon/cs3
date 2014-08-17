@@ -95,7 +95,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+$view = Registry::get('view');
+if (!in_array($mode, array(
+    'add', 'add_subagent', 'update', 'usergroups', 'success_add', 'office',
+    'update_client'
+    ) ) || strpos($mode, 'ajax') === 0 ) {
+    $view->assign('content_tpl', 'views/agents/office.tpl');
+    $view->assign('mode', $mode);
+
+}
+if (strpos($mode, 'orders_') === 0) {
+    $view->assign('mode', 'orders');
+}
+
+$limit = $_REQUEST['limit'] = empty($_REQUEST['limit']) ? 10 : $_REQUEST['limit'];
+$page = $_REQUEST['page'] = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
+
 if ($mode == 'add') {
+
 
     if (!empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "agents.update");
@@ -125,18 +142,18 @@ if ($mode == 'add') {
 
     $profile_fields = fn_get_profile_fields('C', array(), CART_LANGUAGE, $params);
 
-    Registry::get('view')->assign('profile_fields', $profile_fields);
-    Registry::get('view')->assign('user_data', $user_data);
-    Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));
-    Registry::get('view')->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
-    Registry::get('view')->assign('states', fn_get_all_states());
+    $view->assign('profile_fields', $profile_fields);
+    $view->assign('user_data', $user_data);
+    $view->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));
+    $view->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
+    $view->assign('states', fn_get_all_states());
 
 }
 elseif ($mode == 'add_subagent') {
     if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
     }
-    Registry::get('view')->assign('content_tpl', 'views/agents/update_subagent.tpl');
+    $view->assign('content_tpl', 'views/agents/update_subagent.tpl');
 
     $profile_id = null; /*empty($_REQUEST['profile_id']) ? 0 : $_REQUEST['profile_id'];*/
     fn_add_breadcrumb(fn_get_lang_var('editing_profile'));
@@ -158,8 +175,8 @@ elseif ($mode == 'add_subagent') {
     $subagent_data['company'] = $user_data['company'];
 
     if(empty ($_REQUEST['user_data'])) {
-//        Registry::get('view')->display('views/agents/update_subagent.tpl');
-        Registry::get('view')->assign('user_data', $subagent_data);
+//        $view->display('views/agents/update_subagent.tpl');
+        $view->assign('user_data', $subagent_data);
         return array(CONTROLLER_STATUS_OK);
     }
     $restored_user_data = fn_restore_post_data('user_data');
@@ -186,19 +203,19 @@ elseif ($mode == 'add_subagent') {
                 'js' => true
             ));
 
-            Registry::get('view')->assign('usergroups', $usergroups);
+            $view->assign('usergroups', $usergroups);
         }
     }
 
     $profile_fields = array();
 
-    Registry::get('view')->assign('profile_fields', $profile_fields);
-    Registry::get('view')->assign('user_data', $subagent_data);
-    Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($subagent_data, $profile_fields));
-    Registry::get('view')->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
-    Registry::get('view')->assign('states', fn_get_all_states());
+    $view->assign('profile_fields', $profile_fields);
+    $view->assign('user_data', $subagent_data);
+    $view->assign('ship_to_another', fn_check_shipping_billing($subagent_data, $profile_fields));
+    $view->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
+    $view->assign('states', fn_get_all_states());
     if (Registry::get('settings.General.user_multiple_profiles') == 'Y') {
-        Registry::get('view')->assign('user_profiles', fn_get_user_profiles($subagent_data['user_id']));
+        $view->assign('user_profiles', fn_get_user_profiles($subagent_data['user_id']));
     }
 
 }
@@ -244,19 +261,19 @@ elseif ($mode == 'update') {
                 'js' => true
             ));
 
-            Registry::get('view')->assign('usergroups', $usergroups);
+            $view->assign('usergroups', $usergroups);
         }
     }
 
     $profile_fields = fn_get_profile_fields();
 
-    Registry::get('view')->assign('profile_fields', $profile_fields);
-    Registry::get('view')->assign('user_data', $subagent_data);
-    Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($subagent_data, $profile_fields));
-    Registry::get('view')->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
-    Registry::get('view')->assign('states', fn_get_all_states());
+    $view->assign('profile_fields', $profile_fields);
+    $view->assign('user_data', $subagent_data);
+    $view->assign('ship_to_another', fn_check_shipping_billing($subagent_data, $profile_fields));
+    $view->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
+    $view->assign('states', fn_get_all_states());
     if (Registry::get('settings.General.user_multiple_profiles') == 'Y') {
-        Registry::get('view')->assign('user_profiles', fn_get_user_profiles($auth['user_id']));
+        $view->assign('user_profiles', fn_get_user_profiles($auth['user_id']));
     }
 }
 elseif ($mode == 'usergroups') {
@@ -295,50 +312,31 @@ elseif ($mode == 'office') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'companies_and_products') {
-    if ( empty($_REQUEST['limit']) || !intval(($_REQUEST['limit']) )) {
-        $limit = $_REQUEST['limit'] =  10;
-    } else {
-        $limit = $_REQUEST['limit'];
-    }
-    $page = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
-
     $offices = fn_agents_get_company_offices($_REQUEST['client']['company']);
     $cities = fn_agents_extract_cities_from_offices($offices);
 
     $all_products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['client']['company']) ), null, CART_LANGUAGE, null, false );
-    $products = fn_agents_get_products($_REQUEST, $limit );
-    $count_params = $_REQUEST;
-    unset($count_params['limit']);
-    unset($count_params['items_per_page']);
-    unset($count_params['page']);
-    $products_count = fn_agents_get_products($count_params);
-    $products_count = count($products_count[0]);
+    $products = fn_agents_get_products($_REQUEST, $limit, $page );
+    $affiliate_plan = fn_get_affiliate_plan_data_by_partner_id($auth['user_id']);
     foreach($products[0] as &$product) {
         $product['image']['image_path'] = get_image_full_path($product['image']);
         $product['company'] = fn_agents_get_company_info($product['company_id']);
         $product['company']['image_path'] = get_image_full_path($product['company']);
         $product['description'] = fn_agents_get_product_description($product['product_id']);
+        $product['profit'] = fn_agents_get_plan_product_profit($affiliate_plan, $product);
     }
     unset($product);
-    $total_pages = ceil($products_count / $limit);
-    $pagination = array(
-        'page' => $page,
-        'total_pages' =>$total_pages,
-        'pages' => range(1, $total_pages ),
-        'url' => fn_url('agents.companies_and_products')
-    );
 
+    $pagination = fn_agents_paginate_products($auth['user_id'], $_REQUEST, $limit, $page);
     $companies = fn_get_companies(null, $auth);
-    Registry::get('view')->assign('all_cities', $cities);
-    Registry::get('view')->assign('all_products', $all_products[0]);
-    Registry::get('view')->assign('products', $products[0]);
-    Registry::get('view')->assign('products_param', $products[1]);
-    Registry::get('view')->assign('companies', $companies[0]);
-    Registry::get('view')->assign('mode', 'products');
-    Registry::get('view')->assign('pagination', $pagination);
-    Registry::get('view')->assign('client', $_REQUEST['client']);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-
+    $view->assign('all_cities', $cities);
+    $view->assign('all_products', $all_products[0]);
+    $view->assign('products', $products[0]);
+    $view->assign('products_param', $products[1]);
+    $view->assign('companies', $companies[0]);
+    $view->assign('mode', 'products');
+    $view->assign('pagination', $pagination);
+    $view->assign('client', $_REQUEST['client']);
 
     return array(CONTROLLER_STATUS_OK);
 }
@@ -352,10 +350,8 @@ elseif ($mode == 'clients') {
     $pagination = fn_agents_paginate_clients($auth['user_id'], $_REQUEST, $limit, $page);
 
     $clients = fn_agents_get_clients($auth['user_id'], $_REQUEST);
-    Registry::get('view')->assign('mode', 'clients');
-    Registry::get('view')->assign('clients', $clients );
-    Registry::get('view')->assign('pagination', $pagination );
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    $view->assign('clients', $clients );
+    $view->assign('pagination', $pagination );
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'add_client_form') {
@@ -380,9 +376,7 @@ elseif ($mode == 'add_client_form') {
     }
 
 
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('mode', 'add_client_form');
-    Registry::get('view')->assign('client', $_REQUEST );
+    $view->assign('client', $_REQUEST );
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'collegues') {
@@ -394,11 +388,9 @@ elseif ($mode == 'collegues') {
     $page = $_REQUEST['page'] = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
     $pagination = fn_agents_paginate_collegues($auth['user_id'], $_REQUEST, $limit, $page);
     $collegues = fn_agents_get_collegues($auth['user_id'], $_REQUEST);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('mode', 'collegues');
-    Registry::get('view')->assign('collegues', $collegues);
-    Registry::get('view')->assign('pagination', $pagination);
-    Registry::get('view')->assign('client', $_REQUEST );
+    $view->assign('collegues', $collegues);
+    $view->assign('pagination', $pagination);
+    $view->assign('client', $_REQUEST );
 }
 elseif ($mode == 'report') {
         $payout_types = Registry::get('payout_types');
@@ -524,24 +516,43 @@ elseif ($mode == 'report') {
 
         $order_status_descr = fn_get_statuses(STATUSES_ORDER, true, true, true);
         $view->assign('order_status_descr', $order_status_descr);
+        $view->assign('mode', 'report');
 
 
 }
-elseif ($mode == 'orders') {
+elseif (in_array($mode, array('orders', 'orders_saved', 'orders_active', 'orders_closed'  ))  ) {
+    if ($mode != 'orders_saved') {
+        $_REQUEST['where']['not'] = array ('status' => 'B' );
+    }
+   switch ($mode) {
+       case 'orders' :
+           $orders = fn_agents_get_orders($auth['user_id'], $_REQUEST);
+           $pagination = fn_agents_paginate_orders($auth['user_id'], $_REQUEST, $limit, $page);
+           break;
+       case 'orders_saved' :
+           $orders = fn_agents_get_saved_orders($auth['user_id'], $_REQUEST);
+           $pagination = fn_agents_paginate_saved_orders($auth['user_id'], $_REQUEST, $limit, $page);
+           break;
+       case 'orders_active' :
+           $orders = fn_agents_get_active_orders($auth['user_id'], $_REQUEST);
+           $pagination = fn_agents_paginate_active_orders($auth['user_id'], $_REQUEST, $limit, $page);
+           break;
+       case 'orders_closed' :
+           $orders = fn_agents_get_closed_orders($auth['user_id'], $_REQUEST);
+           $pagination = fn_agents_paginate_closed_orders($auth['user_id'], $_REQUEST, $limit, $page);
+           break;
+   }
     $products = fn_agents_get_products(array('company_id'=>$_REQUEST['where']['company_id'] ), null, CART_LANGUAGE, null, false );
     $companies = fn_get_companies(null, $auth);
-    $_REQUEST['where']['not'] = array ('status' => 'B' );
-    $orders = fn_agents_get_orders($auth['user_id'], $_REQUEST);
     $cities = fn_agents_get_all_cities($_REQUEST);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
-    Registry::get('view')->assign('mode', 'orders');
-    Registry::get('view')->assign('products', $cities[0]);
-    Registry::get('view')->assign('products', $products[0]);
-    Registry::get('view')->assign('companies', $companies[0]);
-    Registry::get('view')->assign('where', $_REQUEST['where'] );
-    Registry::get('view')->assign('order', $_REQUEST['order'] );
-    Registry::get('view')->assign('orders', $orders );
+    $view->assign('order_statuses', fn_agents_get_order_statuses());
+    $view->assign('products', $cities[0]);
+    $view->assign('products', $products[0]);
+    $view->assign('companies', $companies[0]);
+    $view->assign('where', $_REQUEST['where'] );
+    $view->assign('order', $_REQUEST['order'] );
+    $view->assign('orders', $orders );
+    $view->assign('pagination', $pagination);
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'order_make') {
@@ -583,27 +594,25 @@ elseif ($mode == 'order_make') {
     $product = $product[0][0];
     $company_id = $product['company_id'];
     $regions = fn_agents_get_all_regions();
-    Registry::get('view')->assign('regions', $regions );
+    $view->assign('regions', $regions );
     $companies = fn_get_companies(array('company_id' => $company_id), $auth);
-    Registry::get('view')->assign('companies', $companies[0]);
+    $view->assign('companies', $companies[0]);
     $cities = fn_agents_get_all_cities($_REQUEST['client']);
-    Registry::get('view')->assign('cities', $cities);
+    $view->assign('cities', $cities);
     $offices = fn_agents_get_company_offices_with_shippings($company_id);
     if(empty($offices)) {
         fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('company_have_no_offices'));
         return array(CONTROLLER_STATUS_REDIRECT, 'agents.companies_and_products' );
     }
-    Registry::get('view')->assign('offices' , $offices);
-    Registry::get('view')->assign('step', $step );
-    Registry::get('view')->assign('product', array(
+    $view->assign('offices' , $offices);
+    $view->assign('step', $step );
+    $view->assign('product', array(
             'product_id' => $_REQUEST['product_id'],
             'amount' => ($_REQUEST['item_count'] || 1) )
     );
-    Registry::get('view')->assign('mode', 'order_make');
     $locations = $_REQUEST['client']['locations'] = fn_agents_process_order_address($_REQUEST['client']);
     $_REQUEST['client']['address'] = fn_agents_locations_to_address($locations, true);
-    Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
+    $view->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'order_save') {
@@ -628,54 +637,8 @@ elseif ($mode == 'order_save') {
     fn_save_cart_content($cart, $auth['user_id']);
 
 
-    Registry::get('view')->assign('product', $product );
-    Registry::get('view')->assign('mode', 'order_save');
-    Registry::get('view')->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    return array(CONTROLLER_STATUS_OK);
-}
-elseif ($mode == 'orders_saved') {
-    $products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
-    $companies = fn_get_companies(null, $auth);
-    $orders = fn_agent_get_saved_orders($auth['user_id'], $_REQUEST);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
-    Registry::get('view')->assign('mode', 'orders');
-    Registry::get('view')->assign('products', $products[0]);
-    Registry::get('view')->assign('companies', $companies[0]);
-    Registry::get('view')->assign('where', $_REQUEST['where'] );
-    Registry::get('view')->assign('order', $_REQUEST['order'] );
-    Registry::get('view')->assign('orders', $orders );
-    return array(CONTROLLER_STATUS_OK);
-}
-elseif ($mode == 'orders_active') {
-    $_REQUEST['where']['not'] = array ('status' => 'B' );
-    $products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
-    $companies = fn_get_companies(null, $auth);
-    $orders = fn_agent_get_active_orders($auth['user_id'], $_REQUEST);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
-    Registry::get('view')->assign('mode', 'orders');
-    Registry::get('view')->assign('products', $products[0]);
-    Registry::get('view')->assign('companies', $companies[0]);
-    Registry::get('view')->assign('where', $_REQUEST['where'] );
-    Registry::get('view')->assign('order', $_REQUEST['order'] );
-    Registry::get('view')->assign('orders', $orders );
-    return array(CONTROLLER_STATUS_OK);
-}
-elseif ($mode == 'orders_closed') {
-    $_REQUEST['where']['not'] = array ('status' => 'B' );
-    $products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['where']['company_id']) ), null, CART_LANGUAGE, null, false );
-    $companies = fn_get_companies(null, $auth);
-    $orders = fn_agent_get_closed_orders($auth['user_id'], $_REQUEST);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
-    Registry::get('view')->assign('mode', 'orders');
-    Registry::get('view')->assign('products', $products[0]);
-    Registry::get('view')->assign('companies', $companies[0]);
-    Registry::get('view')->assign('where', $_REQUEST['where'] );
-    Registry::get('view')->assign('order', $_REQUEST['order'] );
-    Registry::get('view')->assign('orders', $orders );
+    $view->assign('product', $product );
+    $view->assign('client', empty($_REQUEST['client']) ? array() : $_REQUEST['client']);
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'product_info' || $mode == 'company_info') {
@@ -694,13 +657,12 @@ elseif ($mode == 'product_info' || $mode == 'company_info') {
     $company['image_path'] = get_image_full_path($company);
     $offices = fn_agents_get_company_offices_with_shippings($company['company_id']);
     $cities = fn_agents_extract_cities_from_offices($offices);
-    Registry::get('view')->assign('content_tpl', 'views/agents/office.tpl');
-    Registry::get('view')->assign('order_statuses', fn_agents_get_order_statuses());
-    Registry::get('view')->assign('mode', 'product_info');
-    Registry::get('view')->assign('product', $product);
-    Registry::get('view')->assign('company', $company);
-    Registry::get('view')->assign('offices', $offices);
-    Registry::get('view')->assign('cities', $cities);
+    $view->assign('order_statuses', fn_agents_get_order_statuses());
+    $view->assign('mode', 'product_info');
+    $view->assign('product', $product);
+    $view->assign('company', $company);
+    $view->assign('offices', $offices);
+    $view->assign('cities', $cities);
 
 
     if($mode == 'product_info') {
@@ -709,7 +671,7 @@ elseif ($mode == 'product_info' || $mode == 'company_info') {
         $active_tab = 'company';
     }
     $active_tab = empty($_REQUEST['active_tab']) ? $active_tab : $_REQUEST['active_tab'];
-    Registry::get('view')->assign('active_tab', $active_tab);
+    $view->assign('active_tab', $active_tab);
 
     return array(CONTROLLER_STATUS_OK);
 }
@@ -787,3 +749,4 @@ elseif ($mode == 'ajax_get_products') {
     echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
     die();
 }
+

@@ -14,13 +14,17 @@
             {/foreach}
         </div>
         <div id="content_registration">
-            {$lang.works_representatives}
-            <img src="" alt=""/>
-            <img src="" alt=""/>
-            <img src="" alt=""/>
-            <img src="" alt=""/>
-            <img src="" alt=""/>
-            <img src="" alt=""/>
+            <div id="partner_counter">
+                {$lang.works_representatives}
+                {foreach from=$total_agents item='number'}
+                    {if !empty($total_agents_use_images) }
+                        <img src="/skins/basic/customer/views/agents/images/numbers/{$number}.png" alt="{$number}"/>
+                    {else}
+                        <div class="number">{$number}</div>
+                    {/if}
+                {/foreach}
+            </div>
+
             <a href="/index.php?dispatch=profiles.add&user_type=C"><button id="registration_button" class="big green float-right button">{$lang.registration}</button></a>
         </div>
         <script type="text/javascript" src="//yandex.st/share/share.js"

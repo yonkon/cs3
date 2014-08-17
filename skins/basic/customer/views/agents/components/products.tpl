@@ -1,4 +1,4 @@
-<div id="product_filters">
+<div class="agents-filters">
     <form method="post" id="filters">
     <input type="hidden" name="dispatch" value="agents.companies_and_products">
         <input type="hidden" id="page" name="page" value="{$pagination.page|default:1}">
@@ -47,50 +47,52 @@
                 >{$lang.apply_filter}</button>
         </form>
     </div>
-
+<div id="products_div">
     {foreach from=$products item="product"}
-    <form id="form_{$product.product_id}">
-        <input type="hidden" name="product_id" value="{$product.product_id}">
-        <input type="hidden" name="dispatch" value="agents.order_make">
-    <div class="product_div">
-        <table>
-            <tr>
-                <td id="product_image"> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></a></td>
-                <td id="product_name" colspan="2">
-                    <h2><a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
-                    <div class="'product-description">{$product.full_description|unescape|truncate:360}</div>
-                </td>
-                <td id="product_buy">
-                    <div class="product-count-buttons">
-                        <a href="#" class="increase" onclick="increase_count({$product.product_id}, 1, {$product.price});">+</a>
-                        <a href="#" class="decrease" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
-                        <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
-                    </div>
-                    {assign var="price_id" value='price_'|cat:$product.product_id}
-                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span>
-                    <div>
-                        <button id="order_submit_{$product.product_id}" class="big green button" type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
-                    </div>
-                    <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="skins/basic/customer/views/agents/components/shipping.png">{/if}
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
-                <td id="company_desc" colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
-                <td id="add_to_save">
-                    {*<span>{$product.profit}</span><br>*}
-                    <button id="order_save_submit_{$product.product_id}"
-                            class="big green button"
-                            onclick="save_order({$product.product_id});">
-                        Сохранить в кабинете
-                    </button>
-                </td>
-            </tr>
-        </table>
-    </div>
-</form>
-{/foreach}
+        <form id="form_{$product.product_id}">
+            <input type="hidden" name="product_id" value="{$product.product_id}">
+            <input type="hidden" name="dispatch" value="agents.order_make">
+            <div class="product_div">
+                <table>
+                    <tr>
+                        <td id="product_image"> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></a></td>
+                        <td id="product_name" colspan="2">
+                            <h2><a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
+                            <div class="'product-description">{$product.full_description|unescape|truncate:360}</div>
+                        </td>
+                        <td id="product_buy">
+                            <div class="product-count-buttons">
+                                <a href="#" class="increase" onclick="increase_count({$product.product_id}, 1, {$product.price});">+</a>
+                                <a href="#" class="decrease" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
+                                <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
+                            </div>
+                            {assign var="price_id" value='price_'|cat:$product.product_id}
+                            <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span>
+                            <div>
+                                <button id="order_submit_{$product.product_id}" class="big green button" type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
+                            </div>
+                            <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/components/shipping.png">{/if}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
+                        <td id="company_desc" colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
+                        <td id="add_to_save">
+                            {*<span>{$product.profit}</span><br>*}
+                            <button id="order_save_submit_{$product.product_id}"
+                                    class="big green button"
+                                    onclick="save_order({$product.product_id});">
+                                Сохранить в кабинете
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    {/foreach}
+</div>
+
 {literal}
 <script type="text/javascript">
     function increase_count(product_id, amount, price) {
@@ -132,7 +134,7 @@
         };
         ajax_get_options(url_products, data, '#client_product');
 
-    })
+    });
 
 </script>
 {/literal}

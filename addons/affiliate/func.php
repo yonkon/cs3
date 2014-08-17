@@ -1528,7 +1528,7 @@ function fn_agents_get_company_logos() {
             continue;
         }
         $logo = $logo_data['Customer_logo'];
-        $logo['filename'] = REAL_URL . 'images/' . $logo['filename'];
+        $logo['filename'] = REAL_HOST . '/images/' . $logo['filename'];
         $logos[] = array_merge($logo , array(
                 'company_id' => $company['company_id'],
                 'company' => $company['company']
@@ -1536,6 +1536,28 @@ function fn_agents_get_company_logos() {
         );
     }
     return $logos;
+}
+
+function fn_agents_get_total_agents() {
+    $count = db_get_field(db_process('SELECT COUNT(*) FROM ?:users WHERE user_type = "P" AND status = "A"'));
+    return $count;
+}
+
+function fn_agents_get_total_agents_numbers($min_lenght = 6) {
+    $count = fn_agents_get_total_agents();
+    $numbers = array();
+    while($count>0) {
+        $count = intval($count, 10);
+        $numbers[] = $count%10;
+        $count = $count/10;
+    }
+    $numbers_lenght = count($numbers);
+    while($numbers_lenght < $min_lenght) {
+        $numbers[] = 0;
+        $numbers_lenght++;
+    }
+    $numbers = array_reverse($numbers);
+    return $numbers;
 }
 
 ?>

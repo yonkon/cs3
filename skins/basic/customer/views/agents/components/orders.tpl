@@ -1,6 +1,7 @@
-<div id="product_filters" class="clr">
-    <form method="post">
+<div class="agents-filters">
+    <form method="post" id="filters">
     <input type="hidden" name="dispatch" value="agents.orders">
+    <input type="hidden" name="page" id=="page" value="{$pagination.page|default:1}">
 
         <select style="width: 250px;margin: 8px;" id="company" name="where[company_id]">
         <option value="">- {$lang.select_company} -</option>
@@ -51,7 +52,7 @@
 
 <div id="orders_div" class="clr">
     {foreach from=$orders item="order"}
-        <p>{$lang.Order} {$order.order_id} </p>
+        <p class="padding-top-2em">{$lang.Order} {$order.order_id} </p>
     <form>
         <input type="hidden" name="order_id" value="{$order.order_id}">
         <input type="hidden" name="dispatch" value="agents.order_make">

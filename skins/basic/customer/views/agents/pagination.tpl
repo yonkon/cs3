@@ -24,21 +24,22 @@
     function agents_go_to_page(page, form_selector, page_selector) {
         form_selector = form_selector ? form_selector : '#filters';
         page_selector = page_selector ? page_selector : '#page';
-    $pageInput = $(page_selector);
-    $pageInput.val(page);
-    $form = $(form_selector);
-    if($form.length && $form.length>0) {
-        if($form && $pageInput && $pageInput.length && $pageInput.length>0) {
-            $form.submit();
-            event.preventDefault();
-            return false;
-        } else {
-           return true;
+        $pageInput = $(page_selector);
+        $pageInput.val(page);
+        $form = $(form_selector);
+        if($form.length && $form.length>0) {
+            if($form && $pageInput && $pageInput.length && $pageInput.length>0) {
+                $form.submit();
+                event.preventDefault();
+                return false;
+            } else {
+                return true;
+            }
+        }
+        else {
+            return true;
         }
     }
-        else {
-    return true;}
-    }
-    }
+
 </script>
 {/literal}

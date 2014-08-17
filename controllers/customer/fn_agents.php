@@ -1623,7 +1623,7 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
 
 }
 
-function fn_agent_get_saved_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
+function fn_agents_get_saved_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $saved_orders = db_get_array(db_process('SELECT order_id FROM ?:orders_saved WHERE user_id = ?i', array($user_id) ));
     if (empty($saved_orders)) {
         return array();
@@ -1638,13 +1638,13 @@ function fn_agent_get_saved_orders($user_id, $params = array(), $lang_code = CAR
 }
 
 
-function fn_agent_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
+function fn_agents_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $active_statuses = array('O', 'P',  'A');
     $params['where'][db_process('?:orders.status')] = $active_statuses ;
     return fn_agents_get_orders($user_id, $params, $lang_code);
 }
 
-function fn_agent_get_closed_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
+function fn_agents_get_closed_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
     $closed_statuses = array('C', 'F', 'D');
     $params['where'][ db_process('?:orders.status')] = $closed_statuses;
     return fn_agents_get_orders($user_id, $params, $lang_code);
@@ -1989,41 +1989,79 @@ function fn_agents_prepare_ajax_options($source_array, $value_key, $text_key, $d
     return $ajaxResult;
 }
 
-function fn_agents_get_total_agents() {
-    $count = db_get_field(db_process('SELECT COUNT(*) FROM ?:users WHERE user_type = "P" AND status = "A"'));
-    return $count;
-}
 
-function fn_agents_paginate_clients($user_id, $count_params, $limit=10, $page=1) {
-    unset($count_params['limit']);
-    unset($count_params['items_per_page']);
-    unset($count_params['page']);
-    $count = fn_agents_get_clients($user_id, $count_params);
-    $count = count($count);
+function fn_agents_paginate_items($user_id, $count_params, $items, $controller_mode,  $limit=10, $page=1) {
+    $count = count($items);
     $total_pages = ceil($count / $limit);
     $pagination = array(
         'page' => $page,
         'total_pages' =>$total_pages,
         'pages' => range(1, $total_pages ),
-        'url' => fn_url('agents.clients')
+        'url' => fn_url($controller_mode)
     );
+    return $pagination;
+}
+
+function fn_agents_paginate_products($user_id, $count_params, $limit=10, $page=1) {
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_products($count_params, $limit, $page );
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.companies_and_products', $limit, $page);
+    return $pagination;
+}
+
+function fn_agents_paginate_clients($user_id, $count_params, $limit=10, $page=1) {
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_clients($user_id, $count_params);
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.clients', $limit, $page);
     return $pagination;
 }
 
 function fn_agents_paginate_collegues($user_id, $count_params, $limit=10, $page=1) {
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_collegues($user_id, $count_params);
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.collegues', $limit, $page);
+    return $pagination;
+}
+
+function fn_agents_paginate_orders($user_id, $count_params, $limit=10, $page=1) {
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_orders($user_id, $count_params);
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.orders', $limit, $page);
+    return $pagination;
+}
+
+function fn_agents_paginate_saved_orders($user_id, $count_params, $limit=10, $page=1) {
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_saved_orders($user_id, $count_params);
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.orders_saved', $limit, $page);
+    return $pagination;
+}
+
+function fn_agents_paginate_active_orders($user_id, $count_params, $limit=10, $page=1) {
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_active_orders($user_id, $count_params);
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.orders_active', $limit, $page);
+    return $pagination;
+}
+
+function fn_agents_paginate_closed_orders($user_id, $count_params, $limit=10, $page=1) {
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_closed_orders($user_id, $count_params);
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.orders_closed', $limit, $page);
+    return $pagination;
+}
+
+
+function fn_agents_prepare_pagination_count_params(&$count_params) {
     unset($count_params['limit']);
     unset($count_params['items_per_page']);
     unset($count_params['page']);
-    $count = fn_agents_get_collegues($user_id, $count_params);
-    $count = count($count);
-    $total_pages = ceil($count / $limit);
-    $pagination = array(
-        'page' => $page,
-        'total_pages' =>$total_pages,
-        'pages' => range(1, $total_pages ),
-        'url' => fn_url('agents.clients')
-    );
-    return $pagination;
+    return $count_params;
+}
+
+function fn_agents_get_plan_product_profit($plan, $product) {
+    $profit = fn_affiliate_place_order()
+    return rand(0, 100000);
 }
 
 //function fn_agents_get_company_logos() {

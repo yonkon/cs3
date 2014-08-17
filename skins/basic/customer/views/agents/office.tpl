@@ -1,8 +1,3 @@
-<style type="text/css">
-    {literal}
-
-    {/literal}
-</style>
 {script src="js/ajax_get.js"}
 {*<div id="main_content">*}
     {*<div id="top">*}
@@ -52,6 +47,8 @@
         {include file="views/agents/components/product_info_company.tpl"}
     {elseif $mode == 'product_info'}
         {include file="views/agents/components/product_info.tpl"}
+    {elseif $mode == 'report'}
+        {include file="views/agents/components/report.tpl"}
     {/if}
 
 </div>
