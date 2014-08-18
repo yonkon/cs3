@@ -49,11 +49,13 @@
         {include file="views/agents/components/product_info.tpl"}
     {elseif $mode == 'report'}
         {include file="views/agents/components/report.tpl"}
+    {elseif $mode == 'all_plans'}
+        {include file="views/agents/components/all_plans.tpl"}
     {/if}
 
 </div>
 </div>
-    <div id="footer_office">
+    <div>
     <div id="social_office"> <script type="text/javascript" src="//yandex.st/share/share.js"
                   charset="utf-8"></script>
         <div class="yashare-auto-init" data-yashareL10n="ru"
@@ -62,7 +64,7 @@
                 ></div>
 
     </div>
-    <div>
+    <div class="footer_office">
         <img src=""><a href="/index.php?dispatch=support.add_ticket">{$lang.support_helpdesk}</a>
         <img src=""><a href="/index.php?dispatch=pages.view&page_id=48">{$lang.Partnership_Agreement}</a>
     </div>

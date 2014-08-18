@@ -46,7 +46,7 @@
                 {/if}
             {/foreach}
         </div>
-        <div><button id="see_all" class="big green button center-block block">{$lang.view_all}</button></div>
+        <div><a href="/index.php?dispatch=agents.all_plans"><button id="see_all" class="big green button center-block block">{$lang.view_all}</button></a></div>
 
     </div>
 </div>
