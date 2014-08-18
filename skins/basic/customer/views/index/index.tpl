@@ -35,10 +35,10 @@
                 ></div>
         <div class="h2 clear-both padding-top-2em">{$lang.affiliate_program}</div>
         <div id="content_affiliate_program">
-            {foreach from=$company_slider.images item='image'}
+            {foreach from=$plan_slider.images item='image'}
                 <div>
                     <img src="{$image.filename}">
-                    <span class="company_name">{$image.company}</span>
+                    <span class="plan_name">{$image.plan}</span>
                 </div>
             {/foreach}
         </div>

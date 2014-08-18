@@ -50,7 +50,22 @@ if ($_SERVER['REQUEST_METHOD']	== 'POST') {
 	//
 	if ($mode == 'update') {
 		$plan_id = fn_update_affiliate_plan($_REQUEST['affiliate_plan'], $_REQUEST['plan_id'], DESCR_SL);
+        $uploaddir = DIR_IMAGES."plan_images/";
+        if(!is_dir($uploaddir)){
+            mkdir($uploaddir, 0777, true);
+            chmod($uploaddir, 0777);
+        }
+        if ( !empty($_FILES['application']['name']) && !empty($plan_id) ) {
+            $uploadfile = $uploaddir . basename($_FILES['application']['name']);
+            if (move_uploaded_file($_FILES['application']['tmp_name'], $uploadfile)) {
+                db_query(db_process("UPDATE ?:affiliate_plans SET plan_image = ?s WHERE plan_id = ?i", array($uploadfile, $plan_id)));
+            } else {
 
+                fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('file_not_uploaded'));
+            }
+        } else {
+            $uploadfile = '';
+        }
 
 
 		$suffix = ".update?plan_id=$plan_id";

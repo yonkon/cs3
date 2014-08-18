@@ -1,0 +1,1 @@
+ALTER TABLE `cscart_affiliate_plans` ADD `plan_image` VARCHAR(512) NULL ;

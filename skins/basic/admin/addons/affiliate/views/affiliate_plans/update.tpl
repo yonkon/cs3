@@ -3,7 +3,7 @@
 {capture name="tabsbox"}
 {assign var="affiliate_plan_form_classes" value="cm-form-highlight"}
 
-<form action="{""|fn_url}" method="post" name="affiliate_plan_form" class="{$affiliate_plan_form_classes}">
+<form action="{""|fn_url}" method="post" name="affiliate_plan_form" enctype="multipart/form-data"  class="{$affiliate_plan_form_classes}">
 <input id="selected_section" type="hidden" name="selected_section" value="" />
 <input type="hidden" name="plan_id" value="{$affiliate_plan.plan_id}" />
 <div id="content_general">
@@ -47,7 +47,7 @@
 		<input type="checkbox" name="affiliate_plan[use_coupon_commission]" id="use_coupon_commission" {if $affiliate_plan.use_coupon_commission == "Y" || !$affiliate_plan}checked="checked"{/if} value="Y" class="checkbox" />
 	</div>
 
-	{include file="views/companies/components/company_field.tpl" title=$lang.vendor name="affiliate_plan[company_id]" id="affiliate_plan_company_id" selected=$affiliate_plan.company_id"}
+	{include file="views/companies/components/company_field.tpl" title=$lang.vendor name="affiliate_plan[company_id]" id="affiliate_plan_company_id" selected="$affiliate_plan.company_id"}
 
 	{include file="common_templates/select_status.tpl" input_name="affiliate_plan[status]" id="affiliate_plan" obj=$affiliate_plan}
 </fieldset>
@@ -362,6 +362,7 @@
 </form>
 {/capture}
 
+
 	<div class="buttons-container float-right no-clear">
 	{include file="common_templates/popupbox.tpl" id="add_coupons" but_text=$lang.add_coupons act="create"}
 	</div>
@@ -370,8 +371,12 @@
 {** /Coupons **}
 
 {/if}
-
+<div id="upload_file">
+        <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
+        <input type="file" name="application" title="{$lang.upload_file}">
+        </div>
 <div class="buttons-container buttons-bg">
+
 	{capture name="tools_list"}
 	<ul>
 		<li><a class="cm-confirm cm-process-items" name="dispatch[affiliate_plans.delete]" rev="affiliate_plan_form">{$lang.delete_selected}</a></li>

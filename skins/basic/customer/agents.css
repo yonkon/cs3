@@ -213,6 +213,9 @@ ul.hr li {
 
 .yashare-auto-init {
     /*margin-left: 35%;*/
+    margin: 0 auto;
+    display: block;
+    width: 20%;
 }
 
 #product_image{
@@ -412,7 +415,7 @@ ul.hr li {
 }
 
 #content_registration {
-    padding-top: 1em;
+    padding: 2em;
     line-height: 40px;
     vertical-align: bottom;
 }
@@ -422,7 +425,6 @@ ul.hr li {
 }
 
 #partner_counter {
-    padding: 5%;
     display: inline-block;
 }
 

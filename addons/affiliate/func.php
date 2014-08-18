@@ -1560,4 +1560,18 @@ function fn_agents_get_total_agents_numbers($min_lenght = 6) {
     return $numbers;
 }
 
+function fn_agents_get_plans_logos($lang_code = CART_LANGUAGE) {
+    $query = db_process('SELECT ap.*, cd.description, cd.object AS plan FROM ?:affiliate_plans ap LEFT JOIN ?:common_descriptions cd ON cd.object_id = ap.plan_id AND cd.object_holder = "affiliate_plans" AND cd.lang_code = ?s  WHERE 1', array($lang_code));
+    $plans = db_get_array($query);
+    $logos = array();
+    foreach($plans as $plan) {
+        $logos[] =  array(
+            'filename' => $plan['plan_image'],
+            'plan_id' => $plan['plan_id'],
+            'plan' => $plan['plan']
+        );
+    }
+    return $logos;
+}
+
 ?>
