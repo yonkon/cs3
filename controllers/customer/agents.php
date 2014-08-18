@@ -315,24 +315,48 @@ elseif ($mode == 'companies_and_products') {
     $offices = fn_agents_get_company_offices($_REQUEST['client']['company']);
     $cities = fn_agents_extract_cities_from_offices($offices);
 
-    $all_products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['client']['company']) ), null, CART_LANGUAGE, null, false );
-    $products = fn_agents_get_products($_REQUEST, $limit, $page );
+    $all_products = fn_agents_get_products(array('client' => array('company'=>$_REQUEST['client']['company']) ), null, CART_LANGUAGE, false );
+
+    if(!empty($_REQUEST['sorting_profit'])) {
+        $products = fn_agents_get_products($_REQUEST,null, CART_LANGUAGE, true);
+    } else {
+        $products = fn_agents_get_products($_REQUEST,null, CART_LANGUAGE, true);
+    }
+
     $affiliate_plan = fn_get_affiliate_plan_data_by_partner_id($auth['user_id']);
     foreach($products[0] as &$product) {
         $product['image']['image_path'] = get_image_full_path($product['image']);
         $product['company'] = fn_agents_get_company_info($product['company_id']);
-        $product['company']['image_path'] = get_image_full_path($product['company']);
+        $product['company']['image_path'] = fn_agents_get_company_logos($product['company_id'])[0]['filename'];
         $product['description'] = fn_agents_get_product_description($product['product_id']);
         $product['profit'] = fn_agents_get_plan_product_profit($affiliate_plan, $product);
     }
     unset($product);
+    $products_param = $products[1];
+    $products = $products[0];
+    if(!empty($_REQUEST['sort_profit'])) {
+
+        $products = fn_agents_sort_products_by_profit($products, $_REQUEST['sort_profit']);
+        if(!empty($limit) && !empty($page)) {
+            $i = 0;
+            $from = $limit * ($page - 1);
+            $to = $from + $limit;
+            foreach($products as $pid => $product) {
+                if($i < $from || $i >= $to) {
+                    unset ($products[$pid]);
+                }
+            }
+        }
+    }
+
+
 
     $pagination = fn_agents_paginate_products($auth['user_id'], $_REQUEST, $limit, $page);
     $companies = fn_get_companies(null, $auth);
     $view->assign('all_cities', $cities);
     $view->assign('all_products', $all_products[0]);
-    $view->assign('products', $products[0]);
-    $view->assign('products_param', $products[1]);
+    $view->assign('products', $products);
+    $view->assign('products_param', $products_param);
     $view->assign('companies', $companies[0]);
     $view->assign('mode', 'products');
     $view->assign('pagination', $pagination);

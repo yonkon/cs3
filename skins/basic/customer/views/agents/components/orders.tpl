@@ -82,7 +82,7 @@
                 </td>
                 <td colspan="2"><div>{$order.company_data.company_description|default|unescape|truncate:360}</div></td>
                 <td>
-                    {*<span>{$order.product_data.profit}</span><br/>*}
+                    <span>{$order.product_data.profit}</span><br/>
                     <span class="status">{$order.status_description}</span>
                 </td>
             </tr>

@@ -464,6 +464,16 @@ function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_
         );
     }
 
+
+
+//    $profit_field = db_process("IF(products.id = ?i,
+//                            IF()
+//                            (products.price*?f),
+//                            IF(products.main_category IN (?n),
+//                               (products.price*?f),
+//                               (products.price*?f)
+//                              )
+//                            )");
     // Define sort fields
     $sortings = array (
         'code' => 'products.product_code',
@@ -1183,7 +1193,7 @@ function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_
         $limit = fn_paginate($params['page'], $params['items_per_page']);
     }
 
-    if (!empty($params['limit']) ) {
+    if (empty($params['sort_profit']) && !empty($params['limit']) ) {
         $limit = 'LIMIT ';
         if(!empty($params['page'])) {
             $limit .= ($params['page'] - 1) * $params['limit'] . ',' . $params['limit'];
@@ -1602,6 +1612,7 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
 
     $agent_orders = db_get_array($query_string);
     $status_descriptions = array();
+    $agent_plan = fn_get_affiliate_plan_data_by_partner_id($user_id);
     foreach ($agent_orders as &$order) {
         $order['product_data'] = unserialize($order['extra']);
         $order['product_data']['product_id'] = $order['product_id'];
@@ -1615,6 +1626,7 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
             $status_descriptions[$order['status']] = $status_descriptions[$order['status']][0]['description'];
         }
         $order['status_description'] = $status_descriptions[$order['status']];
+        $order['product_data']['profit'] = fn_agents_get_plan_product_profit($agent_plan, $order['product_data']);
 
     }
 
@@ -2060,7 +2072,49 @@ function fn_agents_prepare_pagination_count_params(&$count_params) {
 }
 
 function fn_agents_get_plan_product_profit($plan, $product) {
-    return rand(0, 100000);
+    $price = $product['price'];
+    $p_id = $product['product_id'];
+    $c_id = $product['main_category'];
+    $p_ids = array_keys($plan['product_ids']);
+    $c_ids = array_keys($plan['category_ids']);
+    $profit = 0;
+    if (in_array($p_id, $p_ids) ) {
+        $commision = $plan['product_ids'][$p_id];
+        if($commision['value_type'] == 'P') {
+            $profit = $price * $commision['value'] / 100;
+        } elseif ($commision['value_type'] == 'A') {
+            $profit = $commision['value'];
+        }
+    } elseif (in_array($c_id, $c_ids) ) {
+        $commision = $plan['category_ids'][$c_id];
+        if($commision['value_type'] == 'P') {
+            $profit = $price * $commision['value'] / 100 ;
+        } elseif ($commision['value_type'] == 'A') {
+            $profit = $commision['value'];
+        }
+    } elseif (  !empty($plan['commissions'][0]) ) {
+        $profit = $price * $plan['commissions'][0] / 100 ;
+    }
+    return $profit;
+}
+
+function fn_agents_sort_products_by_profit($products, $order) {
+    $profit_mapped_products = array();
+    foreach ($products as $product) {
+        $profit_mapped_products[$product['profit']][$product['product_id']] = $product;
+    }
+    if($order == 'asc') {
+        ksort($profit_mapped_products);
+    } elseif ($order == 'desc') {
+        krsort($profit_mapped_products);
+    }
+    $sorted_products = array();
+    foreach($profit_mapped_products as $product_profit_group) {
+        foreach($product_profit_group as $pid => $product) {
+            $sorted_products[$pid] = $product;
+        }
+    }
+    return $sorted_products;
 }
 
 //function fn_agents_get_company_logos() {
