@@ -167,11 +167,11 @@
                             $p.html(sh.shipping_description);
                         }
                     }
-
+                    set_map_coords(gmap);
                 };
                 ajax_get_data(url, data, callback);
             }
-            set_map_coords(gmap);
+
         });
     });
 </script>

@@ -26,11 +26,11 @@
             <option {if !empty($client.sort_price) && $client.sort_price == 'asc'}selected="selected" {/if}>asc</option>
             <option{if !empty($client.sort_price) && $client.sort_price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
-        {*{$lang.profit} <select style="width: 70px;" name="sort_profit">*}
-            {*<option></option>*}
-            {*<option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>*}
-            {*<option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>*}
-        {*</select>*}
+        {$lang.profit} <select style="width: 70px;" name="sort_profit">
+            <option></option>
+            <option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>
+            <option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>
+        </select>
         {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city" id="client_city">
             <option value="">- {$lang.select_city} -</option>
             {foreach from=$all_cities item="city" key="code"}
@@ -79,7 +79,7 @@
                         <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
                         <td id="company_desc" colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
                         <td id="add_to_save">
-                            {*<span>{$product.profit}</span><br>*}
+                            <span>{$product.profit|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span><br>
                             <button id="order_save_submit_{$product.product_id}"
                                     class="big green button"
                                     onclick="save_order({$product.product_id});">
@@ -104,7 +104,9 @@
         var base_amount = $input.val();
         $input.val(parseInt(base_amount) + amount);
         var base_cost = parseInt($cost.text());
-        $cost.text(base_cost + amount*price);
+        $cost.text(base_cost + amount*price)
+        event.preventDefault();
+        return false;
     }
 
     function save_order(product_id) {

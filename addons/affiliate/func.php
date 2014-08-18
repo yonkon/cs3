@@ -1518,8 +1518,11 @@ function  fn_affiliate_get_feedback_data(&$fdata)
 
 /** [/HOOKS] **/
 
-function fn_agents_get_company_logos() {
+function fn_agents_get_company_logos($company_id = null) {
     $query = db_process('SELECT * FROM ?:companies WHERE 1');
+    if(!empty($company_id) ) {
+        $query .= db_process(' AND company_id = ?i', $company_id);
+    }
     $companies = db_get_array($query);
     $logos = array();
     foreach($companies as $company) {
