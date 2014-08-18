@@ -371,10 +371,10 @@
 {** /Coupons **}
 
 {/if}
-<div id="upload_file">
+<div class="form-field">
         <input type="hidden" name="MAX_FILE_SIZE" value="300000" />
-        <input type="file" name="application" title="{$lang.upload_file}">
-        </div>
+      <label>Логотип плана:  </label><input type="file" name="application" title="{$lang.upload_file}">
+</div>
 <div class="buttons-container buttons-bg">
 
 	{capture name="tools_list"}

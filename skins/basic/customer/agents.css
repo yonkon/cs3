@@ -215,7 +215,7 @@ ul.hr li {
     /*margin-left: 35%;*/
     margin: 0 auto;
     display: block;
-    width: 20%;
+    width: 30%;
 }
 
 #product_image{
@@ -438,4 +438,42 @@ ul.hr li {
     color: #e0ffe0;
     font-family: "Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, "AppleGothic", sans-serif;
     text-align: center;
+}
+
+.company_image {
+    max-width: 100px;
+    max-height: 70px;
+}
+
+.profit {
+    font-size: 12px;
+}
+
+.product-count-buttons{
+    width: 12pt;
+    text-align: center;
+    line-height: 6pt;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+
+.plus_minus{
+    background: dimgray;
+    width: 10pt;
+    display: inline-block;
+    height: 5pt;
+    vertical-align: bottom;
+    padding: 2px 0;
+    font-size: 10pt;
+    color: white !important;
+    margin: 1px 0 0 0;
+}
+
+.shipping {
+    margin: 0 auto;
+    width: 120px;
+}
+
+.shipping-img {
+    width: 90px;
 }

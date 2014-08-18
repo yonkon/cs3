@@ -62,8 +62,8 @@
                         </td>
                         <td id="product_buy">
                             <div class="product-count-buttons">
-                                <a href="#" class="increase" onclick="increase_count({$product.product_id}, 1, {$product.price});">+</a>
-                                <a href="#" class="decrease" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
+                                <a href="#" class="increase plus_minus" onclick="increase_count({$product.product_id}, 1, {$product.price});">+</a>
+                                <a href="#" class="decrease plus_minus" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
                                 <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
                             </div>
                             {assign var="price_id" value='price_'|cat:$product.product_id}
@@ -76,10 +76,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img src="{$product.company.image_path}"></a>{/if}</td>
+                        <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img class="company_image" src="{$product.company.image_path}"></a>{/if}</td>
                         <td id="company_desc" colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
                         <td id="add_to_save">
-                            <span>{$product.profit|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span><br>
+                            <span>{$lang.profit} {$product.profit|floatval|format_price:$currencies.$secondary_currency:$price_id:"profit":true}</span><br>
                             <button id="order_save_submit_{$product.product_id}"
                                     class="big green button"
                                     onclick="save_order({$product.product_id});">
