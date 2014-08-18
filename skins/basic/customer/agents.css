@@ -150,9 +150,10 @@ ul.hr li {
     width: 100%;
     min-height: 500px;
 }
-#footer_office{
-    /*background-color: lawngreen;*/
-    margin-left: 40%;
+.footer_office{
+    margin: 0 auto;
+    width: 300px;
+
 }
 #social_office {
     margin-left: 5%;
@@ -476,4 +477,8 @@ ul.hr li {
 
 .shipping-img {
     width: 90px;
+}
+
+.padding10px {
+    padding: 10px;
 }

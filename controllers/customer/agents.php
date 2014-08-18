@@ -416,6 +416,7 @@ elseif ($mode == 'collegues') {
     $view->assign('pagination', $pagination);
     $view->assign('client', $_REQUEST );
 }
+
 elseif ($mode == 'report') {
         $payout_types = Registry::get('payout_types');
 
@@ -772,5 +773,9 @@ elseif ($mode == 'ajax_get_products') {
     $ajaxResult = fn_agents_prepare_ajax_options($products, 'product_id', 'product');
     echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
     die();
+}
+elseif ($mode == 'all_plans') {
+    $plans = fn_agents_get_plans_logos();
+    $view->assign('plans', $plans);
 }
 

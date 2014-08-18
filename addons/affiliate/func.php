@@ -1571,7 +1571,8 @@ function fn_agents_get_plans_logos($lang_code = CART_LANGUAGE) {
         $logos[] =  array(
             'filename' => $plan['plan_image'],
             'plan_id' => $plan['plan_id'],
-            'plan' => $plan['plan']
+            'plan' => $plan['plan'],
+            'description' => $plan['description']
         );
     }
     return $logos;
