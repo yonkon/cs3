@@ -464,7 +464,13 @@ function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_
         );
     }
 
-
+    $companies_ids = array();
+    if (!empty($params['filter_city'])) {
+        $companies_offices = fn_agents_get_company_offices(null, array('city_id' => $params['filter_city']) );
+        foreach($companies_offices as $c_office) {
+            $companies_ids[$c_office['company_id']] = $c_office['company_id'];
+        }
+    }
 
 //    $profit_field = db_process("IF(products.id = ?i,
 //                            IF()
@@ -927,6 +933,9 @@ function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_
     if (isset($params['client']['company']) && $params['client']['company'] != '') {
         $condition .= db_quote(' AND products.company_id = ?i ', $params['client']['company']);
     }
+    if (!empty ($companies_ids)) {
+        $condition .= db_quote(' AND products.company_id IN (?n) ', $companies_ids);
+    }
     if (isset($params['product_id']) && $params['product_id'] != '') {
         $condition .= db_quote(' AND products.product_id = ?i ', $params['product_id']);
     }
@@ -934,6 +943,8 @@ function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_
     if (isset($params['client']['product']) && $params['client']['product'] != '') {
         $condition .= db_quote(' AND products.product_id = ?i ', $params['client']['product']);
     }
+
+
 
 
     if (!empty($params['filter_params'])) {
@@ -1309,6 +1320,10 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
     $amount = $order_data['item_count'];
 
     if ($step == 2) {
+        $locations = fn_agents_get_city_details($order_data['client']['city']);
+        foreach(array('city', 'region' , 'address', 'country') as $field) {
+            $order_data['client'][$field] = $locations[$field];
+        }
         $client_id = fn_agents_register_customer($order_data['client']);
         $client = fn_agents_get_clients($auth['user_id'], array('where' => array('profile_id' => $client_id) ) );
         $client = $client[0];
@@ -1383,7 +1398,13 @@ function fn_agents_register_customer ($customer_data) {
 }
 
 function fn_agents_new_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
-    fn_place_order($cart, $auth, $action, $parent_order_id);
+    $order_id =fn_place_order($cart, $auth, $action, $parent_order_id);
+    if(!empty($order_id) && !empty($order_id[0])) {
+        fn_set_notification('N', fn_get_lang_var('congratulations'), fn_get_lang_var('text_order_saved_successfully'));
+    } else {
+        fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('text_order_placed_error'));
+
+    }
 }
 function fn_agents_save_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
     $order_id = fn_place_order($cart, $auth, $action, $parent_order_id);
@@ -1960,6 +1981,28 @@ function fn_agents_process_order_address($order_fields, $params = array(), $lang
     $locations = $locations[0];
     $locations['address'] = $address;
     return $locations;
+}
+
+function fn_agents_get_city_details($city_id, $lang = CART_LANGUAGE) {
+    $query = db_process(
+        'SELECT
+            c.CityId as city_id,
+            rl.parent_id as region_id,
+            cnl.parent_id as country_id,
+            cl.name as city,
+            rl.name as region,
+            cnl.Country as country
+        FROM Cities c
+        LEFT JOIN Cities_lang cl ON cl.parent_id = c.CityId
+        LEFT JOIN Regions_lang rl ON rl.parent_id = c.RegionID
+        LEFT JOIN Countries_lang cnl ON cnl.parent_id = c.CountryID
+        WHERE c.CityId = ?i
+            AND cl.lang_id = ?s
+            AND rl.lang_id = ?s
+            AND cnl.lang_id = ?s',
+        array($city_id, $lang, $lang, $lang) );
+    $details = db_get_array($query);
+    return $details[0];
 }
 
 function fn_agents_locations_to_address($locations, $with_address = false) {

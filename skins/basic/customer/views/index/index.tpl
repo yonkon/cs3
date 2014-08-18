@@ -7,10 +7,12 @@
         <div id="content_company" class="h2">{$lang.Companies_which_you_can_collaborate}</div>
         <div id="company_slaider">
             {foreach from=$company_slider.images item='image'}
+                {if !empty($image.filename)}
                 <div>
                     <img src="{$image.filename}" alt="{$image.company}">
                     {*<span class="company_name">{$image.company}</span>*}
                 </div>
+                {/if}
             {/foreach}
         </div>
         <div id="content_registration">
@@ -36,10 +38,12 @@
         <div class="h2 clear-both padding-top-2em">{$lang.affiliate_program}</div>
         <div id="content_affiliate_program">
             {foreach from=$plan_slider.images item='image'}
+                {if !empty($image.filename)}
                 <div>
                     <img src="{$image.filename}">
                     <span class="plan_name">{$image.plan}</span>
                 </div>
+                {/if}
             {/foreach}
         </div>
         <div><button id="see_all" class="big green button center-block block">{$lang.view_all}</button></div>

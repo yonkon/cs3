@@ -757,9 +757,9 @@ function fn_place_order(&$cart, &$auth, $action = '', $parent_order_id = 0)
 				array_unshift($child_orders, $order_id);
 				$cart['processed_order_id'] = $child_orders;
 			}
-			
 
-			return array($order_id, $action != 'save');
+
+            return array($order_id, $action != 'save');
 		}
 	}
 

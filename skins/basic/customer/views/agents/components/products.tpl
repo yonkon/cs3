@@ -17,24 +17,24 @@
 <br>
         {$lang.Sort_by_name} <select style="width: 70px;" name="sort_name">
             <option></option>
-            <option {if !empty($client.sort_name) && $client.sort_name == 'asc'}selected="selected" {/if}>asc</option>
-            <option {if !empty($client.sort_name) && $client.sort_name == 'desc'}selected="selected" {/if}>desc</option>
+            <option {if !empty($request.sort_name) && $request.sort_name == 'asc'}selected="selected" {/if}>asc</option>
+            <option {if !empty($request.sort_name) && $request.sort_name == 'desc'}selected="selected" {/if}>desc</option>
         </select>
 
         {$lang.price} <select style="width: 70px;" name="sort_price">
             <option></option>
-            <option {if !empty($client.sort_price) && $client.sort_price == 'asc'}selected="selected" {/if}>asc</option>
-            <option{if !empty($client.sort_price) && $client.sort_price == 'desc'}selected="selected" {/if}>desc</option>
+            <option {if !empty($request.sort_price) && $request.sort_price == 'asc'}selected="selected" {/if}>asc</option>
+            <option{if !empty($request.sort_price) && $request.sort_price == 'desc'}selected="selected" {/if}>desc</option>
         </select>
         {$lang.profit} <select style="width: 70px;" name="sort_profit">
             <option></option>
-            <option {if !empty($client.sort_profit) && $client.sort_profit == 'asc'}selected="selected" {/if}>asc</option>
-            <option {if !empty($client.sort_profit) && $client.sort_profit == 'desc'}selected="selected" {/if}>desc</option>
+            <option {if !empty($request.sort_profit) && $request.sort_profit == 'asc'}selected="selected" {/if}>asc</option>
+            <option {if !empty($request.sort_profit) && $request.sort_profit == 'desc'}selected="selected" {/if}>desc</option>
         </select>
         {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city" id="client_city">
             <option value="">- {$lang.select_city} -</option>
             {foreach from=$all_cities item="city" key="code"}
-                <option {if !empty($client.city) && $city.city_id == $client.city}selected="selected"{/if}  value="{$city.city_id}">{$city.city}</option>
+                <option {if !empty($request.filter_city) && $city.CityId == $request.filter_city}selected="selected"{/if}  value="{$city.CityId}">{$city.name}</option>
             {/foreach}
         </select>
         <button
@@ -61,11 +61,12 @@
                             <div class="'product-description">{$product.full_description|unescape|truncate:360}</div>
                         </td>
                         <td id="product_buy">
-                            <div class="product-count-buttons">
-                                <a href="#" class="increase plus_minus" onclick="increase_count({$product.product_id}, 1, {$product.price});">+</a>
-                                <a href="#" class="decrease plus_minus" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>
-                                <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
-                            </div>
+                            {*<div class="product-count-buttons">*}
+                                {*<a href="#" class="increase" onclick="increase_count({$product.product_id}, 1, {$product.price});">+</a>*}
+                                {*<a href="#" class="decrease" onclick="increase_count({$product.product_id}, -1,{$product.price});">-</a>*}
+                            {*</div>*}
+                            <input type="hidden" name="item_count" id="item_{$product.product_id}_count" value='1' >
+
                             {assign var="price_id" value='price_'|cat:$product.product_id}
                             <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span>
                             <div>
@@ -93,22 +94,10 @@
     {/foreach}
 </div>
 
-{literal}
-<script type="text/javascript">
-    function increase_count(product_id, amount, price) {
-        amount = parseInt(amount);
-        price = parseInt(price);
-        var $form = $('#form_'+product_id);
-        var $input = $('#item_' + product_id + '_count');
-        var $cost = $('#sec_price_' + product_id);
-        var base_amount = $input.val();
-        $input.val(parseInt(base_amount) + amount);
-        var base_cost = parseInt($cost.text());
-        $cost.text(base_cost + amount*price)
-        event.preventDefault();
-        return false;
-    }
 
+<script type="text/javascript">
+
+    {literal}
     function save_order(product_id) {
         var $form = $('#form_'+product_id);
         $('input[name=dispatch]', $form).val('agents.order_save');

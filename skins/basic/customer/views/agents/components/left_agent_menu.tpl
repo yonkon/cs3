@@ -1,15 +1,11 @@
-
-<div class="left_agent_menu_section">
-    <div class="left_agent_menu_logo"> {$user_data.logo}</div>
-</div>
-<div class="left_agent_menu_section">
+{*<div class="left_agent_menu_section">
     <ul>
         <li class="left_agent_menu_profile">
             <img src={if $user_data.avatar} "{$user_data.avatar}" {else}"noavatar.gif"{/if} class="avatar-small">
             <a href="{"profiles.update"|fn_url}" rel="nofollow" class="underlined h2 level-0">{$lang.agents_profile}</a>
         </li>
     </ul>
-</div>
+</div>*}
 <div class="left_agent_menu_section">
     <ul>
         <li> <a href="{"agents.office"|fn_url}" rel="nofollow" class="underlined h2 level-0">{$lang.agents_office}</a></li>

@@ -361,6 +361,7 @@ elseif ($mode == 'companies_and_products') {
     $view->assign('mode', 'products');
     $view->assign('pagination', $pagination);
     $view->assign('client', $_REQUEST['client']);
+    $view->assign('request', $_REQUEST);
 
     return array(CONTROLLER_STATUS_OK);
 }
@@ -612,7 +613,6 @@ elseif ($mode == 'order_make') {
     }
     if ($step == 3) {
         fn_agents_process_order($_REQUEST, $step, $auth);
-
     }
     $product = fn_agents_get_products(array('product_id' => $_REQUEST['product_id']));
     $product = $product[0][0];
@@ -666,18 +666,25 @@ elseif ($mode == 'order_save') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'product_info' || $mode == 'company_info') {
-    if (empty ($_REQUEST['product_id'])) {
+    if (empty ($_REQUEST['product_id']) && empty ($_REQUEST['company_id'])) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
-    $product = fn_agents_get_products(array('product_id' => $_REQUEST['product_id'], 'pid' => $_REQUEST['product_id']) );
-    $product = $product[0][0];
-    if(empty ($product)) {
+    if (!empty ($_REQUEST['product_id'])) {
+        $product = fn_agents_get_products(array('product_id' => $_REQUEST['product_id'], 'pid' => $_REQUEST['product_id']) );
+        $product = $product[0][0];
+        if(empty ($product)) {
+            return array(CONTROLLER_STATUS_NO_PAGE);
+        }
+        $product['image']['image_path'] = get_image_full_path($product['image']);
+        $product['description'] = fn_agents_get_product_description($_REQUEST['product_id']);
+        $company = fn_agents_get_company_info($product['company_id']);
+    } else {
+        $product = array();
+        $company = fn_agents_get_company_info($_REQUEST['company_id']);
+    }
+    if(empty($company)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
-
-    $product['image']['image_path'] = get_image_full_path($product['image']);
-    $product['description'] = fn_agents_get_product_description($_REQUEST['product_id']);
-    $company = fn_agents_get_company_info($product['company_id']);
     $company['image_path'] = get_image_full_path($company);
     $offices = fn_agents_get_company_offices_with_shippings($company['company_id']);
     $cities = fn_agents_extract_cities_from_offices($offices);

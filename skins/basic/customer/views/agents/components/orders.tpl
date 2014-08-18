@@ -1,7 +1,7 @@
 <div class="agents-filters">
     <form method="post" id="filters">
     <input type="hidden" name="dispatch" value="agents.orders">
-    <input type="hidden" name="page" id=="page" value="{$pagination.page|default:1}">
+    <input type="hidden" name="page" id="page" value="{$pagination.page|default:1}">
 
         <select style="width: 250px;margin: 8px;" id="company" name="where[company_id]">
         <option value="">- {$lang.select_company} -</option>

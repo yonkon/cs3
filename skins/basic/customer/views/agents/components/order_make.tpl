@@ -8,7 +8,7 @@
         <form method="post">
         <input type="hidden" name="step" value="{$step}">
         <input type="hidden" name="client[affiliate_id]" value="{$auth.user_id}">
-        <input type="hidden" name="item_count" value="{$product.amount}">
+        <input type="hidden" name="item_count" value="{$product.amount|default:1}">
         <div>
             <label class="client_filds_add_product_label" for="client_fio">{$lang.FIO}</label>
             <input class="client_filds_add_product" id="client_fio" name="client[fio]" value="{$client.fio }">

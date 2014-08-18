@@ -34,7 +34,7 @@
 
     </div>
     <div id="order_make_bottom">
-        <button id="button_product" onclick="window.history.back();">{$lang.Edit}</button>      <button id="button_product" type="submit">{$lang.Send}</button>
+        <button id="button_product" type="button" onclick="window.history.go(-1);">{$lang.Edit}</button>      <button id="button_product" type="submit">{$lang.Send}</button>
     </div>
     </form>
 </div>
