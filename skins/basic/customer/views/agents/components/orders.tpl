@@ -88,9 +88,9 @@
             </tr>
             <tr>
                 <td>
-                    <p class="underlined">{$order.b_lastname} {$order.b_firstname} {$order.b_midname}</p>
-                    <p class="underlined">{$order.b_email}<br/> {$order.b_phone}</p>
-                    <p class="underlined">{$order.registration_date|date_format}</p>
+                    <p class="underlined">{$lang.FIO_client}: {$order.b_lastname} {$order.b_firstname} {$order.b_midname}</p>
+                    <p class="underlined">{$lang.mail}: {$order.b_email}<br/> {$order.b_phone}</p>
+                    <p class="underlined">{$lang.registration_date}: {$order.registration_date|date_format}</p>
                 </td>
                 <td colspan="2">
                     {$lang.Comment}:

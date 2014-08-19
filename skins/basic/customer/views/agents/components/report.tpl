@@ -1,7 +1,7 @@
-{include file="addons/affiliate/views/aff_statistics/components/stat_search_form.tpl"}
+{include file="views/agents/components/stat_search_form.tpl"}
 
 <p><a onclick="$('#general_statistics').toggle(); return false;"><strong>{$lang.general_statistics} &#187;</strong></a></p>
-
+F
 <div id="general_statistics" class="hidden">
 
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
