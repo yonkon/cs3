@@ -1,7 +1,6 @@
-{include file="addons/affiliate/views/aff_statistics/components/stat_search_form.tpl"}
+{include file="views/agents/components/stat_search_form.tpl"}
 
 <p><a onclick="$('#general_statistics').toggle(); return false;"><strong>{$lang.general_statistics} &#187;</strong></a></p>
-
 <div id="general_statistics" class="hidden">
 
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
@@ -43,16 +42,16 @@
         </tr>
     </table>
 
-    {if $additional_stats}
-        <table cellpadding="2" cellspacing="1" border="0" class="margin-top">
-            {foreach from=$additional_stats key="a_stats_name" item="a_stats_value"}
-                <tr>
-                    <td><strong>{$lang.$a_stats_name}</strong>:</td>
-                    <td>{$a_stats_value}</td>
-                </tr>
-            {/foreach}
-        </table>
-    {/if}
+    {*{if $additional_stats}*}
+        {*<table cellpadding="2" cellspacing="1" border="0" class="margin-top">*}
+            {*{foreach from=$additional_stats key="a_stats_name" item="a_stats_value"}*}
+                {*<tr>*}
+                    {*<td><strong>{$lang.$a_stats_name}</strong>:</td>*}
+                    {*<td>{$a_stats_value}</td>*}
+                {*</tr>*}
+            {*{/foreach}*}
+        {*</table>*}
+    {*{/if}*}
 
 </div>
 
