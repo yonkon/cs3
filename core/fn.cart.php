@@ -3656,7 +3656,7 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
 			if (empty($key)) {
 				continue;
 			}
-			if (empty($data['amount'])) {
+			if (empty($data['amount']) && $data['amount'] !== 0) {
 				continue;
 			}
 

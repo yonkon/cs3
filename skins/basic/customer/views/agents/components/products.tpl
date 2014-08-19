@@ -55,7 +55,7 @@
             <div class="product_div">
                 <table>
                     <tr>
-                        <td id="product_image"> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="/images/detailed/1/{$product.image.image_path}"></a></td>
+                        <td id="product_image"> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="{$product.image.image_path}"></a></td>
                         <td id="product_name" colspan="2">
                             <h2><a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
                             <div class="'product-description">{$product.full_description|unescape|truncate:360}</div>

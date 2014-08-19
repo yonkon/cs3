@@ -1,5 +1,5 @@
-<div class="pagination-div">
-{if !empty($pagination.pages) }
+{if !empty($pagination.pages) && $pagination.total_pages > 1  }
+    <div class="pagination-div">
     {if empty($pagination.page)}{assign var='pagination.page' value=1}{/if}
     {if $pagination.page != 1}
         <a class="pagination previous" href="{$pagination.url}&page={$pagination.page-1}">{$lang.Back}</a>
@@ -16,7 +16,6 @@
         <a class="pagination next" href="{$pagination.url}&page={$pagination.page+1}">{$lang.Next}</a>
     {/if}
 
-{/if}
 </div>
 
 {literal}
@@ -43,3 +42,4 @@
 
 </script>
 {/literal}
+{/if}

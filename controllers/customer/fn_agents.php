@@ -1,6 +1,7 @@
 <?php
 
 define('PATH_NO_IMAGE',  '/images/no_image.gif');
+const ORDER_STATUS_SAVED = 'S';
 
 /**
  * Requests usergroup for customer
@@ -1354,6 +1355,40 @@ function fn_agents_register_customer ($customer_data) {
     $user_id = $customer_data['affiliate_id'];
     $firstname = explode(' ', $customer_data['fio'])[1];
     $lastname = explode(' ', $customer_data['fio'])[0];
+    $customer_data['office'] = fn_agents_get_company_offices(null, array('office_id' => $customer_data['office']));
+    $customer_data['office'] = $customer_data['office'][0];
+    $customer_data['address'] = $customer_data['office']['address'];
+    $existing_client = db_get_array(
+        db_process(
+'SELECT * FROM ?:user_profiles WHERE
+    profile_name = ?s
+    AND profile_type = "S"
+    AND b_phone = ?s
+    AND b_email = ?s
+    AND b_country = ?s
+    AND b_state = ?s
+    AND b_city = ?s
+    AND b_address = ?s
+    AND user_id = ?i',
+        array(
+            $customer_data['fio'],
+            $customer_data['phone'],
+            $customer_data['email'],
+            $customer_data['country'],
+            $customer_data['region'],
+            $customer_data['city'],
+            $customer_data['address'],
+            $user_id,
+        )
+    ));
+    if(is_array($existing_client) && count($existing_client) >= 1 ) {
+        $existing_client = $existing_client[0];
+        if(!empty($customer_data['comment'])) {
+            db_query(db_process('UPDATE ?:user_profiles SET comment = ?s WHERE user_id = ?i AND profile_id = ?i') , array($customer_data['comment'], $existing_client['user_id'], $existing_client['profile_id']) );
+        }
+        return $existing_client['profile_id'];
+    }
+
     $user_data = array(
         'user_id' => $user_id,
         'profile_name' => $customer_data['fio'],
@@ -1374,10 +1409,11 @@ function fn_agents_register_customer ($customer_data) {
         's_state' =>  $customer_data['region'],
         'b_country' =>  $customer_data['country'],
         's_country' =>  $customer_data['country'],
-        'b_address' =>  $customer_data['office'],
+        'b_address' =>  $customer_data['address'],
         's_address' =>  $customer_data['office'],
     );
     fn_set_hook('update_user_profile_pre', $user_id, $user_data, $action);
+
     $user_data['profile_id'] = db_query("INSERT INTO ?:user_profiles ?e", $user_data);
 
     // Add/Update additional fields
@@ -1403,14 +1439,13 @@ function fn_agents_new_order(&$cart, &$auth, $action = '', $parent_order_id = 0)
         fn_set_notification('N', fn_get_lang_var('congratulations'), fn_get_lang_var('text_order_saved_successfully'));
     } else {
         fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('text_order_placed_error'));
-
     }
 }
 function fn_agents_save_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
     $order_id = fn_place_order($cart, $auth, $action, $parent_order_id);
     $order_id = $order_id[0];
     if($order_id) {
-        db_query(db_process('UPDATE ?:orders SET status = "B" WHERE order_id = ?i', array($order_id)) );
+        db_query(db_process('UPDATE ?:orders SET status = "?s" WHERE order_id = ?i', array(ORDER_STATUS_SAVED, $order_id)) );
         db_query(db_process('INSERT INTO ?:orders_saved (`id`, `order_id`, `user_id`) VALUES (NULL, ?i, ?i)', array($order_id, $auth['user_id']) ) );
     }
     return $order_id;
@@ -1584,10 +1619,10 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
             if (!empty ($value) ) {
                 if($field == 'not') {
                     foreach ($value as $not_field => $not_value) {
-                        $where .= db_process("AND $not_field NOT IN (?a)", array($not_value));
+                        $where .= db_process(" AND $not_field NOT IN (?a)", array($not_value));
                     }
                 } else {
-                    $where .= db_process("AND $field IN (?a)", array($value));
+                    $where .= db_process(" AND $field IN (?a)", array($value));
                 }
             }
         }
@@ -1620,7 +1655,7 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
     if (!empty($_params['limit']) ) {
         $limit = 'LIMIT ';
         if(!empty($_params['page'])) {
-            $limit .= $_params['page'] * $_params['limit'] . ',' . $_params['limit'];
+            $limit .= ($_params['page'] - 1) * $_params['limit'] . ',' . $_params['limit'];
         } else {
             $limit .= $_params['limit'];
         }
@@ -1740,13 +1775,23 @@ function fn_restore_processed_user_password(&$destination, &$source)
 }
 
 function get_image_full_path($image, $company_id=0) {
+    $thumbnails_name = str_replace('_02.', '_01.', $image['image_path']);
+    if (!empty($image['image_id'])) {
+        $sizes = array('150, 160, 320, 85, 50, 40, 30');
+        foreach ($sizes as $size) {
+            if(is_file(DIR_ROOT . "/images/thumbnails/$company_id/$size/$size/" . $thumbnails_name)) {
+                return "/images/thumbnails/$company_id/$size/$size/" . $thumbnails_name;
+            }
+        }
+        if (is_file(DIR_ROOT . "/images/thumbnails/$company_id/".$image['image_x']. '/' . $image['image_y'] .'/' . $thumbnails_name)) {
+            return "/images/thumbnails/$company_id/".$image['image_x']. '/' . $image['image_y'] .'/' . $thumbnails_name;
+        }
+    }
     if(!empty($image['detailed_id']) ) {
         return "/images/detailed/$company_id/".$image['image_path'];
-    } elseif (!empty($image['image_id'])) {
-        return "/images/thumbnails/$company_id/".$image['image_x']. '/' . $image['image_y'] .'/' . $image['image_path'];
-    } else {
-        return PATH_NO_IMAGE;
     }
+    return PATH_NO_IMAGE;
+
 }
 
 function fn_agents_assign_client_to_cart($client, &$cart) {

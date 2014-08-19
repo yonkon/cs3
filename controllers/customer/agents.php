@@ -446,7 +446,7 @@ elseif ($mode == 'report') {
             $statistic_search_data = array();
         }
 
-        $statistic_conditions = '1';
+        $statistic_conditions = 'action="sale" AND approved = "Y" ';
         if (empty($_REQUEST['statistic_search'])) {
             $statistic_search = array();
         } else {
@@ -546,9 +546,65 @@ elseif ($mode == 'report') {
 
 
 }
+elseif ($mode == 'report_export') {
+// Подключаем класс для работы с excel
+    require_once(DIR_LIB.'PHPExcel.php');
+// Подключаем класс для вывода данных в формате excel
+    require_once('PHPExcel/Writer/Excel5.php');
+
+// Создаем объект класса PHPExcel
+    $xls = new PHPExcel();
+// Устанавливаем индекс активного листа
+    $xls->setActiveSheetIndex(0);
+// Получаем активный лист
+    $sheet = $xls->getActiveSheet();
+// Подписываем лист
+    $sheet->setTitle('Таблица умножения');
+
+// Вставляем текст в ячейку A1
+    $sheet->setCellValue("A1", 'Таблица умножения');
+    $sheet->getStyle('A1')->getFill()->setFillType(
+        PHPExcel_Style_Fill::FILL_SOLID);
+    $sheet->getStyle('A1')->getFill()->getStartColor()->setRGB('EEEEEE');
+
+// Объединяем ячейки
+    $sheet->mergeCells('A1:H1');
+
+// Выравнивание текста
+    $sheet->getStyle('A1')->getAlignment()->setHorizontal(
+        PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+    for ($i = 2; $i < 10; $i++) {
+        for ($j = 2; $j < 10; $j++) {
+            // Выводим таблицу умножения
+            $sheet->setCellValueByColumnAndRow(
+                $i - 2,
+                $j,
+                $i . "x" .$j . "=" . ($i*$j));
+            // Применяем выравнивание
+            $sheet->getStyleByColumnAndRow($i - 2, $j)->getAlignment()->
+                setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        }
+    }
+
+
+    // Выводим HTTP-заголовки
+    header ( "Expires: Mon, 1 Apr 1974 05:00:00 GMT" );
+    header ( "Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT" );
+    header ( "Cache-Control: no-cache, must-revalidate" );
+    header ( "Pragma: no-cache" );
+    header ( "Content-type: application/vnd.ms-excel" );
+    header ( "Content-Disposition: attachment; filename=matrix.xls" );
+
+// Выводим содержимое файла
+    $objWriter = new PHPExcel_Writer_Excel5($xls);
+    $objWriter->save('php://output');
+    die();
+}
+
 elseif (in_array($mode, array('orders', 'orders_saved', 'orders_active', 'orders_closed'  ))  ) {
     if ($mode != 'orders_saved') {
-        $_REQUEST['where']['not'] = array ('status' => 'B' );
+        $_REQUEST['where']['not'] = array ('status' => ORDER_STATUS_SAVED );
     }
    switch ($mode) {
        case 'orders' :
@@ -651,9 +707,9 @@ elseif ($mode == 'order_save') {
 
     $product_data = array($_REQUEST['product_id'] => array(
         'product_id' => $_REQUEST['product_id'],
-        'amount' => (empty($_REQUEST['item_count']) ? 1 : $_REQUEST['item_count']  )
+        'amount' => 1
     ));
-
+    fn_update_product_amount($product_data['product_id'], 1, null, '+');
     fn_add_product_to_cart($product_data, $cart, $auth);
     fn_save_cart_content($cart, $auth['user_id']);
     fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);

@@ -6,10 +6,10 @@
 
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
         <tr>
-            <th width="40%">{$lang.action}</th>
-            <th class="right" width="20%">count</th>
-            <th class="right" width="20%">sum</th>
-            <th class="right" width="20%">avg</th>
+            {*<th width="40%">{$lang.action}</th>*}
+            <th class="right" width="20%">{$lang.count}</th>
+            <th class="right" width="20%">{$lang.sum}</th>
+            <th class="right" width="20%">{$lang.avg}</th>
         </tr>
         {if $general_stats}
             {foreach from=$payout_types key="payout_id" item="a"}
@@ -17,14 +17,14 @@
                 {assign var="payout_var" value=$a.title}
                 {if $payout.count}
                     <tr {cycle values=" ,class=\"table-row\""}>
-                        <td><strong>{$lang.$payout_var}</strong></td>
+                        {*<td><strong>{$lang.$payout_var}</strong></td>*}
                         <td class="right">{$payout.count|default:"0"}</td>
                         <td class="right">{include file="common_templates/price.tpl" value=$payout.sum|round:2}</td>
                         <td class="right">{include file="common_templates/price.tpl" value=$payout.avg|round:2}</td>
                     </tr>
                 {/if}
             {/foreach}
-            {if $general_stats.total}
+            {if false && $general_stats.total}
                 {assign var="payout" value=$general_stats.total}
                 <tr>
                     <td><strong>{$lang.total}</strong></td>
@@ -67,14 +67,17 @@
 {if $settings.DHTML.customer_ajax_based_pagination == "Y"}
     {assign var="ajax_class" value="cm-ajax"}
 {/if}
-
+<form type="post" >
+    <input type="hidden" name="dispatch" value="agents.report_export">
+    <button class="big green button" type="submit">{$lang.export}</button>
+</form>
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
     <tr>
-        <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=action&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.action}</a>{if $sort_by == "action"}{$sort_sign}{/if}</th>
+        {*<th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=action&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.action}</a>{if $sort_by == "action"}{$sort_sign}{/if}</th>*}
         <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=date&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.date}</a>{if $sort_by == "date"}{$sort_sign}{/if}</th>
         <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.cost}</a>{if $sort_by == "cost"}{$sort_sign}{/if}</th>
         <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=customer&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.customer}</a>{if $sort_by == "customer"}{$sort_sign}{/if}</th>
-        <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=banner&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.banner}</a>{if $sort_by == "banner"}{$sort_sign}{/if}</th>
+        {*<th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=banner&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.banner}</a>{if $sort_by == "banner"}{$sort_sign}{/if}</th>*}
         <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=status&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.status}</a>{if $sort_by == "status"}{$sort_sign}{/if}</th>
         <th width="1%" class="center">
             <img src="{$images_dir}/plus_minus.gif" width="13" height="12" border="0" name="plus_minus" id="on_st" alt="{$lang.expand_collapse_list}" title="{$lang.expand_collapse_list}" class="hand cm-combinations-commissions" /><img src="{$images_dir}/minus_plus.gif" width="13" height="12" border="0" name="minus_plus" id="off_st" alt="{$lang.expand_collapse_list}" title="{$lang.expand_collapse_list}" class="hand hidden cm-combinations-commissions" /></th>
@@ -83,15 +86,15 @@
         {cycle values=",table-row" assign="row_class_name"}
         {include file="addons/affiliate/views/aff_statistics/components/additional_data.tpl" data=$row_stats.data assign="additional_data"}
         <tr class="{$row_class_name}">
-            <td>
-                <strong>{$row_stats.title}{$action_title}</strong>
-            </td>
+            {*<td>*}
+                {*<strong>{$row_stats.title}{$action_title}</strong>*}
+            {*</td>*}
             <td>{$row_stats.date|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</td>
             <td class="right">{include file="common_templates/price.tpl" value=$row_stats.amount|round:2}{$action_amount}</td>
             <td>
                 {$row_stats.customer_lastname} {$row_stats.customer_firstname}
                 {if $row_stats.ip}<p><em>({$row_stats.ip})</em></p>{/if}</td>
-            <td>{if $row_stats.banner}<a href="{"banners_manager.update?banner_type=`$row_stats.banner_type`&amp;banner_id=`$row_stats.banner_id`"|fn_url}">{$row_stats.banner}</a>{else}&nbsp;&nbsp;---&nbsp;{/if}</td>
+            {*<td>{if $row_stats.banner}<a href="{"banners_manager.update?banner_type=`$row_stats.banner_type`&amp;banner_id=`$row_stats.banner_id`"|fn_url}">{$row_stats.banner}</a>{else}&nbsp;&nbsp;---&nbsp;{/if}</td>*}
             <td>{if $row_stats.payout_id}{$lang.paidup}{elseif $row_stats.approved=="Y"}{$lang.approved}{else}&nbsp;&nbsp;---&nbsp;{/if}</td>
             <td class="center nowrap">
                 {if $row_stats.extra_data || $additional_data|trim}

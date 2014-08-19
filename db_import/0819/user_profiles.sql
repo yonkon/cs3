@@ -1,0 +1,2 @@
+ALTER TABLE `cscart_user_profiles` CHANGE `b_country` `b_country` VARCHAR(80) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '';
+ALTER TABLE `cscart_user_profiles` CHANGE `s_country` `s_country` VARCHAR(80) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '';
