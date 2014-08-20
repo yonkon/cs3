@@ -542,15 +542,15 @@ elseif ($mode == 'report') {
 
         $order_status_descr = fn_get_statuses(STATUSES_ORDER, true, true, true);
         $view->assign('order_status_descr', $order_status_descr);
-        $view->assign('mode', 'report');
+
 
 
 }
 elseif ($mode == 'report_export') {
 // Подключаем класс для работы с excel
-    require_once(DIR_LIB.'PHPExcel.php');
+    require_once(DIR_LIB . 'phpexcel/Classes/PHPExcel.php');
 // Подключаем класс для вывода данных в формате excel
-    require_once('PHPExcel/Writer/Excel5.php');
+    require_once(DIR_LIB . 'phpexcel/Classes/PHPExcel/Writer/Excel5.php');
 
 // Создаем объект класса PHPExcel
     $xls = new PHPExcel();
