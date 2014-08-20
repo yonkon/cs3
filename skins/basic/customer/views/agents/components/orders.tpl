@@ -70,6 +70,11 @@
                 </td>
                 <td>
                     <span id="item_{$order.product_data.product_id}_count_text" class="price">{$order.product_data.base_price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span>
+                    {if $mode == 'orders_saved'}
+                        <div>
+                            <button class="green button" type="submit" name="submit" value="submit">{$lang.checkout}</button>
+                        </div>
+                    {/if}
                     <div class="shipping">{if true || $order.product_data.free_shipping || $order.product_data.edp_shipping || $order.product_data.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/images/shipping.png">{/if}
                     </div>
                 </td>
@@ -86,6 +91,7 @@
                     <span class="status">{$order.status_description}</span>
                 </td>
             </tr>
+            {if $mode != 'orders_saved'}
             <tr>
                 <td>
                     <p class="underlined">{$lang.FIO_client}: {$order.b_lastname} {$order.b_firstname} {$order.b_midname}</p>
@@ -106,6 +112,7 @@
                     <button class="green button" type="submit" name="submit" value="submit">{$lang.Send}</button>
                 </td>
             </tr>
+            {/if}
         </table>
     </div>
 </form>

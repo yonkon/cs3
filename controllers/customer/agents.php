@@ -559,10 +559,11 @@ elseif ($mode == 'report_export') {
 // Получаем активный лист
     $sheet = $xls->getActiveSheet();
 // Подписываем лист
-    $sheet->setTitle('Таблица умножения');
+    $report_title = fn_get_lang_var('report_for_agent') . " #" . $auth['user_id'] . ' ' . $auth['lastname'] . ' '. $auth['firstname'] . ' ';
+    $sheet->setTitle($report_title);
 
 // Вставляем текст в ячейку A1
-    $sheet->setCellValue("A1", 'Таблица умножения');
+    $sheet->setCellValue("A1", $report_title);
     $sheet->getStyle('A1')->getFill()->setFillType(
         PHPExcel_Style_Fill::FILL_SOLID);
     $sheet->getStyle('A1')->getFill()->getStartColor()->setRGB('EEEEEE');
@@ -594,7 +595,7 @@ elseif ($mode == 'report_export') {
     header ( "Cache-Control: no-cache, must-revalidate" );
     header ( "Pragma: no-cache" );
     header ( "Content-type: application/vnd.ms-excel" );
-    header ( "Content-Disposition: attachment; filename=matrix.xls" );
+    header ( "Content-Disposition: attachment; filename=report.xls" );
 
 // Выводим содержимое файла
     $objWriter = new PHPExcel_Writer_Excel5($xls);
@@ -605,6 +606,8 @@ elseif ($mode == 'report_export') {
 elseif (in_array($mode, array('orders', 'orders_saved', 'orders_active', 'orders_closed'  ))  ) {
     if ($mode != 'orders_saved') {
         $_REQUEST['where']['not'] = array ('status' => ORDER_STATUS_SAVED );
+    } else {
+        $view->assign('mode', $mode);
     }
    switch ($mode) {
        case 'orders' :
@@ -670,6 +673,11 @@ elseif ($mode == 'order_make') {
     }
     if ($step == 3) {
         fn_agents_process_order($_REQUEST, $step, $auth);
+    }
+    if(!empty($_REQUEST['order_id'])) {
+        $order = fn_agents_get_orders($auth['user_id'], array('where' => array('order_id' => $_REQUEST['order_id'])));
+        $order = $order[0];
+        $_REQUEST['product_id'] = $order['product_id'];
     }
     $product = fn_agents_get_products(array('product_id' => $_REQUEST['product_id']));
     $product = $product[0][0];
@@ -738,10 +746,11 @@ elseif ($mode == 'product_info' || $mode == 'company_info') {
     } else {
         $product = array();
         $company = fn_agents_get_company_info($_REQUEST['company_id']);
+        if(empty($company)) {
+            return array(CONTROLLER_STATUS_NO_PAGE);
+        }
     }
-    if(empty($company)) {
-        return array(CONTROLLER_STATUS_NO_PAGE);
-    }
+
     $company['image_path'] = get_image_full_path($company);
     $offices = fn_agents_get_company_offices_with_shippings($company['company_id']);
     $cities = fn_agents_extract_cities_from_offices($offices);

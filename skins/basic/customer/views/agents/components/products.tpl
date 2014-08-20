@@ -70,7 +70,7 @@
                             {assign var="price_id" value='price_'|cat:$product.product_id}
                             <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:$price_id:"price big":true}</span>
                             <div>
-                                <button id="order_submit_{$product.product_id}" class="big green button" type="submit" name="checkout" value="Оформить заявку">Оформить заявку</button>
+                                <button id="order_submit_{$product.product_id}" class="big green button" type="submit" name="checkout" value="checkout">{$lang.checkout}</button>
                             </div>
                             <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/components/shipping.png">{/if}
                             </div>
@@ -84,7 +84,7 @@
                             <button id="order_save_submit_{$product.product_id}"
                                     class="big green button"
                                     onclick="save_order({$product.product_id});">
-                                Сохранить в кабинете
+                                {$lang.save_product}
                             </button>
                         </td>
                     </tr>

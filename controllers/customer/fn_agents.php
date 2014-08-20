@@ -1607,7 +1607,7 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
             $_params[$key] = $params[$key];
         }
     }
-    $select = db_process('SELECT ?:orders.*, ?:order_details.product_id, ?:order_details.extra ');
+    $select = db_process('SELECT ?:orders.*, ?:order_details.order_id AS oid, ?:order_details.product_id, ?:order_details.extra ');
     $from = db_process('FROM ?:orders ');
     $join = db_process('JOIN ?:order_details ON ?:order_details.order_id = ?:orders.order_id ');
 
@@ -1619,9 +1619,15 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
             if (!empty ($value) ) {
                 if($field == 'not') {
                     foreach ($value as $not_field => $not_value) {
+                        if($not_field == 'order_id') {
+                            $not_field = db_process('?:orders.order_id');
+                        }
                         $where .= db_process(" AND $not_field NOT IN (?a)", array($not_value));
                     }
                 } else {
+                    if($field == 'order_id') {
+                        $field = db_process('?:orders.order_id');
+                    }
                     $where .= db_process(" AND $field IN (?a)", array($value));
                 }
             }
