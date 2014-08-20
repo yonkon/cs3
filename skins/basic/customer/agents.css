@@ -312,7 +312,8 @@ ul.hr li {
 
 #agents_content {
     float: left;
-    width: 75%;
+    width: 70%;
+    margin: 1%;
 }
 
 .product_div, .order_div {
