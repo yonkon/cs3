@@ -1541,6 +1541,12 @@ function fn_agents_get_company_logos($company_id = null) {
     return $logos;
 }
 
+function fn_agents_get_company_logo($company_id) {
+    $logos = fn_agents_get_company_logos($company_id);
+    $logo = $logos[0];
+    return $logo['filename'];
+}
+
 function fn_agents_get_total_agents() {
     $count = db_get_field(db_process('SELECT COUNT(*) FROM ?:users WHERE user_type = "P" AND status = "A"'));
     return $count;

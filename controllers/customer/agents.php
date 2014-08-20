@@ -751,7 +751,7 @@ elseif ($mode == 'product_info' || $mode == 'company_info') {
         }
     }
 
-    $company['image_path'] = get_image_full_path($company);
+    $company['image_path'] = fn_agents_get_company_logo($company['company_id']);
     $offices = fn_agents_get_company_offices_with_shippings($company['company_id']);
     $cities = fn_agents_extract_cities_from_offices($offices);
     $view->assign('order_statuses', fn_agents_get_order_statuses());
