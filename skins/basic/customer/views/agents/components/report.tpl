@@ -66,10 +66,21 @@
 {if $settings.DHTML.customer_ajax_based_pagination == "Y"}
     {assign var="ajax_class" value="cm-ajax"}
 {/if}
-<form type="post" >
-    <input type="hidden" name="dispatch" value="agents.report_export">
-    <button class="big green button" type="submit">{$lang.export}</button>
-</form>
+{*<form type="post" >*}
+    {*<input type="hidden" name="dispatch" value="agents.report_export">*}
+    <button class="green button" type="button" onclick="exportReport();">{$lang.export}</button>
+{*</form>*}
+{literal}
+<script type="text/javascript">
+    function exportReport() {
+        var $form = $('form[name=general_stats_search_form]');
+        var $submit = $('input[type=submit]', $form);
+        $submit.attr('name', 'dispatch[agents.report_export/search]');
+        $submit.click();
+        return false;
+    }
+</script>
+{/literal}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
     <tr>
         {*<th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=action&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.action}</a>{if $sort_by == "action"}{$sort_sign}{/if}</th>*}

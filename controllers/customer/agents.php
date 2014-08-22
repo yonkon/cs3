@@ -104,7 +104,7 @@ if (!in_array($mode, array(
     $view->assign('mode', $mode);
 
 }
-if (strpos($mode, 'orders_') === 0) {
+if (strpos($mode, 'orders_') === 0 && $mode != 'orders_saved') {
     $view->assign('mode', 'orders');
 }
 
@@ -112,8 +112,6 @@ $limit = $_REQUEST['limit'] = empty($_REQUEST['limit']) ? 10 : $_REQUEST['limit'
 $page = $_REQUEST['page'] = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
 
 if ($mode == 'add') {
-
-
     if (!empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "agents.update");
     }
@@ -418,7 +416,7 @@ elseif ($mode == 'collegues') {
     $view->assign('client', $_REQUEST );
 }
 
-elseif ($mode == 'report') {
+elseif ($mode == 'report' || $mode == 'report_export') {
         $payout_types = Registry::get('payout_types');
 
         $view->assign('payout_types', $payout_types);
@@ -544,79 +542,131 @@ elseif ($mode == 'report') {
         $view->assign('order_status_descr', $order_status_descr);
 
 
-
-}
-elseif ($mode == 'report_export') {
+    if ($mode == 'report_export') {
 // Подключаем класс для работы с excel
-    require_once(DIR_LIB . 'phpexcel/Classes/PHPExcel.php');
+        require_once(DIR_LIB . 'phpexcel/Classes/PHPExcel.php');
 // Подключаем класс для вывода данных в формате excel
-    require_once(DIR_LIB . 'phpexcel/Classes/PHPExcel/Writer/Excel5.php');
+        require_once(DIR_LIB . 'phpexcel/Classes/PHPExcel/Writer/Excel5.php');
 
 // Создаем объект класса PHPExcel
-    $xls = new PHPExcel();
+        $xls = new PHPExcel();
 // Устанавливаем индекс активного листа
-    $xls->setActiveSheetIndex(0);
+        $xls->setActiveSheetIndex(0);
 // Получаем активный лист
-    $sheet = $xls->getActiveSheet();
-// Подписываем лист
-    $report_title = fn_get_lang_var('report_for_agent') . " #" . $auth['user_id'] . ' ' . $auth['lastname'] . ' '. $auth['firstname'] . ' ';
-    $sheet->setTitle($report_title);
+        $sheet = $xls->getActiveSheet();
 
+        $user = fn_get_user_info($auth['user_id'], false);
+// Подписываем лист
+        $report_title = fn_get_lang_var('report_for_agent') . " #" . $user['user_id'] . ' ' . $user['lastname'] . ' '. $user['firstname'] . ' ';
+        $sheet->setTitle($report_title);
 // Вставляем текст в ячейку A1
-    $sheet->setCellValue("A1", $report_title);
-    $sheet->getStyle('A1')->getFill()->setFillType(
-        PHPExcel_Style_Fill::FILL_SOLID);
-    $sheet->getStyle('A1')->getFill()->getStartColor()->setRGB('EEEEEE');
+        $sheet->setCellValue("A1", $report_title);
+        $sheet->getStyle('A1')->getFill()->setFillType(
+            PHPExcel_Style_Fill::FILL_SOLID);
+        $sheet->getStyle('A1')->getFill()->getStartColor()->setRGB('EEEEEE');
 
 // Объединяем ячейки
-    $sheet->mergeCells('A1:H1');
+        $sheet->mergeCells('A1:H1');
 
 // Выравнивание текста
-    $sheet->getStyle('A1')->getAlignment()->setHorizontal(
-        PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(
+            PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+//Report date
+        $sheet->setCellValue("A2", fn_get_lang_var("Date"));
+        $sheet->setCellValue("B2", fn_date_format(time()));
+//General statistics
+        $sheet->setCellValue("A4", fn_get_lang_var("general_statistics"));
+        $sheet->mergeCells('A4:H4');
+        $sheet->setCellValue("A5", fn_get_lang_var("sales"));
+        $sheet->setCellValue("B5", fn_get_lang_var("sum"));
+        $sheet->setCellValue("C5", fn_get_lang_var("avg"));
+        $sheet->setCellValue("A6", $general_stats['sale']['count']);
+        $sheet->setCellValue("B6", $general_stats['sale']['sum']);
+        $sheet->setCellValue("C6", $general_stats['sale']['avg']);
+//Sales list
+//одробный сервис отчётов по всем пользователям и компаниям.
+//
+//Отчёт по агентам содержит поля:
+//- № заказа (или ID заявки )
+//- Название компании (выпадающий список)
+//- Название услуги (выпадающий список)
+//- Агент (сортировка вверх/вниз)
+//- Субагент (сортировка вверх/вниз)
+//- Сумма (сортировка вверх/вниз)
+//- Доход агента (сортировка вверх/вниз)
+//- Доход от субагентов (сортировка вверх/вниз)
+//- Статус (выпадающий список)
+//- Дата регистрации заказа «от – до»
+//- Дата оплаты заказа «от – до»
+//- Статус (выпадающий список)
 
-    for ($i = 2; $i < 10; $i++) {
-        for ($j = 2; $j < 10; $j++) {
-            // Выводим таблицу умножения
-            $sheet->setCellValueByColumnAndRow(
-                $i - 2,
-                $j,
-                $i . "x" .$j . "=" . ($i*$j));
-            // Применяем выравнивание
-            $sheet->getStyleByColumnAndRow($i - 2, $j)->getAlignment()->
-                setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+
+        $sheet->setCellValue("A7", fn_get_lang_var("details"));
+        $sheet->mergeCells('A7:H7');
+        $sheet->setCellValue("A8", fn_get_lang_var("Order"));
+        $sheet->setCellValue("B8", fn_get_lang_var("company"));
+        $sheet->setCellValue("C8", fn_get_lang_var("product"));
+        $sheet->setCellValue("D8", fn_get_lang_var("agent"));
+        $sheet->setCellValue("E8", fn_get_lang_var("subagent"));
+        $sheet->setCellValue("F8", fn_get_lang_var("sum"));
+        $sheet->setCellValue("G8", fn_get_lang_var("agent_profit"));
+        $sheet->setCellValue("H8", fn_get_lang_var("agent_profit_form_subagent"));
+        $sheet->setCellValue("I8", fn_get_lang_var("registration_date"));
+        $sheet->setCellValue("J8", fn_get_lang_var("paid_date"));
+        $row = 9;
+        foreach($list_stats as $sale) {
+            $order = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
+            $order = $order[0];
+            $sheet->setCellValue("A$row", $order['order_id']);
+            $sheet->setCellValue("B$row", $order['company_data']['company']);
+            $sheet->setCellValue("C$row", $order['product_data']['product']);
+            $sheet->setCellValue("D$row", $sale['partner_id'] == $sale['customer_id'] ? fn_get_user_name( $sale['partner_id']) : '');
+            $sheet->setCellValue("E$row", $sale['partner_id'] == $sale['customer_id'] ? '' : fn_get_user_name($sale['customer_id']));
+            $sheet->setCellValue("F$row", $order['total']);
+            $sheet->setCellValue("G$row", $sale['partner_id'] == $sale['customer_id'] ? $sale['amount'] : 0);
+            $sheet->setCellValue("H$row", $sale['partner_id'] == $sale['customer_id'] ? 0 : $sale['amount']);
+            $sheet->setCellValue("I$row", fn_date_format($sale['date']));
+            $sheet->setCellValue("J$row", fn_agents_get_payout_date($sale['payout_id']));
+            $row++;
         }
-    }
 
 
-    // Выводим HTTP-заголовки
-    header ( "Expires: Mon, 1 Apr 1974 05:00:00 GMT" );
-    header ( "Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT" );
-    header ( "Cache-Control: no-cache, must-revalidate" );
-    header ( "Pragma: no-cache" );
-    header ( "Content-type: application/vnd.ms-excel" );
-    header ( "Content-Disposition: attachment; filename=report.xls" );
+//        for ($i = 2; $i < 10; $i++) {
+//            for ($j = 2; $j < 10; $j++) {
+//                // Выводим таблицу умножения
+//                $sheet->setCellValueByColumnAndRow(
+//                    $i - 2,
+//                    $j,
+//                    $i . "x" .$j . "=" . ($i*$j));
+//                // Применяем выравнивание
+//                $sheet->getStyleByColumnAndRow($i - 2, $j)->getAlignment()->
+//                    setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+//            }
+//        }
+
+
+        // Выводим HTTP-заголовки
+        header ( "Expires: Mon, 1 Apr 1974 05:00:00 GMT" );
+        header ( "Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT" );
+        header ( "Cache-Control: no-cache, must-revalidate" );
+        header ( "Pragma: no-cache" );
+        header ( "Content-type: application/vnd.ms-excel" );
+        header ( "Content-Disposition: attachment; filename=report.xls" );
 
 // Выводим содержимое файла
-    $objWriter = new PHPExcel_Writer_Excel5($xls);
-    $objWriter->save('php://output');
-    die();
+        $objWriter = new PHPExcel_Writer_Excel5($xls);
+        $objWriter->save('php://output');
+        die();
+    }
 }
 
-elseif (in_array($mode, array('orders', 'orders_saved', 'orders_active', 'orders_closed'  ))  ) {
-    if ($mode != 'orders_saved') {
-        $_REQUEST['where']['not'] = array ('status' => ORDER_STATUS_SAVED );
-    } else {
-        $view->assign('mode', $mode);
-    }
+
+elseif (in_array($mode, array('orders', 'orders_active', 'orders_closed'  ))  ) {
+
    switch ($mode) {
        case 'orders' :
            $orders = fn_agents_get_orders($auth['user_id'], $_REQUEST);
            $pagination = fn_agents_paginate_orders($auth['user_id'], $_REQUEST, $limit, $page);
-           break;
-       case 'orders_saved' :
-           $orders = fn_agents_get_saved_orders($auth['user_id'], $_REQUEST);
-           $pagination = fn_agents_paginate_saved_orders($auth['user_id'], $_REQUEST, $limit, $page);
            break;
        case 'orders_active' :
            $orders = fn_agents_get_active_orders($auth['user_id'], $_REQUEST);
@@ -637,6 +687,31 @@ elseif (in_array($mode, array('orders', 'orders_saved', 'orders_active', 'orders
     $view->assign('where', $_REQUEST['where'] );
     $view->assign('order', $_REQUEST['order'] );
     $view->assign('orders', $orders );
+    $view->assign('pagination', $pagination);
+    return array(CONTROLLER_STATUS_OK);
+}
+elseif ($mode == 'orders_saved') {
+    $products = fn_agents_get_saved_products($auth['user_id'], $_REQUEST);
+    $affiliate_plan = fn_get_affiliate_plan_data_by_partner_id($auth['user_id']);
+    foreach($products as &$product) {
+        $product['image']['image_path'] = get_image_full_path($product['image']);
+        $product['company'] = fn_agents_get_company_info($product['company_id']);
+        $product['company']['image_path'] =
+            ( ( $fullpath = get_image_full_path($product['company']) ) == PATH_NO_IMAGE ) ?
+                fn_agents_get_company_logo($product['company_id']) :
+                get_image_full_path($product['company']) ;
+        $product['description'] = fn_agents_get_product_description($product['product_id']);
+        $product['profit'] = fn_agents_get_plan_product_profit($affiliate_plan, $product);
+    }
+    unset($product);
+    $pagination = fn_agents_paginate_saved_products($auth['user_id'], $_REQUEST, $limit, $page);
+    $companies = fn_get_companies(null, $auth);
+    $cities = fn_agents_get_all_cities($_REQUEST);
+    $view->assign('order_statuses', fn_agents_get_order_statuses());
+    $view->assign('all_cities', $cities);
+    $view->assign('products', $products);
+    $view->assign('companies', $companies[0]);
+    $view->assign('where', $_REQUEST['where'] );
     $view->assign('pagination', $pagination);
     return array(CONTROLLER_STATUS_OK);
 }
@@ -844,6 +919,20 @@ elseif ($mode == 'ajax_get_products') {
     $products = $products[0];
     $ajaxResult = fn_agents_prepare_ajax_options($products, 'product_id', 'product');
     echo json_encode(array('status' => 'OK', 'data' => $ajaxResult) );
+    die();
+}
+elseif ($mode == 'ajax_save_product') {
+
+    if(empty($_REQUEST['product_id']) || empty($auth['user_id'])) {
+        echo (json_encode(array('status' => 'error')));
+    } else {
+        $query = db_process('SELECT * FROM ?:orders_saved WHERE user_id = ?i AND product_id = ?i', array($auth['user_id'], $_REQUEST['product_id']));
+        $saved = db_get_array($query);
+        if(empty($saved)) {
+            db_query(db_process('INSERT INTO ?:orders_saved VALUES (NULL, ?i, ?i)', array($_REQUEST['product_id'], $auth['user_id'])) );
+        }
+        echo json_encode(array('status' => 'OK') );
+    }
     die();
 }
 elseif ($mode == 'all_plans') {

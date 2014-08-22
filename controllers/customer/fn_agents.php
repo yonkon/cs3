@@ -938,14 +938,35 @@ function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_
         $condition .= db_quote(' AND products.company_id IN (?n) ', $companies_ids);
     }
     if (isset($params['product_id']) && $params['product_id'] != '') {
+
         $condition .= db_quote(' AND products.product_id = ?i ', $params['product_id']);
     }
 
     if (isset($params['client']['product']) && $params['client']['product'] != '') {
         $condition .= db_quote(' AND products.product_id = ?i ', $params['client']['product']);
     }
+    $where = '';
+    if (!empty($params['where'])) {
+        foreach ($params['where'] as $field=>$value) {
+            if (!empty ($value) ) {
+                if($field == 'not') {
+                    foreach ($value as $not_field => $not_value) {
+                        if(in_array($not_field , array( 'product_id', 'company_id' ))) {
+                            $not_field = db_process('products.'.$not_field);
+                        }
+                        $where .= db_process(" AND $not_field NOT IN (?a)", array($not_value));
+                    }
+                } else {
+                    if(in_array($field , array( 'product_id', 'company_id' ))) {
+                        $field = db_process('products.'.$field);
+                    }
+                    $where .= db_process(" AND $field IN (?a)", array($value));
+                }
+            }
+        }
+    }
 
-
+    $condition .= $where;
 
 
     if (!empty($params['filter_params'])) {
@@ -1610,11 +1631,9 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
     $select = db_process('SELECT ?:orders.*, ?:order_details.order_id AS oid, ?:order_details.product_id, ?:order_details.extra ');
     $from = db_process('FROM ?:orders ');
     $join = db_process('JOIN ?:order_details ON ?:order_details.order_id = ?:orders.order_id ');
+    $where = empty($user_id) ? '' : db_process('WHERE user_id = ?i ', array($user_id) );
 
-    if (empty($_params['where'])) {
-        $where = db_process('WHERE user_id = ?i ', array($user_id) );
-    } else {
-        $where = db_process('WHERE user_id = ?i ', array($user_id));
+    if (!empty($_params['where'])) {
         foreach ($_params['where'] as $field=>$value) {
             if (!empty ($value) ) {
                 if($field == 'not') {
@@ -1783,7 +1802,7 @@ function fn_restore_processed_user_password(&$destination, &$source)
 function get_image_full_path($image, $company_id=0) {
     $thumbnails_name = str_replace('_02.', '_01.', $image['image_path']);
     if (!empty($image['image_id'])) {
-        $sizes = array('150, 160, 320, 85, 50, 40, 30');
+        $sizes = array(150, 160, 320, 85,  50,  40,  30);
         foreach ($sizes as $size) {
             if(is_file(DIR_ROOT . "/images/thumbnails/$company_id/$size/$size/" . $thumbnails_name)) {
                 return "/images/thumbnails/$company_id/$size/$size/" . $thumbnails_name;
@@ -1797,7 +1816,6 @@ function get_image_full_path($image, $company_id=0) {
         return "/images/detailed/$company_id/".$image['image_path'];
     }
     return PATH_NO_IMAGE;
-
 }
 
 function fn_agents_assign_client_to_cart($client, &$cart) {
@@ -1837,6 +1855,11 @@ function fn_agents_add_affiliate_data_to_cart(&$cart, $auth) {
 }
 
 function fn_agents_get_all_cities($params = array(), $lang = CART_LANGUAGE, $full_select = false) {
+    if(!empty($params['company_id']) ) {
+        $company_offices = fn_agents_get_company_offices($params['company_id'], $params);
+        $cities = fn_agents_extract_cities_from_offices($company_offices, false);
+        return $cities;
+    }
     if ($full_select) {
         $select = 'SELECT c.*, cl.* ';
     } else {
@@ -2166,20 +2189,23 @@ function fn_agents_prepare_pagination_count_params(&$count_params) {
 }
 
 function fn_agents_get_plan_product_profit($plan, $product) {
+    if(empty($plan) || empty($product)) {
+        return 0;
+    }
     $price = $product['price'];
     $p_id = $product['product_id'];
     $c_id = $product['main_category'];
-    $p_ids = array_keys($plan['product_ids']);
-    $c_ids = array_keys($plan['category_ids']);
+    $p_ids = is_array($plan['product_ids']) ? array_keys($plan['product_ids']) : array();
+    $c_ids = is_array($plan['category_ids']) ? array_keys($plan['category_ids']) : array();
     $profit = 0;
-    if (in_array($p_id, $p_ids) ) {
+    if (is_array($p_ids) && in_array($p_id, $p_ids) ) {
         $commision = $plan['product_ids'][$p_id];
         if($commision['value_type'] == 'P') {
             $profit = $price * $commision['value'] / 100;
         } elseif ($commision['value_type'] == 'A') {
             $profit = $commision['value'];
         }
-    } elseif (in_array($c_id, $c_ids) ) {
+    } elseif (is_array($c_ids) && in_array($c_id, $c_ids) ) {
         $commision = $plan['category_ids'][$c_id];
         if($commision['value_type'] == 'P') {
             $profit = $price * $commision['value'] / 100 ;
@@ -2230,3 +2256,34 @@ function fn_agents_sort_products_by_profit($products, $order) {
 //    }
 //    return $logos;
 //}
+
+function fn_agents_get_payout_date($payout_id, $format = '%b %e, %Y') {
+    if(empty($payout_id)) {
+        return '';
+    }
+    $date = db_get_field(db_process('SELECT date FROM ?:affiliate_payouts WHERE payout_id = ?i', array($payout_id)));
+    return fn_date_format($date, $format);
+}
+
+function fn_agents_get_saved_products($user_id, $params) {
+    $saved_orders = db_get_array(db_process('SELECT product_id FROM ?:orders_saved WHERE user_id = ?i', array($user_id) ));
+    if (empty($saved_orders)) {
+        return array();
+    }
+    $saved_orders_ids = array();
+    foreach($saved_orders as $order) {
+        $saved_orders_ids[] = $order['product_id'];
+    }
+
+    $params['filter_params'][ 'product_id' ] = $saved_orders_ids;
+    $products = fn_agents_get_products($params);
+    return $products[0];
+}
+
+function fn_agents_paginate_saved_products($user_id, $params, $limit, $page){
+    fn_agents_prepare_pagination_count_params($count_params);
+    $items = fn_agents_get_saved_products($user_id, $count_params);
+    $pagination = fn_agents_paginate_items($user_id, $count_params, $items, 'agents.orders_saved', $limit, $page);
+    return $pagination;
+}
+

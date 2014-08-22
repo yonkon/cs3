@@ -24,5 +24,6 @@
 <div class="buttons-container">{include file="buttons/button.tpl" but_text=$lang.search but_name="dispatch[$controller.$mode/search]"}</div>
 </form>
 
+
 {/capture}
 {include file="common_templates/section.tpl" section_title=$lang.search section_content=$smarty.capture.section}

@@ -1,0 +1,1 @@
+ALTER TABLE `cscart_orders_saved` CHANGE `order_id` `product_id` INT(11) NOT NULL;

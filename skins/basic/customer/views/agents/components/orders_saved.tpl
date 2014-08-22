@@ -1,6 +1,6 @@
 <div class="agents-filters">
     <form method="post" id="filters">
-    <input type="hidden" name="dispatch" value="agents.orders">
+    <input type="hidden" name="dispatch" value="agents.orders_saved">
     <input type="hidden" name="page" id="page" value="{$pagination.page|default:1}">
 
         <select style="width: 250px;margin: 8px;" id="company" name="where[company_id]">
@@ -39,80 +39,48 @@
             {/foreach}
         </select>
         <br>
-        {$lang.Status} <select style="width: 150px;" name="where[status]">
-            <option value="">{$lang.Status}</option>
-            {foreach from=$order_statuses item="status" key="code" }
-                <option value="{$status.status}" {if !empty($where.status) && $status.status == $where.status}selected="selected"{/if}  >{$status.description}</option>
-            {/foreach}
-        </select>
+
         <button class="button green"  type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
         </form>
     </div>
 
 
 <div id="orders_div" class="clr">
-    {foreach from=$orders item="order"}
-        <p class="padding-top-2em">{$lang.Order} {$order.order_id} </p>
+    {foreach from=$products item="product"}
     <form>
-        <input type="hidden" name="order_id" value="{$order.order_id}">
         <input type="hidden" name="dispatch" value="agents.order_make">
+        <input type="hidden" name="product_id" value="{$product.product_id}">
     <div class="order_div">
         <table>
             <tr>
                 <td style="width: 100px">
-                    <a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">
-                        <img class="product-image" src="/images/detailed/1/{$order.product_data.image.image_path}">
+                    <a href="{"agents.product_info"|fn_url}&product_id={$product.product_id}">
+                        <img class="product-image" src="/images/detailed/1/{$product.image.image_path}">
                     </a>
                 </td>
                 <td style="width: 300px" colspan="2">
-                    <h2><a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">{$order.product_data.product}</a></h2>
-                    <div class="product-description">{$order.product_data.description|unescape|truncate:360}</div>
+                    <h2><a href="{"agents.product_info"|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
+                    <div class="product-description">{$product.description|unescape|truncate:360}</div>
                 </td>
                 <td>
-                    <span id="item_{$order.product_data.product_id}_count_text" class="price">{$order.product_data.base_price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span>
-                    {if $mode == 'orders_saved'}
+                    <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span>
                         <div>
                             <button class="green button" type="submit" name="submit" value="submit">{$lang.checkout}</button>
                         </div>
-                    {/if}
-                    <div class="shipping">{if true || $order.product_data.free_shipping || $order.product_data.edp_shipping || $order.product_data.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/images/shipping.png">{/if}
-                    </div>
                 </td>
             </tr>
             <tr>
-                <td>{if $order.company_data.image_path}
-                    <a href="{"agents.company_info"|fn_url}&product_id={$order.product_id}">
-                        <img src="{$order.company_data.image_path}">
+                <td>{if $product.company.image_path}
+                    <a href="{"agents.company_info"|fn_url}&product_id={$product.product_id}">
+                        <img src="{$product.company.image_path}">
                     </a>{/if}
                 </td>
-                <td colspan="2"><div>{$order.company_data.company_description|default|unescape|truncate:360}</div></td>
+                <td colspan="2"><div>{$product.company.description|default|unescape|truncate:360}</div></td>
                 <td>
-                    <span>{$lang.profit}: {$order.product_data.profit|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span><br/>
-                    <span class="status">{$lang.status}: {$order.status_description}</span>
+                    <span>{$lang.profit}: {$product.profit|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span><br/>
                 </td>
             </tr>
-            {if $mode != 'orders_saved'}
-            <tr>
-                <td>
-                    <p class="underlined">{$lang.FIO_client}: {$order.b_lastname} {$order.b_firstname} {$order.b_midname}</p>
-                    <p class="underlined">{$lang.mail}: {$order.b_email}<br/> {$order.b_phone}</p>
-                    <p class="underlined">{$lang.registration_date}: {$order.registration_date|date_format}</p>
-                </td>
-                <td colspan="2">
-                    {$lang.Comment}:
-                    <p class="comment" id="comment_{$order.order_id}">
-                        {$order.comment}
-                    </p>
-                    {*<p class="bold">*}
-                        {*{$lang.Add_comment}*}
-                    {*</p>*}
-                    {*<input type="text" name="comment">*}
-                </td>
-                <td>
-                    <button class="green button" type="submit" name="submit" value="submit">{$lang.Send}</button>
-                </td>
-            </tr>
-            {/if}
+
         </table>
     </div>
 </form>
@@ -126,7 +94,8 @@
     {/literal}
     var url_products = '{'agents.ajax_get_products'|fn_url}';
     var url_cities = '{'agents.ajax_get_cities'|fn_url}';
-    var url_offices = '{'agents.ajax_get_offices'|fn_url}';
+    {*var url_offices = '{'agents.ajax_get_offices'|fn_url}';*}
+
     {literal}
 
     $('#company').change(function() {
@@ -136,7 +105,7 @@
         };
         ajax_get_options(url_products, data, '#product');
         ajax_get_options(url_cities, data, '#city');
-        ajax_get_options(url_offices, data, '#office');
+//        ajax_get_options(url_offices, data, '#office');
     });
     $('#city').change(function() {
         var company_id = $('#company').val();
@@ -145,7 +114,7 @@
             city_id : $(this).val()
         };
         ajax_get_options(url_products, data, '#product');
-        ajax_get_options(url_offices, data, '#office');
+//        ajax_get_options(url_offices, data, '#office');
     })
 
 </script>

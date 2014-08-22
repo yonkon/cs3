@@ -85,6 +85,7 @@ margin-top: 5%;" type="submit">{$lang.Next}</button>
     var url_regions = '{'agents.ajax_get_regions'|fn_url}';
     var url_cities = '{'agents.ajax_get_cities'|fn_url}';
     var url_offices = '{'agents.ajax_get_offices'|fn_url}';
+    var url_save = '{'agents.ajax_save_product'|fn_url}';
 
     {literal}
     $('#client_company').change(function() {

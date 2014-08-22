@@ -17,6 +17,9 @@ if ( !defined('AREA') ) { die('Access denied'); }
 $schema = array (
 	'default_permission' => false,
 	'controllers' => array (
+        'agents' => array (
+            'permissions' => true,
+        ),
 		'auth' => array (
 			'permissions' => true,
 		),

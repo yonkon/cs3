@@ -82,8 +82,9 @@
                         <td id="add_to_save">
                             <span>{$lang.profit} {$product.profit|floatval|format_price:$currencies.$secondary_currency:$price_id:"profit":true}</span><br>
                             <button id="order_save_submit_{$product.product_id}"
+                                    type = "button"
                                     class="big green button"
-                                    onclick="save_order({$product.product_id});">
+                                    onclick="save_product({$product.product_id});">
                                 {$lang.save_product}
                             </button>
                         </td>
@@ -104,10 +105,25 @@
         $form.submit();
     }
 
+
     {/literal}
     var url_products = '{'agents.ajax_get_products'|fn_url}';
     var url_cities = '{'agents.ajax_get_cities'|fn_url}';
+    var url_save = '{'agents.ajax_save_product'|fn_url}';
+    var updated = '{$lang.update_successful}';
+    var error = '{$lang.error}';
     {literal}
+
+    function save_product(product_id) {
+        $.ajax({
+            url : url_save,
+            data : {
+                product_id : product_id
+            },
+            type : "post"
+        }).success(alert(updated)).error(alert(error));
+        event.preventDefault();
+    }
 
     $('#client_company').change(function() {
         var company_id = $('#client_company').val();

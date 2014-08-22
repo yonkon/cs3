@@ -40,7 +40,7 @@
     {elseif $mode == 'orders'}
         {include file="views/agents/components/orders.tpl"}
     {elseif $mode == 'orders_saved'}
-        {include file="views/agents/components/orders.tpl"}
+        {include file="views/agents/components/orders_saved.tpl"}
     {elseif $mode == 'collegues'}
         {include file="views/agents/components/collegues.tpl"}
     {elseif $mode == 'company_info'}

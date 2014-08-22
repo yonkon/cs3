@@ -1,9 +1,11 @@
 <div class="company_offices_div clr">
+    {if !empty($product) }
     <div class="block clr">
         <a href="#" onclick="switch_active_tab('product');" class="switch_link product {if $active_tab == 'product'}active{/if}">{$lang.shipment_and_payment}</a>
         |
         <a href="#" onclick="switch_active_tab('company');" class="switch_link company{if $active_tab == 'company'}active{/if}">{$lang.about_company}</a>
     </div>
+    {/if}
     <div class="block clr">
         <label for="select_city">{$lang.City}</label>
         <select id="select_city" name="city">
