@@ -53,7 +53,7 @@
             <input type="hidden" name="product_id" value="{$product.product_id}">
             <input type="hidden" name="dispatch" value="agents.order_make">
             <div class="product_div">
-                <table>
+                <table class="table">
                     <tr>
                         <td id="product_image"> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="{$product.image.image_path}"></a></td>
                         <td id="product_name" colspan="2">

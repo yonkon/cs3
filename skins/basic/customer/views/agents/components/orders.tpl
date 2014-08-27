@@ -57,7 +57,7 @@
         <input type="hidden" name="order_id" value="{$order.order_id}">
         <input type="hidden" name="dispatch" value="agents.order_make">
     <div class="order_div">
-        <table>
+        <table class="table">
             <tr>
                 <td style="width: 100px">
                     <a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">

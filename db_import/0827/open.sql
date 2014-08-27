@@ -1,0 +1,11 @@
+UPDATE cscart_status_descriptions SET `description` = 'В обработке', `status` = 'O', `email_subj` = 'был размещен успешно.', `email_header` = '<p>Спасибо за Ваш заказ, сделанный в нашем магазине. Добро пожаловать!</p>' WHERE status = 'O' AND type = 'O' AND lang_code = 'RU';
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'color', 'ff9522');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'notify', 'Y');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'notify_department', 'Y');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'notify_supplier', 'Y');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'inventory', 'D');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'remove_cc_info', 'Y');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'repay', 'N');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'appearance_type', 'D');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'calculate_for_payouts', 'Y');
+REPLACE INTO cscart_status_data (`status`, `type`, `param`, `value`) VALUES ('O', 'O', 'gift_cert_status', 'P');

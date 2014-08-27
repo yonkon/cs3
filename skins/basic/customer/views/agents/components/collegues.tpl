@@ -4,7 +4,7 @@
     <button class="button big green float-right center" type="submit" value="submit">{$lang.Register_subagent}</button>
 </form>
 <div id="agents_collegues_div">
-    <table id="agents_collegues_table">
+    <table id="agents_collegues_table" class="table">
         <thead>
         <tr>
             <th style="width: 30%">{$lang.FIO}</th>

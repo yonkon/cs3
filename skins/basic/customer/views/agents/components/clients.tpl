@@ -6,6 +6,7 @@
 <div id="agents_clients_div">
     <div id="message_success" class="notification-n hidden"><p style="margin-left: 10%;">{$lang.Update_successfull}</p></div>
     <div id="message_error" class="notification-e hidden"><p style="margin-left: 10%;">{$lang.Update_failed}</p></div>
+
     <table id="agents_clients_table">
         <thead>
         <tr>
@@ -28,8 +29,9 @@
         {/foreach}
         </tbody>
     </table>
+    </div>
     {include file="views/agents/pagination.tpl"}
-</div>
+
 
 
 
