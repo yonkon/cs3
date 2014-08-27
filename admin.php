@@ -15,6 +15,8 @@
 define('AREA', 'A');
 define('AREA_NAME', 'admin');
 define('ACCOUNT_TYPE', 'admin');
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
 
 require dirname(__FILE__) . '/prepare.php';
 require dirname(__FILE__) . '/init.php';

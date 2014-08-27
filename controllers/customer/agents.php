@@ -310,6 +310,7 @@ elseif ($mode == 'office') {
     return array(CONTROLLER_STATUS_OK);
 }
 elseif ($mode == 'companies_and_products') {
+
     $offices = fn_agents_get_company_offices($_REQUEST['client']['company']);
     $cities = fn_agents_extract_cities_from_offices($offices);
 
@@ -346,8 +347,6 @@ elseif ($mode == 'companies_and_products') {
             }
         }
     }
-
-
 
     $pagination = fn_agents_paginate_products($auth['user_id'], $_REQUEST, $limit, $page);
     $companies = fn_get_companies(null, $auth);

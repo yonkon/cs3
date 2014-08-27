@@ -158,6 +158,7 @@
 	<item title="sitemap" dispatch="sitemap.manage" position="700" />
 	<item title="template_editor" dispatch="template_editor.manage" position="800" />
 	<item title="skin_selector" dispatch="skin_selector.manage" position="900" />
+    <item title="sliders" dispatch="agents.sliders" position="1000" />
 	<side>
 		<item group="sitemap" title="sitemap_settings" href="%INDEX_SCRIPT?dispatch=settings.manage&amp;section_id=Sitemap" />
 		<item group="sitemap.manage" title="sitemap_settings" href="%INDEX_SCRIPT?dispatch=settings.manage&amp;section_id=Sitemap" />

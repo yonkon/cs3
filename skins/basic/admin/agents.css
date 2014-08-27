@@ -367,3 +367,8 @@ ul.hr li {
 .block {
     display: block;
 }
+
+.slider_div {
+    padding: 1em;
+    border: 1px solid #ddd;
+}

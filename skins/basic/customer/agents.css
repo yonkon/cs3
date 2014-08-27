@@ -483,3 +483,9 @@ ul.hr li {
 .padding10px {
     padding: 10px;
 }
+
+.text-plain, .text-plain:hover, .text-plain:active, .text-plain:visited {
+    color: inherit;
+    font-weight: normal;
+    text-decoration: none;
+}

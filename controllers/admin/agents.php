@@ -14,7 +14,7 @@ if(empty($_REQUEST['company_id']) ) {
         $office = fn_agents_get_company_offices(null, array('office_id' => $_REQUEST['office_id'] ) );
         $cid = $office[0]['company_id'];
     }
-    if(empty($cid) ) {
+    if(empty($cid) && in_array($mode, array('offices', 'offices_add', 'office_shippings', 'office_shipping_add') ) ) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
 }
@@ -22,7 +22,9 @@ else {
     $cid = $_REQUEST['company_id'];
 }
 
-Registry::get('view')->assign('company_id', $cid);
+if (isset($cid)) {
+    Registry::get('view')->assign('company_id', $cid);
+}
 
 if ($mode == 'offices') {
 
@@ -94,4 +96,28 @@ elseif ($mode == 'office_shipping_add') {
     }
     Registry::get('view')->assign('shipping', $shipping);
     return array(CONTROLLER_STATUS_OK, $redirect_url);
+}
+elseif ($mode == 'sliders') {
+    $sliders = fn_agents_get_sliders();
+    if(isset($_REQUEST['submit'])) {
+        if($_REQUEST['submit'] == 'submit') {
+            fn_agents_add_slide();
+        }
+        elseif ($_REQUEST['submit'] == 'delete') {
+            if(!empty($_REQUEST['slide_id']) ) {
+                $query = db_process('DELETE FROM ?:slider_logos WHERE slide_id = ?i', array($_REQUEST['slide_id']));
+                if( db_query($query) ) {
+                    fn_set_notification('N', fn_get_lang_var('notice'), fn_get_lang_var('text_changes_saved'));
+                } else {
+                    fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('error_ocured'));
+                }
+            }
+        }
+    }
+    Registry::get('view')->assign('sliders', $sliders);
+    Registry::get('view')->assign('mode', 'sliders');
+    Registry::get('view')->assign('content_tpl', 'views/agents/sliders.tpl');
+    $redirect_url = null;
+    return array(CONTROLLER_STATUS_OK);
+
 }

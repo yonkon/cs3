@@ -15,6 +15,9 @@
 if ( !defined('AREA') ) { die('Access denied'); }
 
 $schema = array (
+//    'agents' => array (
+//      'admin_dispatch' => 'agents.slider',
+//    ),
 	'products' => array (
 		'admin_dispatch' => 'products.update',
 		'customer_dispatch' => 'products.view',

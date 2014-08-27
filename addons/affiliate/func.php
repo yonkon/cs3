@@ -1584,4 +1584,13 @@ function fn_agents_get_plans_logos($lang_code = CART_LANGUAGE) {
     return $logos;
 }
 
+function fn_agents_get_sliders() {
+    $query = db_process('SELECT * FROM ?:slider_logos');
+    $db_sliders = db_get_array($query);
+    $sliders = array();
+    foreach($db_sliders as $slider) {
+        $sliders[$slider['type']][] = $slider;
+    }
+    return $sliders;
+}
 ?>

@@ -966,6 +966,11 @@ function fn_agents_get_products($params, $items_per_page = 0, $lang_code = CART_
         }
     }
 
+    if(!empty($params['new'])) {
+        $two_weeks = strtotime('-4 weeks');
+        $where .= db_process( ' AND products.timestamp >=  ?i', array($two_weeks) );
+    }
+
     $condition .= $where;
 
 
@@ -1669,10 +1674,10 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
         $order = array();
         foreach ($_params['order'] as $field=>$value) {
             if (!empty ($value) ) {
-                $order[] = db_process(" $value ");
+                $order[] = db_process("$field $value ");
             }
         }
-        $order = empty($order) ? '' : 'ORDER BY ' . implode(',', $order);
+        $order = !empty($order) && is_array($order) ?  'ORDER BY ' . implode(',', $order) : '';
     } else {
         $order = ' ORDER BY order_id DESC';
     }
@@ -2287,3 +2292,77 @@ function fn_agents_paginate_saved_products($user_id, $params, $limit, $page){
     return $pagination;
 }
 
+function fn_agents_add_slide() {
+    $slider_types = array('top', 'company', 'products');
+    foreach($slider_types as $slider_type) {
+        $logo  = fn_filter_uploaded_data($slider_type);
+        $logo = $logo[0];
+        if(!empty($logo)) {
+            $short_name = "sliders/{$slider_type}/{$logo['name']}";
+            $filename = DIR_IMAGES . $short_name;
+            fn_mkdir(dirname($filename));
+
+            if (fn_get_image_size($logo['path'])) {
+                $dot = strrpos($filename, '.');
+                $filename_original = substr($filename, 0, $dot) . '_orig' . substr($filename, $dot);
+                if (fn_copy($logo['path'], $filename_original)) {
+                    if (fn_resize_image($filename_original, $filename, Registry::get('settings.Thumbnails.product_lists_thumbnail_width'), Registry::get('settings.Thumbnails.product_lists_thumbnail_height'), false, Registry::get('settings.Thumbnails.thumbnail_background_color'), true)) {
+                    }
+                    list($w, $h, ) = fn_get_image_size($filename);
+                    list($w_orig, $h_orig) = fn_get_image_size($filename_original);
+                    $alt = empty($_REQUEST[$slider_type]['alt']) ? '' : $_REQUEST[$slider_type]['alt'];
+                    $name = empty($_REQUEST[$slider_type]['name']) ? '' : $_REQUEST[$slider_type]['name'];
+                    fn_trusted_vars($slider_type);
+                    $description = empty($_REQUEST[$slider_type]['description']) ? '' : $_REQUEST[$slider_type]['description'];
+                    $logoEntity = array(
+                        'filename' => $filename,
+                        'width' => $w,
+                        'height' => $h,
+                        'type' => $slider_type,
+                        'alt' => $alt,
+                        'name' => $name,
+                        'description' => $description,
+                        'filename_original' => $filename_original,
+                        'width_original' => $w_orig,
+                        'height_original' => $h_orig
+                    );
+                    if(!empty($_REQUEST['slide_id'])) {
+                        $sid = $_REQUEST['slide_id'];
+                        $query = db_process("UPDATE ?:slider_logos SET ?e WHERE slide_id = ?i ", array($logoEntity, $sid));
+                        if( db_query($query) ) {
+                            fn_set_notification('N', fn_get_lang_var('notice'), fn_get_lang_var('text_changes_saved'));
+                        } else {
+                            fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('file_not_uploaded'));
+                        }
+                    } else {
+                        $query = db_process("INSERT INTO ?:slider_logos ?e ", array($logoEntity));
+                        if( db_query($query) ) {
+                            fn_set_notification('N', fn_get_lang_var('notice'), fn_get_lang_var('text_changes_saved'));
+                        } else {
+                            fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('file_not_uploaded'));
+                        }
+                    }
+                }
+            } else {
+                $text = fn_get_lang_var('text_cannot_create_file');
+                $text = str_replace('[file]', $filename, $text);
+                fn_set_notification('E', fn_get_lang_var('error'), $text);
+            }
+    }
+
+}
+
+
+
+
+}
+
+/*function fn_agents_get_sliders() {
+    $query = db_process('SELECT * FROM ?:slider_logos');
+    $db_sliders = db_get_array($query);
+    $sliders = array();
+    foreach($db_sliders as $slider) {
+        $sliders[$slider['type']][] = $slider;
+    }
+    return $sliders;
+}*/

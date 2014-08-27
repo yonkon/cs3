@@ -31,8 +31,8 @@
         <li> <a href="{"agents.report"|fn_url}" rel="nofollow" class="underlined h2 level-0">{$lang.Reports}</a></li>
     </ul>
 </div>
-{*<div class="left_agent_menu_section">*}
-    {*<ul>*}
-        {*<li> <a href="{"agents.notifications"|fn_url}" rel="nofollow" class="underlined h2 level-0">{$lang.agents_notifications}</a></li>*}
-    {*</ul>*}
-{*</div>*}
+<div class="left_agent_menu_section">
+    <ul>
+        <li> <a href="{"agents.companies_and_products"|fn_url}&new=1" rel="nofollow" class="underlined h2 level-0">{$lang.whats_new}</a></li>
+    </ul>
+</div>

@@ -20,31 +20,35 @@
 if ( !defined('AREA') ) { die('Access denied'); }
 
 $schema = array (
-		'products' => array (
+//    'agents' => array (
+//        'func' => 'fn_get_sliders',
+//        'item_id' => 'dispatch'
+//    ),
+    'products' => array (
 			'func' => 'fn_get_products',
 			'item_id' => 'product_id'
 		),
-		'pages' => array (
-			'func' => 'fn_get_pages',
-			'item_id' => 'page_id'
-		),
-		'profiles' => array (
-			'func' => 'fn_get_users',
-			'item_id' => 'user_id',
-			'auth' => true
-		),
-		'orders' => array (
-			'update_mode' => 'details',
-			'func' => 'fn_get_orders',
-			'item_id' => 'order_id',
-			'links_label' => 'order',
-			'show_item_id' => true,
-		),
-		'shipments' => array (
-			'update_mode' => 'details',
-			'func' => 'fn_get_shipments_info',
-			'item_id' => 'shipment_id'
-		)
+    'pages' => array (
+        'func' => 'fn_get_pages',
+        'item_id' => 'page_id'
+    ),
+    'profiles' => array (
+        'func' => 'fn_get_users',
+        'item_id' => 'user_id',
+        'auth' => true
+    ),
+    'orders' => array (
+        'update_mode' => 'details',
+        'func' => 'fn_get_orders',
+        'item_id' => 'order_id',
+        'links_label' => 'order',
+        'show_item_id' => true,
+    ),
+    'shipments' => array (
+        'update_mode' => 'details',
+        'func' => 'fn_get_shipments_info',
+        'item_id' => 'shipment_id'
+    )
 	);
 
 ?>

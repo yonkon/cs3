@@ -6,11 +6,11 @@
         {*<div id="content_top_menu">Неизвестный контейнер</div>*}
         <div id="content_company" class="h2">{$lang.Companies_which_you_can_collaborate}</div>
         <div id="company_slaider">
-            {foreach from=$company_slider.images item='image'}
+            {foreach from=$company_slider item='image'}
                 {if !empty($image.filename)}
                 <div>
-                    <img src="{$image.filename}" alt="{$image.company}">
-                    {*<span class="company_name">{$image.company}</span>*}
+                    <img src="{$image.filename}" alt="{$image.name}">
+                    {*<span class="name">{$image.company}</span>*}
                 </div>
                 {/if}
             {/foreach}
@@ -37,16 +37,16 @@
                 ></div>
         <div class="h2 clear-both padding-top-2em">{$lang.affiliate_program}</div>
         <div id="content_affiliate_program">
-            {foreach from=$plan_slider.images item='image'}
+            {foreach from=$products_slider item='image'}
                 {if !empty($image.filename)}
                 <div>
                     <img src="{$image.filename}">
-                    <span class="plan_name">{$image.plan}</span>
+                    <span class="name">{$image.name}</span>
                 </div>
                 {/if}
             {/foreach}
         </div>
-        <div><a href="/index.php?dispatch=agents.all_plans"><button id="see_all" class="big green button center-block block">{$lang.view_all}</button></a></div>
+        <div><a class="text-plain" href="/index.php?dispatch=agents.companies_and_products"><button id="see_all" class="big green button center-block block">{$lang.view_all}</button></a></div>
 
     </div>
 </div>

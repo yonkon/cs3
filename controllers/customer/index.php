@@ -23,11 +23,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'index') {
+    $sliders = fn_agents_get_sliders();
     $company_images = fn_agents_get_company_logos();
     $plan_images = fn_agents_get_plans_logos();
     $total_agents = fn_agents_get_total_agents_numbers();
-    Registry::get('view')->assign('company_slider', array('images' => $company_images));
-    Registry::get('view')->assign('plan_slider', array('images' => $plan_images));
+
+    Registry::get('view')->assign('company_slider', $sliders['company']);
+    Registry::get('view')->assign('products_slider', $sliders['products']);
     Registry::get('view')->assign('total_agents', $total_agents);
     Registry::get('view')->assign('total_agents_use_images', false);
 }

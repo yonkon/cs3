@@ -16,6 +16,7 @@
 if ( !defined('AREA') ) { die('Access denied'); }
 
 $schema = array(
+//    'agents.slider' => array(),
 	'products.update' => array(
 		'func' => array('fn_get_product_name', '@product_id'),
 		'icon' => 'product-item',
