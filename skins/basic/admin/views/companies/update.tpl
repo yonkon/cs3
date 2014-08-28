@@ -342,7 +342,7 @@
 {hook name="companies:tabs_content"}{/hook}
 
 {** Form submit section **}
-<a class="block" href="{'agents.offices'|fn_url}&company_id={$company_data.company_id}"><button type="button">{$lang.Manage_company_offices}</button> </a>
+<a class="block" href="{'agents.offices'|fn_url}&company_id={$company_data.company_id}"><button  class="default-button" type="button">{$lang.Manage_company_offices}</button> </a>
 
 <div class="buttons-container cm-toggle-button buttons-bg">
 	{if $mode == "add"}

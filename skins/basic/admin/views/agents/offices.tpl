@@ -1,4 +1,4 @@
-<div id="company_offices_div">
+<div id="company_offices_div" style="padding: 1em">
 
     {if $mode == 'view'}
         {include file="views/agents/components/view.tpl"}

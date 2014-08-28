@@ -97,6 +97,36 @@ elseif ($mode == 'office_shipping_add') {
     Registry::get('view')->assign('shipping', $shipping);
     return array(CONTROLLER_STATUS_OK, $redirect_url);
 }
+
+elseif ($mode == 'ajax_shipping_delete') {
+    $sid = $_REQUEST['shipping_id'];
+    if (empty($sid)) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $query = db_process('DELETE FROM ?:company_office_shippings WHERE shipping_id = ?i', array($sid));
+    if (db_query($query)) {
+        echo (json_encode(array('status' => 'OK')));
+        die();
+    }
+    return array(CONTROLLER_STATUS_NO_PAGE);
+}
+
+elseif ($mode == 'ajax_office_delete') {
+    $oid = $_REQUEST['office_id'];
+    if (empty($oid)) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    $query = db_process('DELETE FROM ?:company_office_shippings WHERE office_id = ?i', array($oid));
+    if (db_query($query)) {
+        $query = db_process('DELETE FROM ?:company_offices WHERE office_id = ?i', array($oid));
+        if (db_query($query)) {
+            echo (json_encode(array('status' => 'OK')));
+            die();
+        }
+    }
+    return array(CONTROLLER_STATUS_NO_PAGE);
+}
+
 elseif ($mode == 'sliders') {
     $sliders = fn_agents_get_sliders();
     if(isset($_REQUEST['submit'])) {
