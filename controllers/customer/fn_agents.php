@@ -1674,7 +1674,11 @@ function fn_agents_get_orders($user_id, $params = array(), $lang_code = CART_LAN
         $order = array();
         foreach ($_params['order'] as $field=>$value) {
             if (!empty ($value) ) {
-                $order[] = db_process("$field $value ");
+                if(!is_numeric($field)) {
+                    $order[] = db_process("$field $value ");
+                } else {
+                    $order[] = db_process(" $value ");
+                }
             }
         }
         $order = !empty($order) && is_array($order) ?  'ORDER BY ' . implode(',', $order) : '';
@@ -1920,10 +1924,10 @@ function fn_agents_get_company_offices($company_id, $params = array(), $lang = C
 }
 
 function fn_agents_get_company_offices_with_regions($company_id, $params = array(), $lang = CART_LANGUAGE) {
-    $select = db_process('SELECT co.*, rl.parent_id AS region_id, rl.name AS region FROM ?:company_offices co LEFT JOIN Cities c ON c.CityId = co.city_id LEFT JOIN Regions_lang rl ON rl.parent_id = c.RegionID ');
+    $select = db_process('SELECT co.*, cl.name AS city,  rl.parent_id AS region_id, rl.name AS region FROM ?:company_offices co LEFT JOIN Cities c ON c.CityId = co.city_id LEFT JOIN Regions_lang rl ON rl.parent_id = c.RegionID LEFT JOIN Cities_lang cl ON cl.parent_id = co.city_id ');
     $join = '';
     $company_condition = empty($company_id) ? '' : db_process('co.company_id = ?i AND', $company_id );
-    $where = ' WHERE ' . $company_condition . db_process(' rl.lang_id = ?s ', array( $lang) );
+    $where = ' WHERE ' . $company_condition . db_process(' rl.lang_id = ?s AND cl.lang_id = ?s ', array( $lang, $lang) );
     $order = ' ORDER BY city ASC ';
 
     if(!empty($params['office_id'])) {
@@ -2306,7 +2310,7 @@ function fn_agents_add_slide() {
                 $dot = strrpos($filename, '.');
                 $filename_original = substr($filename, 0, $dot) . '_orig' . substr($filename, $dot);
                 if (fn_copy($logo['path'], $filename_original)) {
-                    if (fn_resize_image($filename_original, $filename, Registry::get('settings.Thumbnails.product_lists_thumbnail_width'), Registry::get('settings.Thumbnails.product_lists_thumbnail_height'), false, Registry::get('settings.Thumbnails.thumbnail_background_color'), true)) {
+                    if (fn_resize_image($filename_original, $filename, Registry::get('settings.Thumbnails.product_lists_thumbnail_width'), Registry::get('settings.Thumbnails.product_lists_thumbnail_height'), true, Registry::get('settings.Thumbnails.thumbnail_background_color'), true)) {
                     }
                     list($w, $h, ) = fn_get_image_size($filename);
                     list($w_orig, $h_orig) = fn_get_image_size($filename_original);

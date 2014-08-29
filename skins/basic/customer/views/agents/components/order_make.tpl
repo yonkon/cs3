@@ -23,10 +23,10 @@
         <div>
             <label class="client_filds_add_product_label" for="client_company">{$lang.Company}</label>
             <select class="client_filds_add_product" id="client_company" name="client[company]">
-                <option value="">- {$lang.select_company} -</option>
-                {foreach from=$companies item="company" key="code"}
-                    <option {if $company.company_id == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>
-                {/foreach}
+                <option value="{$company.company_id}">{$company.company}</option>
+                {*{foreach from=$companies item="company" key="code"}*}
+                    {*<option {if $company.company_id == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>*}
+                {*{/foreach}*}
             </select>
         </div>
         <div>
@@ -35,7 +35,7 @@
             <select class="client_filds_add_product" id="client_region" name="client[region]">
                 <option value="">- {$lang.select_region} -</option>
                 {foreach from=$regions item="region"  key="code"}
-                    <option {if $region.RegionID == $client.region} selected="selected"{/if} value="{$region.RegionID}">{$region.name}</option>
+                    <option {if $region.region_id == $client.region} selected="selected"{/if} value="{$region.region_id}">{$region.region}</option>
                 {/foreach}
             </select>
         </div>
@@ -44,7 +44,7 @@
             <select class="client_filds_add_product" id="client_city" name="client[city]">
                 <option value="">- {$lang.select_city} -</option>
                 {foreach from=$cities item="city"  key="code"}
-                    <option {if $city.CityId == $client.city} selected="selected"{/if} value="{$city.CityId}">{$city.name}</option>
+                    <option {if $city.city_id == $client.city} selected="selected"{/if} value="{$city.city_id}">{$city.city}</option>
                 {/foreach}
             </select>
         </div>

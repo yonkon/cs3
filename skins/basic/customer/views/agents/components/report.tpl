@@ -2,7 +2,6 @@
 
 <p><a onclick="$('#general_statistics').toggle(); return false;"><strong>{$lang.general_statistics} &#187;</strong></a></p>
 <div id="general_statistics" class="hidden">
-
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
         <tr>
             {*<th width="40%">{$lang.action}</th>*}
@@ -54,6 +53,7 @@
     {*{/if}*}
 
 </div>
+{capture name="agents_extra_content"}
 
 {include file="common_templates/pagination.tpl"}
 
@@ -66,10 +66,7 @@
 {if $settings.DHTML.customer_ajax_based_pagination == "Y"}
     {assign var="ajax_class" value="cm-ajax"}
 {/if}
-{*<form type="post" >*}
-    {*<input type="hidden" name="dispatch" value="agents.report_export">*}
     <button class="green button" type="button" onclick="exportReport();">{$lang.export}</button>
-{*</form>*}
 {literal}
 <script type="text/javascript">
     function exportReport() {
@@ -83,73 +80,117 @@
 {/literal}
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
     <tr>
-        {*<th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=action&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.action}</a>{if $sort_by == "action"}{$sort_sign}{/if}</th>*}
-        <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=date&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.date}</a>{if $sort_by == "date"}{$sort_sign}{/if}</th>
-        <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.cost}</a>{if $sort_by == "cost"}{$sort_sign}{/if}</th>
-        <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=customer&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.customer}</a>{if $sort_by == "customer"}{$sort_sign}{/if}</th>
-        {*<th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=banner&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.banner}</a>{if $sort_by == "banner"}{$sort_sign}{/if}</th>*}
-        <th><a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=status&amp;sort_order={$sort_order}" rev="pagination_contents">{$lang.status}</a>{if $sort_by == "status"}{$sort_sign}{/if}</th>
-        <th width="1%" class="center">
-            <img src="{$images_dir}/plus_minus.gif" width="13" height="12" border="0" name="plus_minus" id="on_st" alt="{$lang.expand_collapse_list}" title="{$lang.expand_collapse_list}" class="hand cm-combinations-commissions" /><img src="{$images_dir}/minus_plus.gif" width="13" height="12" border="0" name="minus_plus" id="off_st" alt="{$lang.expand_collapse_list}" title="{$lang.expand_collapse_list}" class="hand hidden cm-combinations-commissions" /></th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=order&amp;sort_order={$sort_order}" rev="pagination_contents">
+                {$lang.order}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=company&amp;sort_order={$sort_order}" rev="pagination_contents">
+            {$lang.company}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=product&amp;sort_order={$sort_order}" rev="pagination_contents">
+            {$lang.product}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=partner&amp;sort_order={$sort_order}&amp;post_sort_by=agent" rev="pagination_contents">
+            {$lang.agent}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=partner&amp;sort_order={$sort_order}&amp;post_sort_by=subagent" rev="pagination_contents">
+            {$lang.subagent}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=sum&amp;sort_order={$sort_order}" rev="pagination_contents">
+            {$lang.sum}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;post_sort_by=agent_profit&amp;sort_order={$sort_order}" rev="pagination_contents">
+            {$lang.agent_profit}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;post_sort_by=subagent_profit&amp;sort_order={$sort_order}" rev="pagination_contents">
+            {$lang.agent_profit_from_subagent}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=status&amp;sort_order={$sort_order}" rev="pagination_contents">
+                {$lang.status}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=date&amp;sort_order={$sort_order}" rev="pagination_contents">
+            {$lang.registration_date}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
+        <th>
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=paid_date&amp;sort_order={$sort_order}" rev="pagination_contents">
+            {$lang.paid_date}
+            </a>{if $sort_by == "action"}{$sort_sign}{/if}
+        </th>
     </tr>
     {foreach from=$list_stats item="row_stats" name="commissions"}
         {cycle values=",table-row" assign="row_class_name"}
         {include file="addons/affiliate/views/aff_statistics/components/additional_data.tpl" data=$row_stats.data assign="additional_data"}
         <tr class="{$row_class_name}">
-            {*<td>*}
-                {*<strong>{$row_stats.title}{$action_title}</strong>*}
-            {*</td>*}
-            <td>{$row_stats.date|date_format:"`$settings.Appearance.date_format`, `$settings.Appearance.time_format`"}</td>
-            <td class="right">{include file="common_templates/price.tpl" value=$row_stats.amount|round:2}{$action_amount}</td>
             <td>
-                {$row_stats.customer_lastname} {$row_stats.customer_firstname}
-                {if $row_stats.ip}<p><em>({$row_stats.ip})</em></p>{/if}</td>
-            {*<td>{if $row_stats.banner}<a href="{"banners_manager.update?banner_type=`$row_stats.banner_type`&amp;banner_id=`$row_stats.banner_id`"|fn_url}">{$row_stats.banner}</a>{else}&nbsp;&nbsp;---&nbsp;{/if}</td>*}
-            <td>{if $row_stats.payout_id}{$lang.paidup}{elseif $row_stats.approved=="Y"}{$lang.approved}{else}&nbsp;&nbsp;---&nbsp;{/if}</td>
-            <td class="center nowrap">
-                {if $row_stats.extra_data || $additional_data|trim}
-                    <img src="{$images_dir}/plus.gif" width="14" height="9" border="0" name="plus_minus" id="on_commission_{$smarty.foreach.commissions.iteration}" alt="{$lang.expand_collapse_list}" title="{$lang.expand_collapse_list}" class="hand cm-combination-commissions" /><img src="{$images_dir}/minus.gif" width="14" height="9" border="0" name="minus_plus" id="off_commission_{$smarty.foreach.commissions.iteration}" alt="{$lang.expand_collapse_list}" title="{$lang.expand_collapse_list}" class="hand hidden cm-combination-commissions" /><a id="sw_commission_{$smarty.foreach.commissions.iteration}" class="cm-combination-commissions">{$lang.extra}</a>
-                {else}
-                    &nbsp;
+                    {$row_stats.order.order_id}
+            </td>
+            <td>
+                    {$row_stats.order.company_data.company}
+            </td>
+            <td>
+                    {$row_stats.order.product_data.product}
+            </td>
+            <td>
+                    {if $row_stats.partner_id == $row_stats.customer_id}
+                        {$row_stats.customer_lastname} {$row_stats.customer_firstname}
+                        {/if}&nbsp;
+            </td>
+            <td>
+                {if $row_stats.partner_id != $row_stats.customer_id}
+                    {$row_stats.customer_lastname} {$row_stats.customer_firstname}{/if}
+                &nbsp;
+            </td>
+            <td>
+                {$row_stats.order.total}
+            </td>
+            <td>
+                {if $row_stats.partner_id == $row_stats.customer_id}
+                    {$row_stats.amount}
                 {/if}
             </td>
+            <td>
+                {if $row_stats.partner_id != $row_stats.customer_id}
+                    {$row_stats.amount}
+                {/if}
+            </td>
+            <td>
+                {$row_stats.order.status_description}
+            </td>
+            <td>
+                    {$row_stats.date|date_format}
+            </td>
+            <td>
+                 {$row_stats.payout_date}
+            </td>
         </tr>
-        {if $row_stats.extra_data || $additional_data|trim}
-            <tr id="commission_{$smarty.foreach.commissions.iteration}" class="{$row_class_name} hidden">
-                <td colspan="7">
-                    <div class="box">
-                        {if $row_stats.extra_data}
-                            <table cellpadding="0" cellspacing="0" width="100%" class="table sortable">
-                                <tr>
-                                    <th width="25%">{$lang.action}</th>
-                                    <th width="10%">{$lang.cost}</th>
-                                    <th>{$lang.affiliate}</th>
-                                </tr>
-                                {foreach from=$row_stats.extra_data item="r_action" name="related_action"}
-                                <tr>
-                                    <td>{if $r_action.action_id == $row_stats.action_id}<strong>{/if}{$r_action.title}{if $r_action.tier} ({$r_action.tier} {$lang.tier_account}){/if}{if $r_action.action_id == $row_stats.action_id}</strong>{/if}</td>
-                                    <td>{include file="common_templates/price.tpl" value=$r_action.amount|round:2}</td>
-                                    <td>{if $r_action.firstname || $r_action.lastname} {$r_action.firstname} {$r_action.lastname}{/if}</td>
-                                <tr>
-                                    {/foreach}
-                            </table>
-                        {/if}
-                        {if $additional_data|trim}
-                            {$lang.additional_data}: {$additional_data}
-                        {/if}
-                    </div>
-                </td>
-            </tr>
-        {/if}
         {foreachelse}
         <tr>
-            <td colspan="7"><p class="no-items">{$lang.no_data_found}</p></td>
+            <td colspan="11"><p class="no-items">{$lang.no_data_found}</p></td>
         </tr>
     {/foreach}
     <tr class="table-footer">
-        <td colspan="7">&nbsp;</td>
+        <td colspan="11">&nbsp;</td>
     </tr>
 </table>
 {include file="common_templates/pagination.tpl"}
-
+{/capture}
 {capture name="mainbox_title"}{$lang.commissions}{/capture}

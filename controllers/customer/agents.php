@@ -416,7 +416,7 @@ elseif ($mode == 'collegues') {
 }
 
 elseif ($mode == 'report' || $mode == 'report_export') {
-        $payout_types = Registry::get('payout_types');
+            $payout_types = Registry::get('payout_types');
 
         $view->assign('payout_types', $payout_types);
         $payout_options = array();
@@ -530,8 +530,88 @@ elseif ($mode == 'report' || $mode == 'report_export') {
 
         $list_stats = fn_get_affiliate_actions($_SESSION['statistic_conditions'], array('sort_order' => $sort_order, 'sort_by' => $sort_by), true, @$_REQUEST['page']);
 
+
         $view->assign('sort_order', $sort_order == 'asc' ? 'desc' : 'asc');
         $view->assign('sort_by', $sort_by);
+
+    foreach($list_stats as &$sale) {
+        $sale_order  = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
+        $sale['order'] = $sale_order[0];
+        $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id']);
+    }
+    unset($sale);
+    if (!empty($_REQUEST['post_sort_by']) ) {
+        $psort = $_REQUEST['post_sort_by'];
+        $sorted_list_stats = array();
+
+        if (true || $psort == 'order') {
+            $order_ids = array();
+            $index = 0;
+            foreach($list_stats as $sale) {
+                if ($psort == 'order') {
+                    $order_ids[$sale['order']['order_id']][] = $index;
+                } elseif ($psort == 'company') {
+                    $order_ids[
+                        preg_replace(
+                            '/[^\w^\d]/u', '_',
+                            $sale['order']['company_data']['company']
+                        )][] = $index;
+                } elseif ($psort == 'product') {
+                    $order_ids[
+                    preg_replace(
+                        '/[^\w^\d]/u', '_',
+                        $sale['order']['product_data']['product']
+                    )][] = $index;
+                } elseif ($psort == 'agent' || $psort == 'subagent') {
+                    if($sale['partner_id'] == $sale['customer_id']) {
+                        $order_ids['agent'][
+                        preg_replace(
+                            '/[^\w^\d]/u', '_',
+                            $sale['customer_lastname']
+                        )][] = $index;
+                    } else {
+                        $order_ids['subagent'][
+                        preg_replace(
+                            '/[^\w^\d]/u', '_',
+                            $sale['customer_lastname']
+                        )][] = $index;
+                    }
+                } elseif ($psort == 'sum') {
+                    $order_ids[$sale['order']['total']][] = $index;
+                } elseif ($psort == 'status') {
+                    $order_ids[
+                    preg_replace(
+                        '/[^\w^\d]/u', '_',
+                        $sale['order']['status_description']
+                    )][] = $index;
+                } elseif ($psort == 'agent_profit' || $psort == 'subagent_profit') {
+                    if($sale['partner_id'] == $sale['customer_id']) {
+                        $order_ids['agent'][$sale['amount']][] = $index;
+                    } else {
+                        $order_ids['subagent'][$sale['amount']][] = $index;
+                    }
+                }
+                $index++;
+            }
+            if ($psort == 'agent' || $psort == 'agent_profit') {
+                $order_ids = array_merge($order_ids['agent'], $order_ids['subagent']);
+            }
+            if ($psort == 'subagent' || $psort == 'subagent_profit') {
+                $order_ids = array_merge($order_ids['subagent'], $order_ids['agent']);
+            }
+            if ($_REQUEST['sort_order'] == 'desc') {
+                krsort($order_ids);
+            } else {
+                ksort($order_ids);
+            }
+            foreach($order_ids as $ords) {
+                foreach($ords as $index) {
+                    $sorted_list_stats[] = array_values($list_stats)[$index];
+                }
+            }
+            $list_stats = $sorted_list_stats;
+        }
+    }
 
         if (!empty($list_stats)) {
             $view->assign('list_stats', $list_stats);
@@ -756,12 +836,14 @@ elseif ($mode == 'order_make') {
     $product = fn_agents_get_products(array('product_id' => $_REQUEST['product_id']));
     $product = $product[0][0];
     $company_id = $product['company_id'];
-    $regions = fn_agents_get_all_regions();
+//    $regions = fn_agents_get_all_regions();
+    $regions = fn_agents_get_company_offices_with_regions($company_id);
     $view->assign('regions', $regions );
     $companies = fn_get_companies(array('company_id' => $company_id), $auth);
     $view->assign('companies', $companies[0]);
-    $cities = fn_agents_get_all_cities($_REQUEST['client']);
-    $view->assign('cities', $cities);
+    $view->assign('company', $companies[0][0]);
+//    $cities = fn_agents_get_all_cities($_REQUEST['client']);
+    $view->assign('cities', $regions);
     $offices = fn_agents_get_company_offices_with_shippings($company_id);
     if(empty($offices)) {
         fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('company_have_no_offices'));

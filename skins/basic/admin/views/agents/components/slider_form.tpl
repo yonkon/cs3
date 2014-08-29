@@ -1,5 +1,5 @@
 <section>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
     <input type="hidden" id="slide_id" name="slide_id" value="{$slide.slide_id|default:''}">
     <input type="hidden" id="dispatch" name="dispatch" value="{'agents.sliders'|fn_url}">
     <div class="clear">

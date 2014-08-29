@@ -1,23 +1,4 @@
 {script src="js/ajax_get.js"}
-{*<div id="main_content">*}
-    {*<div id="top">*}
-        {*<ul class="hr">*}
-            {*<li><a href="/">{$lang.main}</a></li>*}
-            {*<li><a>{$lang.company}</a></li>*}
-            {*<li><a>{$lang.how_its_work}</a></li>*}
-            {*<li><a>{$lang.contacts}</a></li>*}
-            {*<li id="login"><a  href="/index.php?dispatch=auth.login_form&return_url=index.php">{$lang.login}</a></li>*}
-            {*{if $auth.user_id}*}
-                {*<li id="login"> <a href="{"auth.logout?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="account">{$lang.sign_out}</a></li>*}
-            {*{else}*}
-                {*<li id="login"> <a href="{"auth.login_form?redirect_url=`$return_current_url`"|fn_url}" rel="nofollow" class="account">{$lang.sign_in}</a></li>*}
-            {*{/if}*}
-
-        {*</ul>*}
-    {*</div>*}
-    {*<div id="content">*}
-        {*<div id="content_top"></div>*}
-        {*<div id="content_top_menu">Неизвестный контейнер</div></div>*}
 <div id="office_content">
 <div id="left_agent_menu">
     {include file="views/agents/components/left_agent_menu.tpl"}
@@ -54,7 +35,13 @@
     {/if}
 
 </div>
+    {if !empty($smarty.capture.agents_extra_content)}
+        <div class="agents_extra_div padding10px">
+            {$smarty.capture.agents_extra_content}
+        </div>
+    {/if}
 </div>
+
     <div>
     <div id="social_office"> <script type="text/javascript" src="//yandex.st/share/share.js"
                   charset="utf-8"></script>
