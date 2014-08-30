@@ -179,7 +179,10 @@
                     {$row_stats.date|date_format}
             </td>
             <td>
-                 {$row_stats.payout_date}
+                {if !empty($row_stats.payout_date)}
+                 {$row_stats.payout_date|date_format}
+                {/if}
+                &nbsp;
             </td>
         </tr>
         {foreachelse}

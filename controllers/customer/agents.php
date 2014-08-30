@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         if (!empty($user_id) && !$is_update) {
-            $redirect_url = "agents.success_add";
+            $redirect_url = "agents.office";
         } else {
             $redirect_url = "agents." . (!empty($user_id) ? "update" : "add") . "?";
 
@@ -528,93 +528,129 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sort_order = empty($_REQUEST['sort_order']) ? 'desc' : $_REQUEST['sort_order'];
         $sort_by = empty($_REQUEST['sort_by']) ? 'date' : $_REQUEST['sort_by'];
 
-        $list_stats = fn_get_affiliate_actions($_SESSION['statistic_conditions'], array('sort_order' => $sort_order, 'sort_by' => $sort_by), true, @$_REQUEST['page']);
+        $list_stats = fn_get_affiliate_actions($_SESSION['statistic_conditions'], array('sort_order' => $sort_order, 'sort_by' => $sort_by), false, @$_REQUEST['page']);
 
 
         $view->assign('sort_order', $sort_order == 'asc' ? 'desc' : 'asc');
         $view->assign('sort_by', $sort_by);
 
-    foreach($list_stats as &$sale) {
-        $sale_order  = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
-        $sale['order'] = $sale_order[0];
-        $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id']);
-    }
-    unset($sale);
-    if (!empty($_REQUEST['post_sort_by']) ) {
-        $psort = $_REQUEST['post_sort_by'];
-        $sorted_list_stats = array();
-
-        if (true || $psort == 'order') {
-            $order_ids = array();
-            $index = 0;
-            foreach($list_stats as $sale) {
-                if ($psort == 'order') {
-                    $order_ids[$sale['order']['order_id']][] = $index;
-                } elseif ($psort == 'company') {
-                    $order_ids[
-                        preg_replace(
-                            '/[^\w^\d]/u', '_',
-                            $sale['order']['company_data']['company']
-                        )][] = $index;
-                } elseif ($psort == 'product') {
-                    $order_ids[
-                    preg_replace(
-                        '/[^\w^\d]/u', '_',
-                        $sale['order']['product_data']['product']
-                    )][] = $index;
-                } elseif ($psort == 'agent' || $psort == 'subagent') {
-                    if($sale['partner_id'] == $sale['customer_id']) {
-                        $order_ids['agent'][
-                        preg_replace(
-                            '/[^\w^\d]/u', '_',
-                            $sale['customer_lastname']
-                        )][] = $index;
-                    } else {
-                        $order_ids['subagent'][
-                        preg_replace(
-                            '/[^\w^\d]/u', '_',
-                            $sale['customer_lastname']
-                        )][] = $index;
-                    }
-                } elseif ($psort == 'sum') {
-                    $order_ids[$sale['order']['total']][] = $index;
-                } elseif ($psort == 'status') {
-                    $order_ids[
-                    preg_replace(
-                        '/[^\w^\d]/u', '_',
-                        $sale['order']['status_description']
-                    )][] = $index;
-                } elseif ($psort == 'agent_profit' || $psort == 'subagent_profit') {
-                    if($sale['partner_id'] == $sale['customer_id']) {
-                        $order_ids['agent'][$sale['amount']][] = $index;
-                    } else {
-                        $order_ids['subagent'][$sale['amount']][] = $index;
-                    }
-                }
-                $index++;
-            }
-            if ($psort == 'agent' || $psort == 'agent_profit') {
-                $order_ids = array_merge($order_ids['agent'], $order_ids['subagent']);
-            }
-            if ($psort == 'subagent' || $psort == 'subagent_profit') {
-                $order_ids = array_merge($order_ids['subagent'], $order_ids['agent']);
-            }
-            if ($_REQUEST['sort_order'] == 'desc') {
-                krsort($order_ids);
-            } else {
-                ksort($order_ids);
-            }
-            foreach($order_ids as $ords) {
-                foreach($ords as $index) {
-                    $sorted_list_stats[] = array_values($list_stats)[$index];
-                }
-            }
-            $list_stats = $sorted_list_stats;
+        foreach($list_stats as &$sale) {
+            $sale_order  = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
+            $sale['order'] = $sale_order[0];
+            $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id'], false);
         }
-    }
+        unset($sale);
+        if (!empty($_REQUEST['post_sort_by']) ) {
+            $psort = $_REQUEST['post_sort_by'];
+            $sorted_list_stats = array();
+
+            if (true || $psort == 'order') {
+                $order_ids = array();
+                $index = 0;
+                foreach($list_stats as $sale) {
+                    if ($psort == 'order') {
+                        $order_ids[$sale['order']['order_id']][] = $index;
+                    } elseif ($psort == 'company') {
+                        $order_ids[
+                            preg_replace(
+                                '/[^\w^\d]/u', '_',
+                                $sale['order']['company_data']['company']
+                            )][] = $index;
+                    } elseif ($psort == 'product') {
+                        $order_ids[
+                        preg_replace(
+                            '/[^\w^\d]/u', '_',
+                            $sale['order']['product_data']['product']
+                        )][] = $index;
+                    } elseif ($psort == 'agent' || $psort == 'subagent') {
+                        if($sale['partner_id'] == $sale['customer_id']) {
+                            $order_ids['agent'][
+                            preg_replace(
+                                '/[^\w^\d]/u', '_',
+                                $sale['customer_lastname']
+                            )][] = $index;
+                        } else {
+                            $order_ids['subagent'][
+                            preg_replace(
+                                '/[^\w^\d]/u', '_',
+                                $sale['customer_lastname']
+                            )][] = $index;
+                        }
+                    } elseif ($psort == 'sum') {
+                        $order_ids[$sale['order']['total']][] = $index;
+                    } elseif ($psort == 'status') {
+                        $order_ids[
+                        preg_replace(
+                            '/[^\w^\d]/u', '_',
+                            $sale['order']['status_description']
+                        )][] = $index;
+                    } elseif ($psort == 'agent_profit' || $psort == 'subagent_profit') {
+                        if($sale['partner_id'] == $sale['customer_id']) {
+                            $order_ids['agent'][$sale['amount']][] = $index;
+                        } else {
+                            $order_ids['subagent'][$sale['amount']][] = $index;
+                        }
+                    } elseif ($psort == 'paid_date') {
+                        $order_ids[$sale['payout_date']][] = $index;
+                    }
+                    $index++;
+                }
+
+                if ($_REQUEST['sort_order'] == 'desc') {
+                    if ($psort == 'agent' || $psort == 'agent_profit') {
+                        krsort($order_ids['agent']);
+                        krsort($order_ids['subagent']);
+                        $order_ids = array_merge(
+                            $order_ids['agent'],
+                            $order_ids['subagent']
+                        );
+                    } elseif ($psort == 'subagent' || $psort == 'subagent_profit') {
+                        krsort($order_ids['agent']);
+                        krsort($order_ids['subagent']);
+                        $order_ids = array_merge(
+                            $order_ids['subagent'],
+                            $order_ids['agent']
+                        );
+                    } else {
+                        krsort($order_ids);
+                    }
+                } else {
+                    if ($psort == 'agent' || $psort == 'agent_profit') {
+                        ksort($order_ids['agent']);
+                        ksort($order_ids['subagent']);
+                        $order_ids = array_merge(
+                            $order_ids['agent'],
+                            $order_ids['subagent']
+                        );
+                    } elseif ($psort == 'subagent' || $psort == 'subagent_profit') {
+                        ksort($order_ids['agent']);
+                        ksort($order_ids['subagent']);
+                        $order_ids = array_merge(
+                            $order_ids['subagent'],
+                            $order_ids['agent']
+                        );
+                    } else {
+                        ksort($order_ids);
+                    }
+                }
+                foreach($order_ids as $ords) {
+                    foreach($ords as $index) {
+                        $sorted_list_stats[] = array_values($list_stats)[$index];
+                    }
+                }
+                $list_stats = $sorted_list_stats;
+            }
+        }
 
         if (!empty($list_stats)) {
-            $view->assign('list_stats', $list_stats);
+            $list_stats_count = count($list_stats);
+            if (!empty($_REQUEST['page']) ) {
+                $view->assign('list_stats', array_slice($list_stats, (intval($_REQUEST['page']) - 1) * $limit, $limit, true) );
+                fn_paginate($_REQUEST['page'], $list_stats_count);
+            } else {
+                $view->assign('list_stats', array_slice($list_stats, 0, $limit, true) );
+                fn_paginate(1, $list_stats_count);
+            }
         }
 
         $order_status_descr = fn_get_statuses(STATUSES_ORDER, true, true, true);
@@ -655,7 +691,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sheet->setCellValue("B2", fn_date_format(time()));
 //General statistics
         $sheet->setCellValue("A4", fn_get_lang_var("general_statistics"));
-        $sheet->mergeCells('A4:H4');
+        $sheet->mergeCells('A4:C4');
         $sheet->setCellValue("A5", fn_get_lang_var("sales"));
         $sheet->setCellValue("B5", fn_get_lang_var("sum"));
         $sheet->setCellValue("C5", fn_get_lang_var("avg"));
@@ -681,7 +717,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
 
 
         $sheet->setCellValue("A7", fn_get_lang_var("details"));
-        $sheet->mergeCells('A7:H7');
+        $sheet->mergeCells('A7:K7');
         $sheet->setCellValue("A8", fn_get_lang_var("Order"));
         $sheet->setCellValue("B8", fn_get_lang_var("company"));
         $sheet->setCellValue("C8", fn_get_lang_var("product"));
@@ -690,8 +726,9 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sheet->setCellValue("F8", fn_get_lang_var("sum"));
         $sheet->setCellValue("G8", fn_get_lang_var("agent_profit"));
         $sheet->setCellValue("H8", fn_get_lang_var("agent_profit_form_subagent"));
-        $sheet->setCellValue("I8", fn_get_lang_var("registration_date"));
-        $sheet->setCellValue("J8", fn_get_lang_var("paid_date"));
+        $sheet->setCellValue("I8", fn_get_lang_var("status"));
+        $sheet->setCellValue("J8", fn_get_lang_var("registration_date"));
+        $sheet->setCellValue("K8", fn_get_lang_var("paid_date"));
         $row = 9;
         foreach($list_stats as $sale) {
             $order = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
@@ -704,8 +741,9 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sheet->setCellValue("F$row", $order['total']);
             $sheet->setCellValue("G$row", $sale['partner_id'] == $sale['customer_id'] ? $sale['amount'] : 0);
             $sheet->setCellValue("H$row", $sale['partner_id'] == $sale['customer_id'] ? 0 : $sale['amount']);
-            $sheet->setCellValue("I$row", fn_date_format($sale['date']));
-            $sheet->setCellValue("J$row", fn_agents_get_payout_date($sale['payout_id']));
+            $sheet->setCellValue("I$row", $sale['order']['status_description']);
+            $sheet->setCellValue("J$row", fn_date_format($sale['date']));
+            $sheet->setCellValue("K$row", fn_agents_get_payout_date($sale['payout_id']));
             $row++;
         }
 

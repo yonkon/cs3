@@ -360,7 +360,7 @@ function fn_update_subagent ($user_id, $user_data, &$auth, $ship_to_another, $no
 
     if ($action == 'add') {
 
-        $skip_auth = false;
+        $skip_auth = true;
         if (AREA != 'A') {
             if (Registry::get('settings.General.approve_user_profiles') == 'Y') {
                 fn_set_notification('W', fn_get_lang_var('important'), fn_get_lang_var('text_profile_should_be_approved'));
@@ -2271,7 +2271,11 @@ function fn_agents_get_payout_date($payout_id, $format = '%b %e, %Y') {
         return '';
     }
     $date = db_get_field(db_process('SELECT date FROM ?:affiliate_payouts WHERE payout_id = ?i', array($payout_id)));
-    return fn_date_format($date, $format);
+    if(!empty($format)) {
+        return fn_date_format($date, $format);
+    } else {
+        return $date;
+    }
 }
 
 function fn_agents_get_saved_products($user_id, $params) {
