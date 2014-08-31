@@ -751,32 +751,28 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $row++;
         }
 
-
-//        for ($i = 2; $i < 10; $i++) {
-//            for ($j = 2; $j < 10; $j++) {
-//                // Выводим таблицу умножения
-//                $sheet->setCellValueByColumnAndRow(
-//                    $i - 2,
-//                    $j,
-//                    $i . "x" .$j . "=" . ($i*$j));
-//                // Применяем выравнивание
-//                $sheet->getStyleByColumnAndRow($i - 2, $j)->getAlignment()->
-//                    setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
-//            }
-//        }
-
+        $report_name = date('m_d_', time()) . 'report_user_' . $user['user_id'] . '.xls';
 
         // Выводим HTTP-заголовки
         header ( "Expires: Mon, 1 Apr 1974 05:00:00 GMT" );
         header ( "Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT" );
-        header ( "Cache-Control: no-cache, must-revalidate" );
-        header ( "Pragma: no-cache" );
+//        header ( "Cache-Control: no-cache, must-revalidate" );
+//        header ( "Pragma: no-cache" );
         header ( "Content-type: application/vnd.ms-excel" );
-        header ( "Content-Disposition: attachment; filename=report.xls" );
-
+        header ( "Content-Disposition: attachment; filename=$report_name" );
+        header ('Pragma: public');
+        header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header ('Content-Type: application/force-download');
+        header ('Content-Type: application/octet-stream');
+        header ('Content-Type: application/download');
+        header ('Content-Transfer-Encoding: binary');
+        PHPExcel_Settings::setZipClass(PHPExcel_Settings::PCLZIP);
 // Выводим содержимое файла
-        $objWriter = new PHPExcel_Writer_Excel5($xls);
-        $objWriter->save('php://output');
+//        $objWriter = new PHPExcel_Writer_Excel5($xls);
+        $objWriter = new PHPExcel_Writer_Excel2007($xls);
+//        $objWriter->save($report_name);
+//        $objWriter->save('php://output');
+        $objWriter->save('php://stdout');
         die();
     }
 }
