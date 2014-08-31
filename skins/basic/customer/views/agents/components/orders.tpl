@@ -87,7 +87,7 @@
                 </td>
                 <td colspan="2"><div>{$order.company_data.company_description|default|unescape|truncate:360}</div></td>
                 <td>
-                    <span>{$lang.profit}: {$order.product_data.profit|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span><br/>
+                    {*<span>{$lang.profit}: {$order.product_data.profit|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span><br/>*}
                     <span class="status">{$lang.status}: {$order.status_description}</span>
                 </td>
             </tr>
@@ -109,7 +109,8 @@
                     {*<input type="text" name="comment">*}
                 </td>
                 <td>
-                    <button class="green button" type="submit" name="submit" value="submit">{$lang.Send}</button>
+                    &nbsp;
+                    {*<button class="green button" type="button" name="send" value="send">{$lang.Send}</button>*}
                 </td>
             </tr>
             {/if}

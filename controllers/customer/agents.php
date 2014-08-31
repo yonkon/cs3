@@ -443,7 +443,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $statistic_search_data = array();
         }
 
-        $statistic_conditions = 'action="sale" AND approved = "Y" ';
+        $statistic_conditions = 'action="sale" ';
         if (empty($_REQUEST['statistic_search'])) {
             $statistic_search = array();
         } else {
@@ -595,6 +595,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
                     }
                     $index++;
                 }
+
+                $order_ids = is_array($order_ids) ? $order_ids : array();
+                $order_ids['agent'] = is_array($order_ids['agent']) ? $order_ids['agent'] : array();
+                $order_ids['subagent'] = is_array($order_ids['subagent']) ? $order_ids['subagent'] : array();
 
                 if ($_REQUEST['sort_order'] == 'desc') {
                     if ($psort == 'agent' || $psort == 'agent_profit') {
