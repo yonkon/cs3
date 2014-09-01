@@ -61,7 +61,7 @@
             <tr>
                 <td style="width: 100px">
                     <a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">
-                        <img class="product-image" src="/images/detailed/1/{$order.product_data.image.image_path}">
+                        <img class="product-image" src="{$order.product_data.image.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">
                     </a>
                 </td>
                 <td style="width: 300px" colspan="2">
@@ -82,12 +82,12 @@
             <tr>
                 <td>{if $order.company_data.image_path}
                     <a href="{"agents.company_info"|fn_url}&product_id={$order.product_id}">
-                        <img src="{$order.company_data.image_path}">
+                        <img src="{$order.company_data.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">
                     </a>{/if}
                 </td>
                 <td colspan="2"><div>{$order.company_data.company_description|default|unescape|truncate:360}</div></td>
                 <td>
-                    <span>{$lang.profit}: {$order.product_data.profit|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span><br/>
+                    {*<span>{$lang.profit}: {$order.product_data.profit|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span><br/>*}
                     <span class="status">{$lang.status}: {$order.status_description}</span>
                 </td>
             </tr>
@@ -109,7 +109,8 @@
                     {*<input type="text" name="comment">*}
                 </td>
                 <td>
-                    <button class="green button" type="submit" name="submit" value="submit">{$lang.Send}</button>
+                    &nbsp;
+                    {*<button class="green button" type="button" name="send" value="send">{$lang.Send}</button>*}
                 </td>
             </tr>
             {/if}

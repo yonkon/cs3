@@ -55,7 +55,7 @@
             <tr>
                 <td style="width: 100px">
                     <a href="{"agents.product_info"|fn_url}&product_id={$product.product_id}">
-                        <img class="product-image" src="/images/detailed/1/{$product.image.image_path}">
+                        <img class="product-image" src="{$product.image.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">
                     </a>
                 </td>
                 <td style="width: 300px" colspan="2">
@@ -72,7 +72,7 @@
             <tr>
                 <td>{if $product.company.image_path}
                     <a href="{"agents.company_info"|fn_url}&product_id={$product.product_id}">
-                        <img src="{$product.company.image_path}">
+                        <img src="{$product.company.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">
                     </a>{/if}
                 </td>
                 <td colspan="2"><div>{$product.company.description|default|unescape|truncate:360}</div></td>

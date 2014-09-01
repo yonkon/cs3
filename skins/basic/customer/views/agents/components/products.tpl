@@ -55,7 +55,7 @@
             <div class="product_div">
                 <table class="table">
                     <tr>
-                        <td id="product_image"> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="{$product.image.image_path}"></a></td>
+                        <td id="product_image"> <a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="{$product.image.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}"></a></td>
                         <td id="product_name" colspan="2">
                             <h2><a href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
                             <div class="'product-description">{$product.full_description|unescape|truncate:360}</div>
@@ -72,12 +72,12 @@
                             <div>
                                 <button id="order_submit_{$product.product_id}" class="big green button" type="submit" name="checkout" value="checkout">{$lang.checkout}</button>
                             </div>
-                            <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/components/shipping.png">{/if}
+                            <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/components/shipping.png"|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape>{/if}
                             </div>
                         </td>
                     </tr>
                     <tr>
-                        <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img class="company_image" src="{$product.company.image_path}"></a>{/if}</td>
+                        <td id="company_img">{if $product.company.company_description}<a href="{'agents.company_info'|fn_url}&product_id={$product.product_id}"> <img class="company_image" src="{$product.company.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}"></a>{/if}</td>
                         <td id="company_desc" colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
                         <td id="add_to_save">
                             <span>{$lang.profit} {$product.profit|floatval|format_price:$currencies.$secondary_currency:$price_id:"profit":true}</span><br>

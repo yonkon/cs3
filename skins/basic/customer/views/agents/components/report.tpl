@@ -126,7 +126,7 @@
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>
         <th>
-            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=date&amp;sort_order={$sort_order}" rev="pagination_contents">
+            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=date&amp;post_sort_by=0&amp;sort_order={$sort_order}" rev="pagination_contents">
             {$lang.registration_date}
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>

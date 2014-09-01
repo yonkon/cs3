@@ -1,0 +1,1 @@
+ALTER TABLE `cscart_orders` ADD `comment` TEXT NULL ;
