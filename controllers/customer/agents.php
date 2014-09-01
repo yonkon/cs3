@@ -703,23 +703,6 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sheet->setCellValue("B6", $general_stats['sale']['sum']);
         $sheet->setCellValue("C6", $general_stats['sale']['avg']);
 //Sales list
-//одробный сервис отчётов по всем пользователям и компаниям.
-//
-//Отчёт по агентам содержит поля:
-//- № заказа (или ID заявки )
-//- Название компании (выпадающий список)
-//- Название услуги (выпадающий список)
-//- Агент (сортировка вверх/вниз)
-//- Субагент (сортировка вверх/вниз)
-//- Сумма (сортировка вверх/вниз)
-//- Доход агента (сортировка вверх/вниз)
-//- Доход от субагентов (сортировка вверх/вниз)
-//- Статус (выпадающий список)
-//- Дата регистрации заказа «от – до»
-//- Дата оплаты заказа «от – до»
-//- Статус (выпадающий список)
-
-
         $sheet->setCellValue("A7", fn_get_lang_var("details"));
         $sheet->mergeCells('A7:K7');
         $sheet->setCellValue("A8", fn_get_lang_var("Order"));
@@ -756,24 +739,44 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         // Выводим HTTP-заголовки
         header ( "Expires: Mon, 1 Apr 1974 05:00:00 GMT" );
         header ( "Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT" );
-//        header ( "Cache-Control: no-cache, must-revalidate" );
-//        header ( "Pragma: no-cache" );
+        header ( "Cache-Control: no-cache, must-revalidate" );
+        header ( "Pragma: no-cache" );
         header ( "Content-type: application/vnd.ms-excel" );
-        header ( "Content-Disposition: attachment; filename=$report_name" );
-        header ('Pragma: public');
-        header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header ('Content-Type: application/force-download');
-        header ('Content-Type: application/octet-stream');
-        header ('Content-Type: application/download');
-        header ('Content-Transfer-Encoding: binary');
+        header ( "Content-Disposition: attachment; filename=" . $report_name );
+
+//        header ('Pragma: public');
+//        header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+//        header ('Content-Type: application/force-download');
+//        header ('Content-Type: application/octet-stream');
+//        header ('Content-Type: application/download');
+//        header ('Content-Transfer-Encoding: binary');
         PHPExcel_Settings::setZipClass(PHPExcel_Settings::PCLZIP);
 // Выводим содержимое файла
-//        $objWriter = new PHPExcel_Writer_Excel5($xls);
-        $objWriter = new PHPExcel_Writer_Excel2007($xls);
+        try {
+            $objWriter = new PHPExcel_Writer_Excel5($xls);
+        } catch (Exception $e) {
+            var_dump($e);
+            die();
+        }
+//        $objWriter = new PHPExcel_Writer_Excel2007($xls);
 //        $objWriter->save($report_name);
-//        $objWriter->save('php://output');
-        $objWriter->save('php://stdout');
-        die();
+        if(!is_dir(DIR_CUSTOM_FILES . 'reports/')) {
+            mkdir(DIR_CUSTOM_FILES . 'reports/');
+            chmod(DIR_CUSTOM_FILES . 'reports/', DEFAULT_DIR_PERMISSIONS);
+        }
+        try {
+            $objWriter->save('php://output');
+//            $objWriter->save(DIR_CUSTOM_FILES . 'reports/' . $report_name);
+        } catch (Exception $e) {
+            var_dump($e);
+            die();
+        }
+        return array(CONTROLLER_STATUS_OK);
+
+//        $objWriter->save('php://stdout');
+//        http_redirect(  '/var/custom/reports/'  . $report_name);
+//        return array(CONTROLLER_STATUS_REDIRECT, '/var/custom/reports/'  . $report_name);
+
     }
 }
 
@@ -944,7 +947,14 @@ elseif ($mode == 'product_info' || $mode == 'company_info') {
             return array(CONTROLLER_STATUS_NO_PAGE);
         }
     }
-
+    $c_products = fn_agents_get_products(array ('company_id' => $company['company_id']));
+    $c_products = $c_products[0];
+    foreach ($c_products as &$c_product) {
+//        fn_get_image_pairs($c_product['product_id'], 'product', 'A');
+        $c_product['image']['image_path'] = get_image_full_path($c_product['image'], 0, 80, 80);
+        $c_product['description'] = fn_agents_get_product_description($_REQUEST['product_id']);
+    }
+    unset ($c_product);
     $company['image_path'] = fn_agents_get_company_logo($company['company_id']);
     $offices = fn_agents_get_company_offices_with_shippings($company['company_id']);
     $cities = fn_agents_extract_cities_from_offices($offices);
@@ -954,6 +964,7 @@ elseif ($mode == 'product_info' || $mode == 'company_info') {
     $view->assign('company', $company);
     $view->assign('offices', $offices);
     $view->assign('cities', $cities);
+    $view->assign('all_products', $c_products);
 
 
     if($mode == 'product_info') {

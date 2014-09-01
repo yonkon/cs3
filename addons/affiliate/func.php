@@ -1531,7 +1531,7 @@ function fn_agents_get_company_logos($company_id = null) {
             continue;
         }
         $logo = $logo_data['Customer_logo'];
-        $logo['filename'] = REAL_HOST . '/images/' . $logo['filename'];
+        $logo['filename'] = '/images/' . $logo['filename'];
         $logos[] = array_merge($logo , array(
                 'company_id' => $company['company_id'],
                 'company' => $company['company']

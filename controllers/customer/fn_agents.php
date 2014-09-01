@@ -1808,8 +1808,11 @@ function fn_restore_processed_user_password(&$destination, &$source)
     }
 }
 
-function get_image_full_path($image, $company_id=0) {
+function get_image_full_path($image, $company_id=0, $prefered_x = 150, $prefered_y = 150) {
     $thumbnails_name = str_replace('_02.', '_01.', $image['image_path']);
+    if(is_file(DIR_ROOT . "/images/thumbnails/$company_id/$prefered_x/$prefered_y/" . $thumbnails_name)) {
+        return "/images/thumbnails/$company_id/$prefered_x/$prefered_y/" . $thumbnails_name;
+    }
     if (!empty($image['image_id'])) {
         $sizes = array(150, 160, 320, 85,  50,  40,  30);
         foreach ($sizes as $size) {
