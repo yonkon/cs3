@@ -894,6 +894,10 @@ function fn_get_affiliate_actions($params, $sorting = 'date DESC', $do_paginatio
 			$params['sort_by'] = 'date';
 		}
 
+        if (!empty($params['prepared'])) {
+            $condition = empty($condition) ? $params['prepared'] : $condition . ' AND ' .$params['prepared'];
+        }
+
 		$sorting = (is_array($sortings[$params['sort_by']]) ? implode(' ' . $directions[$params['sort_order']]. ', ', $sortings[$params['sort_by']]) : $sortings[$params['sort_by']]) . " " . $directions[$params['sort_order']];
 	} else {
 		$condition = $params; // FIXME
@@ -913,6 +917,10 @@ function fn_get_affiliate_actions($params, $sorting = 'date DESC', $do_paginatio
 		$limit = '';
 	}
 
+//    $order_join = '';
+//    if ($params['order_status']) {
+//        $order_join = db_process(' JOIN ?:orders o ON ');
+//    }
 	$actions = db_get_hash_array("SELECT actions.*, alinks.object_data as parent_action_id, customers.firstname as customer_firstname, customers.lastname as customer_lastname, partners.firstname as partner_firstname, partners.lastname as partner_lastname, ?:common_descriptions.object as plan, ?:common_descriptions.description as plan_description, ?:aff_banners.type as banner_type, ?:aff_banner_descriptions.title as banner FROM ?:aff_partner_actions as actions LEFT JOIN ?:users as customers ON customers.user_id = actions.customer_id LEFT JOIN ?:users as partners ON partners.user_id = actions.partner_id LEFT JOIN ?:common_descriptions ON ?:common_descriptions.object_holder = 'affiliate_plans' AND ?:common_descriptions.object_id = actions.plan_id AND ?:common_descriptions.lang_code = ?s LEFT JOIN ?:aff_banners ON ?:aff_banners.banner_id = actions.banner_id LEFT JOIN ?:aff_banner_descriptions ON ?:aff_banner_descriptions.banner_id = actions.banner_id AND ?:aff_banner_descriptions.lang_code = ?s LEFT JOIN ?:aff_action_links as alinks ON alinks.action_id = actions.action_id AND alinks.object_type = 'A' WHERE ?p ORDER BY $sorting $limit", 'action_id', $lang_code, $lang_code, $condition);
 
 	if (!empty($actions)) {
@@ -927,7 +935,16 @@ function fn_get_affiliate_actions($params, $sorting = 'date DESC', $do_paginatio
 				if (!empty($actions[$action_id]['data']['O'])) {
 					$tmp_order = fn_get_order_info($actions[$action_id]['data']['O']);
 					$actions[$action_id]['data']['order_status'] = $tmp_order['status'];
+
 				}
+                if (
+                    (isset($params['order_status']) && empty($actions[$action_id]['data']['O']))
+                    ||
+                    (!empty($params['order_status']) && $params['order_status'] != $actions[$action_id]['data']['order_status'])
+                ){
+                    unset($actions[$action_id]);
+                    continue;
+                }
 				if (!empty($actions[$action_id]['data']['D'])) {
 					$actions[$action_id]['data']['coupon'] = fn_get_promotion_data($actions[$action_id]['data']['D']);
 				}

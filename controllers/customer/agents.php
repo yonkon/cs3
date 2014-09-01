@@ -510,7 +510,14 @@ elseif ($mode == 'report' || $mode == 'report_export') {
 
         $view->assign('statistic_search', $statistic_search_data);
 
-        $general_stats = db_get_hash_array("SELECT action, COUNT(action) as count, SUM(amount) as sum, AVG(amount) as avg, COUNT(distinct partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions GROUP BY action", 'action');
+    $order_status_join = '';
+    if (!empty($_REQUEST['order_status'])) {
+        $order_status = $_REQUEST['order_status'];
+        $order_status_join = db_process (' JOIN ?:aff_action_links al ON al.action_id = actions.action_id AND al.object_type = "O" JOIN ?:orders o ON o.order_id = al.object_data AND o.status = ?s', array($order_status));
+    }
+
+
+        $general_stats = db_get_hash_array("SELECT action, COUNT(action) as count, SUM(amount) as sum, AVG(amount) as avg, COUNT(distinct partner_id) as partners FROM ?:aff_partner_actions  as actions ?p WHERE $statistic_conditions GROUP BY action", 'action', $order_status_join);
 
         $general_stats['total'] = db_get_row("SELECT 'total' as action, COUNT(action) as count, SUM(amount) as sum, AVG(amount) as avg, COUNT(distinct partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions");
 
@@ -528,9 +535,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sort_order = empty($_REQUEST['sort_order']) ? 'desc' : $_REQUEST['sort_order'];
         $sort_by = empty($_REQUEST['sort_by']) ? 'date' : $_REQUEST['sort_by'];
 
-        $list_stats = fn_get_affiliate_actions($_SESSION['statistic_conditions'], array('sort_order' => $sort_order, 'sort_by' => $sort_by), false, @$_REQUEST['page']);
+        $list_stats = fn_get_affiliate_actions(array('prepared' => $_SESSION['statistic_conditions'], 'order_status' => $_REQUEST['order_status']), array('sort_order' => $sort_order, 'sort_by' => $sort_by), false, @$_REQUEST['page']);
 
 
+        $view->assign('order_status', $_REQUEST['order_status']);
         $view->assign('sort_order', $sort_order == 'asc' ? 'desc' : 'asc');
         $view->assign('sort_by', $sort_by);
 
@@ -659,6 +667,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
 
         $order_status_descr = fn_get_statuses(STATUSES_ORDER, true, true, true);
         $view->assign('order_status_descr', $order_status_descr);
+        $view->assign('order_statuses', fn_agents_get_order_statuses());
 
 
     if ($mode == 'report_export') {

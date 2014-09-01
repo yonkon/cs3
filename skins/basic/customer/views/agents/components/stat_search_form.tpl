@@ -21,6 +21,13 @@
 	{html_checkboxes options=$status_options name="statistic_search[status]" selected=$statistic_search.status columns=3}
 </div>
 
+    <select name="order_status">
+        <option value="">{$lang.order_status}</option>
+        {foreach from=$order_statuses item="st"}
+            <option value="{$st.status}" {if $st.status == $order_status}selected="selected"{/if}>{$st.description}</option>
+        {/foreach}
+    </select>
+
 <div class="buttons-container">{include file="buttons/button.tpl" but_text=$lang.search but_name="dispatch[$controller.$mode/search]"}</div>
 </form>
 
