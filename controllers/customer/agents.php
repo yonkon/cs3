@@ -104,9 +104,9 @@ if (!in_array($mode, array(
     $view->assign('mode', $mode);
 
 }
-if (strpos($mode, 'orders_') === 0 && $mode != 'orders_saved') {
-    $view->assign('mode', 'orders');
-}
+//if (strpos($mode, 'orders_') === 0 && $mode != 'orders_saved') {
+//    $view->assign('mode', 'orders');
+//}
 
 $limit = $_REQUEST['limit'] = empty($_REQUEST['limit']) ? 10 : $_REQUEST['limit'];
 $page = $_REQUEST['page'] = empty($_REQUEST['page']) ? 1 : $_REQUEST['page'];
@@ -309,7 +309,13 @@ elseif ($mode == 'success_add') {
 elseif ($mode == 'office') {
     return array(CONTROLLER_STATUS_OK);
 }
-elseif ($mode == 'companies_and_products') {
+elseif ($mode == 'companies_and_products' || $mode == 'new_products') {
+    if($mode == 'new_products') {
+        $_REQUEST['new'] = 1;
+        $view->assign('mode', 'new_products');
+    } else {
+        $view->assign('mode', 'products');
+    }
 
     $offices = fn_agents_get_company_offices($_REQUEST['client']['company']);
     $cities = fn_agents_extract_cities_from_offices($offices);
@@ -355,7 +361,7 @@ elseif ($mode == 'companies_and_products') {
     $view->assign('products', $products);
     $view->assign('products_param', $products_param);
     $view->assign('companies', $companies[0]);
-    $view->assign('mode', 'products');
+
     $view->assign('pagination', $pagination);
     $view->assign('client', $_REQUEST['client']);
     $view->assign('request', $_REQUEST);
