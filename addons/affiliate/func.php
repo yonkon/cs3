@@ -921,7 +921,16 @@ function fn_get_affiliate_actions($params, $sorting = 'date DESC', $do_paginatio
 //    if ($params['order_status']) {
 //        $order_join = db_process(' JOIN ?:orders o ON ');
 //    }
-	$actions = db_get_hash_array("SELECT actions.*, alinks.object_data as parent_action_id, customers.firstname as customer_firstname, customers.lastname as customer_lastname, partners.firstname as partner_firstname, partners.lastname as partner_lastname, ?:common_descriptions.object as plan, ?:common_descriptions.description as plan_description, ?:aff_banners.type as banner_type, ?:aff_banner_descriptions.title as banner FROM ?:aff_partner_actions as actions LEFT JOIN ?:users as customers ON customers.user_id = actions.customer_id LEFT JOIN ?:users as partners ON partners.user_id = actions.partner_id LEFT JOIN ?:common_descriptions ON ?:common_descriptions.object_holder = 'affiliate_plans' AND ?:common_descriptions.object_id = actions.plan_id AND ?:common_descriptions.lang_code = ?s LEFT JOIN ?:aff_banners ON ?:aff_banners.banner_id = actions.banner_id LEFT JOIN ?:aff_banner_descriptions ON ?:aff_banner_descriptions.banner_id = actions.banner_id AND ?:aff_banner_descriptions.lang_code = ?s LEFT JOIN ?:aff_action_links as alinks ON alinks.action_id = actions.action_id AND alinks.object_type = 'A' WHERE ?p ORDER BY $sorting $limit", 'action_id', $lang_code, $lang_code, $condition);
+    $joins = '';
+    if (!empty($params['join'])) {
+        if(is_array($params['join'])) {
+            $joins = implode(' ', $params['join']);
+        } else {
+            $joins = $params['join'];
+        }
+    }
+
+	$actions = db_get_hash_array("SELECT actions.*, alinks.object_data as parent_action_id, customers.firstname as customer_firstname, customers.lastname as customer_lastname, partners.firstname as partner_firstname, partners.lastname as partner_lastname, ?:common_descriptions.object as plan, ?:common_descriptions.description as plan_description, ?:aff_banners.type as banner_type, ?:aff_banner_descriptions.title as banner FROM ?:aff_partner_actions as actions LEFT JOIN ?:users as customers ON customers.user_id = actions.customer_id LEFT JOIN ?:users as partners ON partners.user_id = actions.partner_id LEFT JOIN ?:common_descriptions ON ?:common_descriptions.object_holder = 'affiliate_plans' AND ?:common_descriptions.object_id = actions.plan_id AND ?:common_descriptions.lang_code = ?s LEFT JOIN ?:aff_banners ON ?:aff_banners.banner_id = actions.banner_id LEFT JOIN ?:aff_banner_descriptions ON ?:aff_banner_descriptions.banner_id = actions.banner_id AND ?:aff_banner_descriptions.lang_code = ?s LEFT JOIN ?:aff_action_links as alinks ON alinks.action_id = actions.action_id AND alinks.object_type = 'A' ?p WHERE ?p ORDER BY $sorting $limit", 'action_id', $lang_code, $lang_code, $joins, $condition);
 
 	if (!empty($actions)) {
 		$extra_data = array();

@@ -439,7 +439,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $statistic_search_data = & $_SESSION['statistic_search_data'];
 
         if ($action == 'reset_search' || empty($statistic_conditions)) {
-            $statistic_conditions = " (amount != 0) ";
+            $statistic_conditions = " (actions.amount != 0) ";
             $statistic_search_data = array();
         }
 
@@ -453,9 +453,9 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $statistic_search_data = (empty($search_type) || $search_type != 'add') ? $statistic_search : fn_array_merge($statistic_search_data, $statistic_search);
 
         if (AREA == 'C') {
-            $statistic_conditions .= db_quote(" AND (partner_id = ?i)", $auth['user_id']);
+            $statistic_conditions .= db_quote(" AND (actions.partner_id = ?i)", $auth['user_id']);
         } elseif (!empty($statistic_search_data['partner_id'])) {
-            $statistic_conditions .= db_quote(" AND (partner_id = ?i)", $statistic_search_data['partner_id']);
+            $statistic_conditions .= db_quote(" AND (actions.partner_id = ?i)", $statistic_search_data['partner_id']);
         }
         if (!empty($_REQUEST['period']) && $_REQUEST['period'] != 'A') {
             list($_REQUEST['time_from'], $_REQUEST['time_to']) = fn_create_periods($_REQUEST);
@@ -495,31 +495,61 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $statistic_conditions .= " AND ($_conditions) ";
         }
         if (!empty($statistic_search_data['zero_actions']) && $statistic_search_data['zero_actions'] == 'Y' && AREA != 'C') {
-            $statistic_conditions .= " AND (amount = 0) ";
+            $statistic_conditions .= " AND (actions.amount = 0) ";
         } elseif (empty($statistic_search_data['zero_actions']) || AREA == 'C') {
-            $statistic_conditions .= " AND (amount != 0) ";
+            $statistic_conditions .= " AND (actions.amount != 0) ";
         }
         $statistic_search_data['amount_from'] = empty($statistic_search_data['amount_from']) ? 0 : floatval($statistic_search_data['amount_from']);
         if (!empty($statistic_search_data['amount_from'])) {
-            $statistic_conditions .= db_quote(" AND (amount >= ?d) ", fn_convert_price($statistic_search_data['amount_from']));
+            $statistic_conditions .= db_quote(" AND (actions.amount >= ?d) ", fn_convert_price($statistic_search_data['amount_from']));
         }
         $statistic_search_data['amount_to'] = empty($statistic_search_data['amount_to']) ? 0 : floatval($statistic_search_data['amount_to']);
         if (!empty($statistic_search_data['amount_to'])) {
-            $statistic_conditions .= db_quote(" AND (amount <= ?d) ", fn_convert_price($statistic_search_data['amount_to']));
+            $statistic_conditions .= db_quote(" AND (actions.amount <= ?d) ", fn_convert_price($statistic_search_data['amount_to']));
         }
 
         $view->assign('statistic_search', $statistic_search_data);
 
+    $joins = array();
     $order_status_join = '';
+    $payout_join = '';
     if (!empty($_REQUEST['order_status'])) {
         $order_status = $_REQUEST['order_status'];
-        $order_status_join = db_process (' JOIN ?:aff_action_links al ON al.action_id = actions.action_id AND al.object_type = "O" JOIN ?:orders o ON o.order_id = al.object_data AND o.status = ?s', array($order_status));
+        $joins[] = $order_status_join = db_process (' JOIN ?:aff_action_links al ON al.action_id = actions.action_id AND al.object_type = "O" JOIN ?:orders o ON o.order_id = al.object_data AND o.status = ?s', array($order_status));
+    }
+    if (!empty($_REQUEST['paid_date_from']) || !empty($_REQUEST['paid_date_to']) ) {
+        $payout_join = db_process(' JOIN ?:affiliate_payouts ap ON ap.payout_id = actions.payout_id ');
+        if (!empty($_REQUEST['paid_date_from']) ) {
+            $payout_join .= db_process(' AND ap.date >= ?i ', array(strtotime($_REQUEST['paid_date_from'] ) ) );
+//            $payout_join .= db_process(' AND ap.date >= ?s ', array(date('Y-m-d G:i:s' , strtotime($_REQUEST['paid_date_from']) ) ) );
+        }
+        if (!empty($_REQUEST['paid_date_to']) ) {
+            $payout_join .= db_process(' AND ap.date <= ?i ', array(strtotime($_REQUEST['paid_date_to'] ) ) );
+        }
+        $joins[] = $payout_join;
+    }
+
+    if (!empty ($_REQUEST['product_id']) || !empty ($_REQUEST['company_id'])) {
+        if (!empty($order_status_join)) {
+            $product_join = db_process('JOIN ?:order_details od ON od.order_id = o.order_id ');
+        } else {
+            $product_join = db_process(' JOIN ?:aff_action_links al ON al.action_id = actions.action_id AND al.object_type = "O" JOIN ?:orders o ON o.order_id = al.object_data JOIN ?:order_details od ON od.order_id = o.order_id ');
+        }
+        if (!empty ($_REQUEST['product_id']))  {
+            $product_join .= db_process(' AND od.product_id = ?i ', array($_REQUEST['product_id']));
+        }
+
+        if (!empty ($_REQUEST['company_id']))  {
+            $product_join .= db_process(' JOIN ?:products p ON p.product_id=od.product_id AND p.company_id = ?i ', array($_REQUEST['company_id']));
+        }
+
+        $joins[] = $product_join;
     }
 
 
-        $general_stats = db_get_hash_array("SELECT action, COUNT(action) as count, SUM(amount) as sum, AVG(amount) as avg, COUNT(distinct partner_id) as partners FROM ?:aff_partner_actions  as actions ?p WHERE $statistic_conditions GROUP BY action", 'action', $order_status_join);
+        $general_stats = db_get_hash_array("SELECT action, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p WHERE $statistic_conditions GROUP BY action", 'action', $order_status_join, $payout_join, $product_join);
 
-        $general_stats['total'] = db_get_row("SELECT 'total' as action, COUNT(action) as count, SUM(amount) as sum, AVG(amount) as avg, COUNT(distinct partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions");
+        $general_stats['total'] = db_get_row("SELECT 'total' as action, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions");
 
         $view->assign('general_stats', $general_stats);
         $additional_stats = array();
@@ -535,7 +565,11 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sort_order = empty($_REQUEST['sort_order']) ? 'desc' : $_REQUEST['sort_order'];
         $sort_by = empty($_REQUEST['sort_by']) ? 'date' : $_REQUEST['sort_by'];
 
-        $list_stats = fn_get_affiliate_actions(array('prepared' => $_SESSION['statistic_conditions'], 'order_status' => $_REQUEST['order_status']), array('sort_order' => $sort_order, 'sort_by' => $sort_by), false, @$_REQUEST['page']);
+        $list_stats = fn_get_affiliate_actions(array(
+            'prepared' => $_SESSION['statistic_conditions'],
+            'order_status' => $_REQUEST['order_status'],
+            'join' => $joins
+        ), array('sort_order' => $sort_order, 'sort_by' => $sort_by), false, @$_REQUEST['page']);
 
 
         $view->assign('order_status', $_REQUEST['order_status']);
@@ -548,6 +582,9 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id'], false);
         }
         unset($sale);
+
+
+
         if (!empty($_REQUEST['post_sort_by']) ) {
             $psort = $_REQUEST['post_sort_by'];
             $sorted_list_stats = array();
@@ -668,6 +705,13 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $order_status_descr = fn_get_statuses(STATUSES_ORDER, true, true, true);
         $view->assign('order_status_descr', $order_status_descr);
         $view->assign('order_statuses', fn_agents_get_order_statuses());
+        $view->assign('products', fn_agents_get_products(array('company_id' => $_REQUEST['company_id']))[0]);
+        $companies = fn_get_companies(null, $auth);
+        $view->assign('companies', $companies[0]);
+        $view->assign('company_id', $_REQUEST['company_id']);
+        $view->assign('product_id', $_REQUEST['product_id']);
+
+
 
 
     if ($mode == 'report_export') {
@@ -753,12 +797,6 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         header ( "Content-type: application/vnd.ms-excel" );
         header ( "Content-Disposition: attachment; filename=" . $report_name );
 
-//        header ('Pragma: public');
-//        header ('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-//        header ('Content-Type: application/force-download');
-//        header ('Content-Type: application/octet-stream');
-//        header ('Content-Type: application/download');
-//        header ('Content-Transfer-Encoding: binary');
         PHPExcel_Settings::setZipClass(PHPExcel_Settings::PCLZIP);
 // Выводим содержимое файла
         try {
@@ -767,8 +805,6 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             var_dump($e);
             die();
         }
-//        $objWriter = new PHPExcel_Writer_Excel2007($xls);
-//        $objWriter->save($report_name);
         if(!is_dir(DIR_CUSTOM_FILES . 'reports/')) {
             mkdir(DIR_CUSTOM_FILES . 'reports/');
             chmod(DIR_CUSTOM_FILES . 'reports/', DEFAULT_DIR_PERMISSIONS);
@@ -782,9 +818,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         }
         return array(CONTROLLER_STATUS_OK);
 
-//        $objWriter->save('php://stdout');
-//        http_redirect(  '/var/custom/reports/'  . $report_name);
-//        return array(CONTROLLER_STATUS_REDIRECT, '/var/custom/reports/'  . $report_name);
+
 
     }
 }

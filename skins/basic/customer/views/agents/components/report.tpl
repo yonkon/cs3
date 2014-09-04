@@ -4,9 +4,9 @@
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
         <tr>
             {*<th width="40%">{$lang.action}</th>*}
-            <th class="right" width="20%">{$lang.count}</th>
-            <th class="right" width="20%">{$lang.sum}</th>
-            <th class="right" width="20%">{$lang.avg}</th>
+            <th class="right" width="20%">{$lang.orders_count}</th>
+            <th class="right" width="20%">{$lang.agent_total_profit}</th>
+            <th class="right" width="20%">{$lang.agent_average_profit}</th>
         </tr>
         {if $general_stats}
             {foreach from=$payout_types key="payout_id" item="a"}
@@ -106,7 +106,7 @@
         </th>
         <th>
             <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=sum&amp;sort_order={$sort_order}" rev="pagination_contents">
-            {$lang.sum}
+            {$lang.price}
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>
         <th>
