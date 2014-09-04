@@ -18,7 +18,7 @@
         {include file="views/agents/components/clients.tpl"}
     {elseif $mode == 'add_client_form'}
         {include file="views/agents/components/add_client_form.tpl"}
-    {elseif $mode == 'orders'}
+    {elseif $mode == 'orders' || $mode == 'orders_active' || $mode == 'orders_closed' }
         {include file="views/agents/components/orders.tpl"}
     {elseif $mode == 'orders_saved'}
         {include file="views/agents/components/orders_saved.tpl"}
