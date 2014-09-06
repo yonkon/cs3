@@ -12,7 +12,10 @@ include dirname(__FILE__) . "/../customer/fn_agents.php";
 if(empty($_REQUEST['company_id']) ) {
     if(!empty ($_REQUEST['office_id'])) {
         $office = fn_agents_get_company_offices(null, array('office_id' => $_REQUEST['office_id'] ) );
-        $cid = $office[0]['company_id'];
+        $office = $office[0];
+        $cid = $office['company_id'];
+        Registry::get('view')->assign('office_id', $office['office_id']);
+        Registry::get('view')->assign('office', $office);
     }
     if(empty($cid) && in_array($mode, array('offices', 'offices_add', 'office_shippings', 'office_shipping_add') ) ) {
         return array(CONTROLLER_STATUS_NO_PAGE);

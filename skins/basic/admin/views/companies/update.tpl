@@ -342,6 +342,20 @@
 {hook name="companies:tabs_content"}{/hook}
 
 {** Form submit section **}
+<h2 class="subheader">{$lang.additional_data}</h2>
+<div class="form-field">
+    <label for="company_home_master">{$lang.company_home_master}</label>
+    <input id="company_home_master" name="company_data[company_home_master]" type="checkbox" {if $company_data.company_home_master}checked="checked" {/if} value="1">
+</div>
+<div class="form-field">
+    <label for="company_home_master_description">{$lang.company_home_master_description}</label>
+    <textarea id="company_home_master_description" name="company_data[company_home_master_description]" class="cm-wysiwyg"> {$company_data.company_home_master_description}</textarea>
+</div>
+<div class="form-field">
+    <label for="company_long_description">{$lang.company_long_description}</label>
+    <textarea id="company_long_description" name="company_data[company_long_description]" class="cm-wysiwyg"> {$company_data.company_long_description}</textarea>
+</div>
+
 <a class="block" href="{'agents.offices'|fn_url}&company_id={$company_data.company_id}"><button  class="default-button" type="button">{$lang.Manage_company_offices}</button> </a>
 
 <div class="buttons-container cm-toggle-button buttons-bg">

@@ -1,19 +1,24 @@
 {if !empty($company) }
 <div class="company_description_div clr switchable_tab {if $active_tab != 'company'}hidden{/if}">
     <a href="" class="block clr margin-bottom">{$lang.back_to_catalog}</a>
-    <img class="margin-top" src="{$company.image_path}" alt="{$lang.logo}">
+    <img class="margin-top" width="350px" height="350px" src="{$company.image_path|unescape|fn_generate_thumbnail:350:350:true|escape}" alt="{$lang.logo}">
     <p class="bold margin-top">{$company.company}</p>
     <p class="margin-bottom">{$company.company_description|unescape}</p>
-    <div id="company_products_div" class="margin-top">
+    <p class="margin-bottom">{$company.company_long_description|unescape}</p>
+    <p class="margin-bottom">{$lang.phone}: {$company.phone}</p>
+    <p class="margin-bottom">{$lang.email}: {$company.email}</p>
+    <p class="margin-bottom">{$lang.fax}: {$company.fax}</p>
+    {if $company.company_home_master}<p class="margin-bottom">{$lang.company_home_master}: {$company.company_home_master_description|unescape}</p>{/if}
+    <div id="company_products_div" class="margin10px">
         <table>
             <tr class="padding10px">
                 <td class="center h2" colspan="2">{$lang.company_products}</td>
             </tr>
             {foreach from=$all_products item='prod'}
-                <tr class="padding-top-1em" style="border-top: 1px solid lightgray;">
+                <tr class="padding10px" style="border-top: 1px solid lightgray;">
                     <td>
                         <a href="{'agents.product_info'|fn_url}&product_id={$prod.product_id}">
-                            <img width="{$settings.Thumbnails.product_lists_thumbnail_width}" src="{$prod.image.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}" alt="{$prod.product}">
+                            <img width="50px" src="{$prod.image.image_path|unescape|fn_generate_thumbnail:50:50:true|escape}" alt="{$prod.product}">
                         </a>
                     </td>
                     <td>

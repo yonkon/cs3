@@ -19,6 +19,10 @@
                 <th>{$lang.City}</th>
                 <th>{$lang.Address}</th>
                 <th>{$lang.Description}</th>
+                <th>{$lang.Phone}</th>
+                <th>{$lang.Fax}</th>
+                <th>{$lang.Email}</th>
+                <th>{$lang.working_mode}</th>
                 <th>{$lang.Shipping}</th>
                 <th>{$lang.Action}</th>
             </tr>
@@ -31,6 +35,10 @@
                     <td>{$office.city}</td>
                     <td>{$office.address}</td>
                     <td>{$office.description|unescape}</td>
+                    <td>{$office.phone}</td>
+                    <td>{$office.fax}</td>
+                    <td>{$office.email}</td>
+                    <td>{$office.working_mode}</td>
                     <td>
                         <a href="{'agents.office_shippings'|fn_url}&office_id={$office.office_id}" target="_blank">{$lang.Edit}</a>
                         {foreach from=$office.shippings item='shipping'}
@@ -47,7 +55,12 @@
                                     href="#"
                                     onclick="deleteOffice({$office.office_id});"
                                     >{$lang.delete}</a>
+                            <a
+                                    class="block margin-top"
+                                    href="{'agents.offices_add'|fn_url}&office_id={$office.office_id}"
+                                    >{$lang.edit}</a>
                         </div>
+
                     </td>
                 </tr>
             {/foreach}

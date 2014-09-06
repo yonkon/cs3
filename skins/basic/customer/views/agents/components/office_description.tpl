@@ -42,7 +42,7 @@
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
     {script src="js/gmaps.js"}
 
-    <div id="offices_gmap" class="gmap" style="width: 350px; height:350px; float: left;"></div>
+    <div id="offices_gmap" class="gmap" style="width: 300px; height:300px; float: left;"></div>
 </div>
 <div class="office_shipping_div clr">
     <h2>{$lang.Shipping}</h2>

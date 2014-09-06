@@ -24,14 +24,10 @@
             <label class="client_filds_add_product_label" for="client_company">{$lang.Company}</label>
             <select class="client_filds_add_product" id="client_company" name="client[company]">
                 <option value="{$company.company_id}">{$company.company}</option>
-                {*{foreach from=$companies item="company" key="code"}*}
-                    {*<option {if $company.company_id == $client.company}selected="selected"{/if}  value="{$company.company_id}">{$company.company}</option>*}
-                {*{/foreach}*}
             </select>
         </div>
         <div>
             <label class="client_filds_add_product_label" for="client_region">{$lang.Region}</label>
-            <option value="">- {$lang.select_region} -</option>
             <select class="client_filds_add_product" id="client_region" name="client[region]">
                 <option value="">- {$lang.select_region} -</option>
                 {foreach from=$regions item="region"  key="code"}

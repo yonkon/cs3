@@ -6,6 +6,7 @@
 <form id="office_add_form" method="post" action="{'agents.offices_add'|fn_url}">
     <input type="hidden" name="office[company_id]" value="{$company_id}">
     <input type="hidden" name="company_id" value="{$company_id}">
+    <input type="hidden" name="office[office_id]" value="{$office.office_id|default}">
     <input type="hidden" name="dispatch" value="agents.offices_add">
 
     <div class="form-field">
@@ -37,6 +38,16 @@
     <div class="form-field">
         <label for="email"            >{$lang.email}</label>
         <input id="email"             name="office[email]"              value="{if !empty($office.email)}{$office.email}{/if}"/>
+    </div>
+
+    <div class="form-field">
+        <label for="fax"            >{$lang.fax}</label>
+        <input id="fax"             name="office[fax]"              value="{if !empty($office.fax)}{$office.fax}{/if}"/>
+    </div>
+
+    <div class="form-field">
+        <label for="working_mode"            >{$lang.working_mode}</label>
+        <textarea id="working_mode" class="cm-wysiwyg" name="office[working_mode]"  >{if !empty($office.working_mode)}{$office.working_mode|unescape}{/if}</textarea>
     </div>
 
     <div class="form-field">

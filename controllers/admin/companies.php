@@ -22,7 +22,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		'company_data'
 	);
 	
-	
+	if (empty($_REQUEST['company_data']['company_home_master'])) {
+        $_REQUEST['company_data']['company_home_master'] = 0;
+    } else {
+        $_REQUEST['company_data']['company_home_master'] = 1;
+    }
 	//
 	// Processing additon of new company
 	//
