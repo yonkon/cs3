@@ -16,10 +16,10 @@
 	<input type="text" name="statistic_search[amount_from]" value="{$statistic_search.amount_from}" size="6" class="input-text-short" />&nbsp;-&nbsp;<input type="text" name="statistic_search[amount_to]" value="{$statistic_search.amount_to}" size="6" class="input-text-short" />
 </div>
 
-<div class="form-field">
-	<label>{$lang.status}:</label>
-	{html_checkboxes options=$status_options name="statistic_search[status]" selected=$statistic_search.status columns=3}
-</div>
+{*<div class="form-field">*}
+	{*<label>{$lang.payout_status}:</label>*}
+	{*{html_checkboxes options=$status_options name="statistic_search[status]" selected=$statistic_search.status columns=3}*}
+{*</div>*}
 
     <select name="order_status">
         <option value="">{$lang.order_status}</option>
@@ -35,6 +35,13 @@
         {include file="common_templates/calendar.tpl" date_id="paid_date_to" date_name="paid_date_to" date_val=$search.paid_date_to start_year=$settings.Company.company_start_year}
     </div>
     <div class="form-field">
+        <select class="clr" name="company_id">
+            <option value="" {if empty($product_id)}selected="selected"{/if}>{$lang.company}</option>
+            {foreach from=$companies item="com"}
+                <option value="{$com.company_id}" {if $com.company_id == $company_id}selected="selected"{/if}>{$com.company}</option>
+            {/foreach}
+        </select>
+
         <select class="clr" name="product_id">
             <option value="" {if empty($product_id)}selected="selected"{/if}>{$lang.product}</option>
             {foreach from=$products item="pr"}
@@ -43,14 +50,6 @@
         </select>
      </div>
 
-    <div class="form-field">
-        <select class="clr" name="company_id">
-            <option value="" {if empty($product_id)}selected="selected"{/if}>{$lang.company}</option>
-            {foreach from=$companies item="com"}
-                <option value="{$com.company_id}" {if $com.company_id == $company_id}selected="selected"{/if}>{$com.company}</option>
-            {/foreach}
-        </select>
-    </div>
 
 <div class="buttons-container">{include file="buttons/button.tpl" but_text=$lang.search but_name="dispatch[$controller.$mode/search]"}</div>
 </form>

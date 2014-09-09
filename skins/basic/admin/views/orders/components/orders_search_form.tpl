@@ -42,14 +42,14 @@
 
 {hook name="orders:advanced_search"}
 
-<div class="search-field">
+{*<div class="search-field">
 	<label for="tax_exempt">{$lang.tax_exempt}:</label>
 	<select name="tax_exempt" id="tax_exempt">
 		<option value="">--</option>
 		<option value="Y" {if $search.tax_exempt == "Y"}selected="selected"{/if}>{$lang.yes}</option>
 		<option value="N" {if $search.tax_exempt == "N"}selected="selected"{/if}>{$lang.no}</option>
 	</select>
-</div>
+</div>*}
 
 {if $incompleted_view}
 	<input type="hidden" name="status" value="{$smarty.const.STATUS_INCOMPLETED_ORDER}" />
@@ -74,6 +74,7 @@
 	<input type="text" name="order_id" id="order_id" value="{$search.order_id}" size="10" class="input-text" />
 </div>
 
+{*
 <div class="search-field">
 	<label for="inv_id">{$lang.invoice_id}:</label>
 	<input type="text" name="invoice_id" id="inv_id" value="{$search.invoice_id}" size="10" class="input-text" />
@@ -93,16 +94,17 @@
 	<label for="has_credit_memo">{$lang.has_credit_memo}:</label>
 	<input type="checkbox" name="has_credit_memo" id="has_credit_memo" value="Y" class="checkbox"{if $search.has_credit_memo} checked="checked"{/if} />
 </div>
+*}
 
 <div class="search-field">
 	<label>{$lang.shipping}:</label>
 	{html_checkboxes name="shippings" options=$shippings selected=$search.shippings columns=4}
 </div>
-
+{*
 <div class="search-field">
 	<label>{$lang.payment_methods}:</label>
 	{html_checkboxes name="payments" options=$payments selected=$search.payments columns=4}
-</div>
+</div>*}
 
 <div class="search-field">
 	<label for="a_uid">{$lang.new_orders}:</label>
@@ -113,16 +115,18 @@
 	<label>{$lang.ordered_products}:</label>
 	{include file="pickers/search_products_picker.tpl"}
 </div>
+{*
 
 <div class="search-field">
 	<label for="custom_files">{$lang.customer_files}:</label>
 	<input type="checkbox" name="custom_files" id="custom_files" value="Y" class="checkbox" {if $search.custom_files}checked="checked"{/if} />
 </div>
+*}
 
 {/hook}
 
-{hook name="orders:search_form"}
-{/hook}
+{*{hook name="orders:search_form"}
+{/hook}*}
 
 {/capture}
 

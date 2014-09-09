@@ -1408,8 +1408,12 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
 
 	fn_order_notification($order_info, $edp_data, $force_notification);
 
-	db_query("UPDATE ?:orders SET status = ?s WHERE order_id = ?i", $status_to, $order_id);
-	
+    if ($status_to == 'C') {
+        db_query("UPDATE ?:orders SET status = ?s, order_paid_date = ?s WHERE order_id = ?i", $status_to, date('Y-m-d H:i:s', time()), $order_id);
+    } else {
+        db_query("UPDATE ?:orders SET status = ?s WHERE order_id = ?i", $status_to, $order_id);
+    }
+
 	return true;
 }
 

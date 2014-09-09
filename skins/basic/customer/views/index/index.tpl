@@ -41,7 +41,8 @@
                 {if !empty($image.filename)}
                 <div>
                     <img src="{$image.filename}">
-                    <span class="name">{$image.name}</span>
+                    <p class="center name">{$image.name}</p>
+                    {if !empty($image.description)}<p class="center description">{$image.description|unescape}</p>{/if}
                 </div>
                 {/if}
             {/foreach}

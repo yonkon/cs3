@@ -1,6 +1,6 @@
 {include file="views/agents/components/stat_search_form.tpl"}
 <p><a onclick="$('#general_statistics').toggle(); return false;"><strong>{$lang.general_statistics} &#187;</strong></a></p>
-<div id="general_statistics" class="hidden">
+<div id="general_statistics" {*class="hidden"*}>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
         <tr>
             {*<th width="40%">{$lang.action}</th>*}
@@ -65,7 +65,7 @@
 {if $settings.DHTML.customer_ajax_based_pagination == "Y"}
     {assign var="ajax_class" value="cm-ajax"}
 {/if}
-    <button class="green button" type="button" onclick="exportReport();">{$lang.export}</button>
+    <button class="green button" style="background-image: url(http://www.garantpostach.com.ua/images/Excel.gif); padding-left: 30px; background-color: #eee; background-repeat: no-repeat;" type="button" onclick="exportReport();">{$lang.export}</button>
 {literal}
 <script type="text/javascript">
     function exportReport() {

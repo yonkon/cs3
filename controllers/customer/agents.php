@@ -491,14 +491,16 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             foreach ($statistic_search_data['status'] as $_status) {
                 $_conditions .= empty($_conditions) ? '' : 'OR';
                 if ($_status == 'P') {
-                    $_conditions .= " (payout_id != 0) ";
+                    $_conditions .= " (actions.payout_id != 0) ";
                 } elseif ($_status == 'A') {
-                    $_conditions .= " (payout_id = 0 AND actions.approved = 'Y') ";
+                    $_conditions .= " (actions.payout_id = 0 AND actions.approved = 'Y') ";
                 } else {
-                    $_conditions .= " (actions.approved = 'N' AND payout_id = 0) ";
+                    $_conditions .= " (actions.approved = 'N' AND actions.payout_id = 0) ";
                 }
             }
             $statistic_conditions .= " AND ($_conditions) ";
+        } else {
+            $statistic_conditions .= " AND actions.payout_id != 0 ";
         }
         if (!empty($statistic_search_data['zero_actions']) && $statistic_search_data['zero_actions'] == 'Y' && AREA != 'C') {
             $statistic_conditions .= " AND (actions.amount = 0) ";
@@ -519,6 +521,8 @@ elseif ($mode == 'report' || $mode == 'report_export') {
     $joins = array();
     $order_status_join = '';
     $payout_join = '';
+    $product_join = '';
+    $std_payout_join = '';
     if (!empty($_REQUEST['order_status'])) {
         $order_status = $_REQUEST['order_status'];
         $joins[] = $order_status_join = db_process (' JOIN ?:aff_action_links al ON al.action_id = actions.action_id AND al.object_type = "O" JOIN ?:orders o ON o.order_id = al.object_data AND o.status = ?s', array($order_status));
@@ -552,8 +556,11 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $joins[] = $product_join;
     }
 
+    if ( empty($payout_join)) {
+        $joins[] = $std_payout_join = db_process(' LEFT JOIN ?:affiliate_payouts ap ON ap.payout_id = actions.payout_id ');
+    }
 
-        $general_stats = db_get_hash_array("SELECT action, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p WHERE $statistic_conditions GROUP BY action", 'action', $order_status_join, $payout_join, $product_join);
+        $general_stats = db_get_hash_array("SELECT action, IF(ap.status = 'S', ap.amount, 0) as amount, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY action", 'action', $order_status_join, $payout_join, $product_join, $std_payout_join);
 
         $general_stats['total'] = db_get_row("SELECT 'total' as action, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions");
 
