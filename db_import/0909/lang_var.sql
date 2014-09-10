@@ -1,0 +1,2 @@
+INSERT INTO `cscart_language_values`(`lang_code`, `name`, `value`) VALUES ('EN','company_products','Company products');
+INSERT INTO `cscart_language_values`(`lang_code`, `name`, `value`) VALUES ('RU','company_products','Услуги компании');

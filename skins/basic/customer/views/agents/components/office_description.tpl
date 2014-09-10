@@ -1,12 +1,12 @@
 <div class="company_offices_div clr">
     {if !empty($product) }
-    <div class="block clr">
+    <div class="block clr margin-top margin-bottom">
         <a href="#" onclick="switch_active_tab('product');" class="switch_link product {if $active_tab == 'product'}active{/if}">{$lang.shipment_and_payment}</a>
         |
         <a href="#" onclick="switch_active_tab('company');" class="switch_link company{if $active_tab == 'company'}active{/if}">{$lang.about_company}</a>
     </div>
     {/if}
-    <div class="block clr">
+    <div class="block clr margin-top margin-bottom">
         <label for="select_city">{$lang.City}</label>
         <select id="select_city" name="city">
             <option value="">{$lang.Select_city}</option>
@@ -15,11 +15,9 @@
             {/foreach}
         </select>
     </div>
-    <div class="offices_descriptions_div" style="width: 350px; float: left">
-        <h2>{$lang.offices}</h2>
+    <div class="offices_descriptions_div margin-top margin-bottom" style="width: 350px; float: left">
+        <h2 class="margin-top bold">{$lang.offices}</h2>
         <div id="office_names_and_descriptions">
-
-
         {foreach from=$offices item='office'}
             <p class="office_name no-padding">
                 {$office.office_name}
@@ -29,11 +27,13 @@
             </p>
         {/foreach}
         </div>
-        <h2>{$lang.Addresses_and_phones}</h2>
-        <div id="adresses_and_phones">
+        <h2 class="margin-top bold">{$lang.Addresses_and_phones}</h2>
+        <div id="adresses_and_phones" class="margin-top">
         {foreach from=$offices item='office'}
-            <p class="bold no-padding office_address">{$office.address}</p>
-            <p class="no-padding">{$office.phone}</p>
+            <p class="no-padding office_address">{$lang.address}: {$office.address}</p>
+            <p class="no-padding">{$lang.phone}: {$office.phone}</p>
+            <p class="no-padding">{$lang.fax}: {$office.fax}</p>
+            <p class="no-padding">{$lang.working_mode}: {$office.working_mode|unescape}</p>
             <br/>
         {/foreach}
         </div>
@@ -45,12 +45,14 @@
     <div id="offices_gmap" class="gmap" style="width: 300px; height:300px; float: left;"></div>
 </div>
 <div class="office_shipping_div clr">
-    <h2>{$lang.Shipping}</h2>
+    <h2 class="bold">{$lang.Shipping}</h2>
     <div id="shipping_names_and_descriptions">
     {foreach from=$offices item='office'}
         {foreach from=$office.shippings item='shipping'}
-            <p class="bold">{$shipping.shipping_name}</p>
-            <p>{$shipping.shipping_description|unescape}</p>
+            <div class="shipping_name_and_description margin-top">
+                <p>{$shipping.shipping_name}</p>
+                <p>{$shipping.shipping_description|unescape}</p>
+            </div>
         {/foreach}
     {/foreach}
     </div>

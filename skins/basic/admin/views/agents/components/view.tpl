@@ -38,7 +38,7 @@
                     <td>{$office.phone}</td>
                     <td>{$office.fax}</td>
                     <td>{$office.email}</td>
-                    <td>{$office.working_mode}</td>
+                    <td>{$office.working_mode|unescape}</td>
                     <td>
                         <a href="{'agents.office_shippings'|fn_url}&office_id={$office.office_id}" target="_blank">{$lang.Edit}</a>
                         {foreach from=$office.shippings item='shipping'}

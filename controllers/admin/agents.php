@@ -51,7 +51,7 @@ elseif ($mode == 'offices_add') {
         fn_trusted_vars('office');
         $errors = fn_agents_get_office_fields_errors($_REQUEST['office']);
         if (empty($errors)) {
-            $query = db_process("INSERT INTO ?:company_offices ?e", array($_REQUEST['office']) );
+            $query = db_process("REPLACE INTO ?:company_offices ?e", array($_REQUEST['office']) );
             db_query( $query);
             fn_set_notification('N', fn_get_lang_var('information'),  fn_get_lang_var('text_office_is_created') );
             $redirect_url = fn_url('agents.offices') . "&company_id=$cid";
