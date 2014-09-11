@@ -43,7 +43,7 @@ if (PHP_INT_SIZE == 4 && (substr(ini_get('memory_limit'), 0, -1) < "48")) {
 $config['db_host'] = 'localhost';
 $config['db_name'] = 'cart';
 $config['db_user'] = 'root';
-$config['db_password'] = '';
+$config['db_password'] = 'root';
 $config['db_type'] = 'mysqli';
 
 /*
@@ -61,11 +61,11 @@ $config['db_type'] = 'mysqli';
  */
 
 // Host and directory where software is installed on no-secure server
-$config['http_host'] = 'cs.in';
+$config['http_host'] = 'cs.int';
 $config['http_path'] = '';
 
 // Host and directory where software is installed on secure server
-$config['https_host'] = 'cs.in';
+$config['https_host'] = 'cs.int';
 $config['https_path'] = '';
 
 /*
