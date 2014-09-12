@@ -32,12 +32,12 @@
             {*<option {if !empty($order.profit) && $order.profit == 'asc'}selected="selected" {/if}>asc</option>*}
             {*<option {if !empty($order.profit) && $order.profit == 'desc'}selected="selected" {/if}>desc</option>*}
         {*</select>*}
-        {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city" id="city">
+        {*{$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city" id="city">
             <option value="">- {$lang.select_city} -</option>
             {foreach from=$all_cities item="city" key="code"}
                 <option {if !empty($client.city) && $city.city_id == $client.city}selected="selected"{/if}  value="{$city.city_id}">{$city.city}</option>
             {/foreach}
-        </select>
+        </select>*}
         <br>
 
         <button class="button green"  type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
@@ -75,7 +75,7 @@
                         <img src="{$product.company.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">
                     </a>{/if}
                 </td>
-                <td colspan="2"><div>{$product.company.description|default|unescape|truncate:360}</div></td>
+                <td colspan="2"><div>{$product.company.company_description|default|unescape|truncate:360}</div></td>
                 <td>
                     <span>{$lang.profit}: {$product.profit|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span><br/>
                 </td>
@@ -104,18 +104,18 @@
             company_id : company_id
         };
         ajax_get_options(url_products, data, '#product');
-        ajax_get_options(url_cities, data, '#city');
+//        ajax_get_options(url_cities, data, '#city');
 //        ajax_get_options(url_offices, data, '#office');
     });
-    $('#city').change(function() {
-        var company_id = $('#company').val();
-        var data = {
-            company_id : company_id,
-            city_id : $(this).val()
-        };
-        ajax_get_options(url_products, data, '#product');
-//        ajax_get_options(url_offices, data, '#office');
-    })
+//    $('#city').change(function() {
+//        var company_id = $('#company').val();
+//        var data = {
+//            company_id : company_id,
+//            city_id : $(this).val()
+//        };
+//        ajax_get_options(url_products, data, '#product');
+////        ajax_get_options(url_offices, data, '#office');
+//    })
 
 </script>
 {/literal}

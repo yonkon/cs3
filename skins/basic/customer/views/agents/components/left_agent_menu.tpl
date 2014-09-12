@@ -18,21 +18,21 @@
 </div>
 <div class="left_agent_menu_section">
     <ul>
-        <li> <a href="{"agents.collegues"|fn_url}" rel="nofollow" class="underlined h2 level-0 {if $mode == 'collegues'}active{/if}">{$lang.agents_collegues}</a></li>
+        <li> <a href="{"agents.collegues"|fn_url}" rel="nofollow" class="underlined level-0 {if $mode == 'collegues'}active{/if}">{$lang.agents_collegues}</a></li>
     </ul>
 </div>
 <div class="left_agent_menu_section">
     <ul>
-        <li> <a href="{"agents.clients"|fn_url}" rel="nofollow" class="underlined h2 level-0 {if $mode == 'clients'}active{/if} {if $mode == 'add_client_form'}active{/if}">{$lang.agents_clients}</a></li>
+        <li> <a href="{"agents.clients"|fn_url}" rel="nofollow" class="underlined level-0 {if $mode == 'clients'}active{/if} {if $mode == 'add_client_form'}active{/if}">{$lang.agents_clients}</a></li>
     </ul>
 </div>
 <div class="left_agent_menu_section">
     <ul>
-        <li> <a href="{"agents.report"|fn_url}" rel="nofollow" class="underlined h2 level-0 {if $mode == 'report'}active{/if}">{$lang.Reports}</a></li>
+        <li> <a href="{"agents.report"|fn_url}" rel="nofollow" class="underlined level-0 {if $mode == 'report'}active{/if}">{$lang.Reports}</a></li>
     </ul>
 </div>
 <div class="left_agent_menu_section">
     <ul>
-        <li> <a href="{"agents.new_products"|fn_url}" rel="nofollow" class="underlined h2 level-0 {if $mode == 'new_products'}active{/if}">{$lang.whats_new}</a></li>
+        <li> <a href="{"agents.new_products"|fn_url}" rel="nofollow" class="underlined level-0 {if $mode == 'new_products'}active{/if}">{$lang.whats_new}</a></li>
     </ul>
 </div>

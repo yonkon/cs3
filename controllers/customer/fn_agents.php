@@ -1747,7 +1747,7 @@ function fn_agents_get_active_orders($user_id, $params = array(), $lang_code = C
 }
 
 function fn_agents_get_closed_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
-    $closed_statuses = array('C', 'F', 'D');
+    $closed_statuses = array('C');
     $params['where'][ db_process('?:orders.status')] = $closed_statuses;
     return fn_agents_get_orders($user_id, $params, $lang_code);
 }
@@ -1764,6 +1764,10 @@ function fn_agents_get_order_statuses($status = null, $lang_code = CART_LANGUAGE
     }
     $statuses = db_get_array($query);
     return $statuses;
+}
+
+function fn_agents_get_active_order_statuses($lang_code = CART_LANGUAGE) {
+    return fn_agents_get_order_statuses(array('O', 'P',  'A'), $lang_code);
 }
 
 function fn_agents_get_company_info($company_id, $lang_code = CART_LANGUAGE) {
@@ -1890,6 +1894,13 @@ function fn_agents_get_all_cities($params = array(), $lang = CART_LANGUAGE, $ful
     }
     $query .= ' ORDER BY cl.name ASC';
     $cities = db_get_array($query);
+//    foreach($cities as &$city) {
+//        $city['city_id'] = $city['CityId'];
+//        $city['region_id'] = $city['RegionId'];
+//        $city['city_id'] = $city['CityId'];
+//        $city['city'] = $city['name'];
+//    }
+//    unset ($city);
     return $cities;
 }
 

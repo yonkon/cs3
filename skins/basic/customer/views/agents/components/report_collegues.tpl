@@ -3,35 +3,29 @@
 <div id="general_statistics" {*class="hidden"*}>
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
         <tr>
-            {if $report_type == 'all'}
-            <th width="40%">{$lang.profit_source}</th>
-            {/if}
+            <th width="40%">{$lang.agent}</th>
             <th class="right" width="20%">{$lang.orders_count}</th>
             <th class="right" width="20%">{$lang.agent_total_profit}</th>
             {*<th class="right" width="20%">{$lang.agent_average_profit}</th>*}
         </tr>
-        {if $general_stats|count}
-            {foreach from=$general_stats item='g_st' key="g_st_lang_var"}
+        {if $general_stats}
+            {foreach from=$general_stats key="partner_id" item="a"}
                     <tr {cycle values=" ,class=\"table-row\""}>
-                        {if $report_type == 'all'}
-                        <td><strong>{$lang.$g_st_lang_var}</strong></td>
-                        {/if}
-                        <td class="right">{$g_st.count|default:"0"}</td>
-                        <td class="right">{include file="common_templates/price.tpl" value=$g_st.sum|round:2}</td>
-                        {*<td class="right">{include file="common_templates/price.tpl" value=$g_st.avg|round:2}</td>*}
+                        <td><strong>{$a.action}</strong></td>
+                        <td class="right">{$a.count|default:"0"}</td>
+                        <td class="right">{include file="common_templates/price.tpl" value=$a.sum|round:2}</td>
+                        {*<td class="right">{include file="common_templates/price.tpl" value=$a.avg|round:2}</td>*}
                     </tr>
             {/foreach}
         {else}
             <tr>
-                <td colspan={if $report_type == 'all'}"4"{else}"3"{/if}><p class="no-items">{$lang.no_data_found}</p></td>
+                <td colspan="4"><p class="no-items">{$lang.no_data_found}</p></td>
             </tr>
         {/if}
         <tr class="table-footer">
-            <td colspan={if $report_type == 'all'}"4"{else}"3"{/if}>&nbsp;</td>
+            <td colspan="4">&nbsp;</td>
         </tr>
     </table>
-
-
 </div>
 {capture name="agents_extra_content"}
 
@@ -52,7 +46,7 @@
     function exportReport() {
         var $form = $('form[name=general_stats_search_form]');
         var $submit = $('input[type=submit]', $form);
-        $submit.attr('name', 'dispatch[agents.report_export/search]');
+        $submit.attr('name', 'dispatch[agents.collegues_export/search]');
         $submit.click();
         return false;
     }
@@ -75,39 +69,21 @@
             {$lang.product}
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>
-        {if $report_type == 'agent' || $report_type == 'all'}
-            <th>
+        <th>
             <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=partner&amp;sort_order={$sort_order}&amp;post_sort_by=agent" rev="pagination_contents">
             {$lang.agent}
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>
-        {/if}
-        {if $report_type == 'subagent' || $report_type == 'all'}
-        <th>
-            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=partner&amp;sort_order={$sort_order}&amp;post_sort_by=subagent" rev="pagination_contents">
-            {$lang.subagent}
-            </a>{if $sort_by == "action"}{$sort_sign}{/if}
-        </th>
-        {/if}
         <th>
             <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=sum&amp;sort_order={$sort_order}" rev="pagination_contents">
             {$lang.price}
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>
-        {if $report_type == 'agent' || $report_type == 'all'}
         <th>
             <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;post_sort_by=agent_profit&amp;sort_order={$sort_order}" rev="pagination_contents">
             {$lang.agent_profit}
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>
-        {/if}
-        {if $report_type == 'subagent' || $report_type == 'all'}
-        <th>
-            <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;post_sort_by=subagent_profit&amp;sort_order={$sort_order}" rev="pagination_contents">
-            {$lang.agent_profit_from_subagent}
-            </a>{if $sort_by == "action"}{$sort_sign}{/if}
-        </th>
-        {/if}
         <th>
             <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=status&amp;sort_order={$sort_order}" rev="pagination_contents">
                 {$lang.status}
@@ -129,7 +105,7 @@
         {include file="addons/affiliate/views/aff_statistics/components/additional_data.tpl" data=$row_stats.data assign="additional_data"}
         <tr class="{$row_class_name}">
             <td>
-                    <a href="{'agents.orders'|fn_url}&where[order_id]={$row_stats.order.order_id}&where[user_id]={$row_stats.customer_id}"> {$row_stats.order.order_id}</a>
+                <a href="{'agents.orders'|fn_url}&where[order_id]={$row_stats.order.order_id}&where[user_id]={$row_stats.customer_id}"> {$row_stats.order.order_id}</a>
             </td>
             <td>
                     {$row_stats.order.company_data.company}
@@ -137,37 +113,19 @@
             <td>
                     {$row_stats.order.product_data.product}
             </td>
-            {if $report_type == 'agent' || $report_type == 'all'}
             <td>
                     {if $row_stats.partner_id == $row_stats.customer_id}
                         {$row_stats.customer_lastname} {$row_stats.customer_firstname}
                         {/if}&nbsp;
             </td>
-            {/if}
-            {if $report_type == 'subagent' || $report_type == 'all'}
-            <td>
-                {if $row_stats.partner_id != $row_stats.customer_id}
-                    {$row_stats.customer_lastname} {$row_stats.customer_firstname}{/if}
-                &nbsp;
-            </td>
-            {/if}
             <td>
                 {$row_stats.order.total}
             </td>
-            {if $report_type == 'agent' || $report_type == 'all'}
             <td>
                 {if $row_stats.partner_id == $row_stats.customer_id}
                     {$row_stats.amount}
                 {/if}
             </td>
-            {/if}
-            {if $report_type == 'subagent' || $report_type == 'all'}
-            <td>
-                {if $row_stats.partner_id != $row_stats.customer_id}
-                    {$row_stats.amount}
-                {/if}
-            </td>
-            {/if}
             <td>
                 {$row_stats.order.status_description}
             </td>
@@ -183,11 +141,11 @@
         </tr>
         {foreachelse}
         <tr>
-            <td colspan={if $report_type == 'all'}"11"{else}"9"{/if}><p class="no-items">{$lang.no_data_found}</p></td>
+            <td colspan="9"><p class="no-items">{$lang.no_data_found}</p></td>
         </tr>
     {/foreach}
     <tr class="table-footer">
-        <td colspan={if $report_type == 'all'}"11"{else}"9"{/if}>&nbsp;</td>
+        <td colspan="9">&nbsp;</td>
     </tr>
 </table>
 {include file="common_templates/pagination.tpl"}

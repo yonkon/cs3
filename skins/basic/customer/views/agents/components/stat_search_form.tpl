@@ -50,6 +50,28 @@
         </select>
      </div>
 
+    {if $mode != 'collegues'}
+    <div class="form-field">
+        <select id="report_type" name="report_type" onchange="toggleCustomerChoice()">
+            <option value="agent"    {if $report_type == 'agent'}selected="selected" {/if}>{$lang.your_report}</option>
+            <option value="subagent" {if $report_type == 'subagent'}selected="selected" {/if}>{$lang.subagents_report}</option>
+            <option value="all"      {if $report_type == 'all'}selected="selected" {/if}>{$lang.full_report}</option>
+        </select>
+    </div>
+    {/if}
+
+
+    <div id="customer_id_div" class="form-field{if $report_type == 'agent'} hidden {/if}">
+        <label for="customer_id">{$lang.show_report_for}: </label>
+        <select id="customer_id" name="customer_id">
+            <option value="">{$lang.all_subagents_nat}</option>
+            {foreach from=$collegues item='collegue'}
+                <option value="{$collegue.user_id}">{$collegue.lastname} {$collegue.firstname} {$collegue.midname}</option>
+            {/foreach}
+        </select>
+    </div>
+
+
 
 <div class="buttons-container">{include file="buttons/button.tpl" but_text=$lang.search but_name="dispatch[$controller.$mode/search]"}</div>
 </form>
@@ -57,3 +79,16 @@
 
 {/capture}
 {include file="common_templates/section.tpl" section_title=$lang.search section_content=$smarty.capture.section}
+{literal}
+<script type="text/javascript">
+    function toggleCustomerChoice() {
+        var report_type = $('#report_type').val();
+        var $customer_id_div = $('#customer_id_div');
+        if(report_type != 'agent') {
+            $customer_id_div.removeClass('hidden');
+        } else {
+            $customer_id_div.addClass('hidden');
+        }
+    }
+</script>
+{/literal}

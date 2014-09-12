@@ -115,8 +115,8 @@ ul.hr li {
 
 .left_agent_menu_section {
     background-color: rgb(245, 250, 245);
-    margin: 0 2%;
-    width: 96%;
+    margin: 0 1%;
+    width: 98%;
     border-style: outset;
     border-color: rgb(255, 255, 255);
     border-bottom-width: 1px;
@@ -221,29 +221,29 @@ ul.hr li {
 }
 
 #product_image{
-    height: 100px;
+    /*height: 100px;*/
     width: 100px;
 }
 #product_name{
-    height: 110px;
+    /*height: 110px;*/
     width: 300px;
 }
 #product_buy {
-    height: 110px;
-    width: 300px;
+    /*height: 110px;*/
+    /*width: 300px;*/
 }
 #company_img {
-    height: 70px;
+    /*height: 70px;*/
     width: 100px;
 }
 #company_desc {
-    height: 70px;
+    /*height: 70px;*/
     width: 300px;
 }
 
 #add_to_save {
-    height: 70px;
-    width: 300px;
+    /*height: 70px;*/
+    /*width: 300px;*/
 }
 .button {
     text-transform: none;
@@ -328,7 +328,7 @@ ul.hr li {
 .order_div table td,
 .product_div table td,
 #agents_clients_table td{
-    border: 1px inset rgb(120, 150, 120);
+    border: 1px inset rgb(200, 220, 200);
     padding: 0.5em;
 }
 .product_sorting {
@@ -337,6 +337,8 @@ ul.hr li {
 .product-image {
     max-width: 100%;
     max-height:100%;
+    margin: 0 auto;
+    display: block;
 }
 
 
@@ -444,8 +446,10 @@ ul.hr li {
 }
 
 .company_image {
-    max-width: 100px;
-    max-height: 70px;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+    display: block;
 }
 
 .profit {

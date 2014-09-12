@@ -6,7 +6,7 @@
 
 <div id="agents_content">
     {$agents_content}
-    {if $mode == 'products'}
+    {if $mode == 'products' || $mode == 'new_products'}
         {include file="views/agents/components/products.tpl"}
     {elseif $mode == 'order_make'}
         {if $step == 1}

@@ -35,16 +35,18 @@
         {$lang.City} <select style="width: 150px;margin: 8px;" name="filter_city" id="city">
             <option value="">- {$lang.select_city} -</option>
             {foreach from=$all_cities item="city" key="code"}
-                <option {if !empty($client.city) && $city.city_id == $client.city}selected="selected"{/if}  value="{$city.city_id}">{$city.city}</option>
+                <option {if !empty($filter_city) && $city.CityId == $filter_city}selected="selected"{/if}  value="{$city.CityId}">{$city.name}</option>
             {/foreach}
         </select>
         <br>
-        {$lang.Status} <select style="width: 150px;" name="where[status]">
+        {if $mode != 'orders_closed'}
+            {$lang.Status} <select style="width: 150px;" name="where[status]">
             <option value="">{$lang.Status}</option>
             {foreach from=$order_statuses item="status" key="code" }
                 <option value="{$status.status}" {if !empty($where.status) && $status.status == $where.status}selected="selected"{/if}  >{$status.description}</option>
             {/foreach}
         </select>
+        {/if}
         <button class="button green"  type="submit" value="{$lang.apply_filter}">{$lang.apply_filter}</button>
         </form>
     </div>
@@ -60,7 +62,7 @@
         <table class="table">
             <tr>
                 <td style="width: 100px">
-                    <a href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">
+                    <a class="center-block block" href="{"agents.product_info"|fn_url}&product_id={$order.product_id}">
                         <img class="product-image" src="{$order.product_data.image.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">
                     </a>
                 </td>
@@ -75,13 +77,15 @@
                             <button class="green button" type="submit" name="submit" value="submit">{$lang.checkout}</button>
                         </div>
                     {/if}
+                    {if $mode == 'orders'}
                     <div class="shipping">{if true || $order.product_data.free_shipping || $order.product_data.edp_shipping || $order.product_data.shipping_freight}<img class="shipping-img" src="/skins/basic/customer/views/agents/images/shipping.png">{/if}
                     </div>
+                    {/if}
                 </td>
             </tr>
             <tr>
                 <td>{if $order.company_data.image_path}
-                    <a href="{"agents.company_info"|fn_url}&product_id={$order.product_id}">
+                    <a class="center-block block" href="{"agents.company_info"|fn_url}&product_id={$order.product_id}">
                         <img src="{$order.company_data.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">
                     </a>{/if}
                 </td>
@@ -95,7 +99,7 @@
             <tr>
                 <td>
                     <p class="underlined">{$lang.FIO_client}: {$order.b_lastname} {$order.b_firstname} {$order.b_midname}</p>
-                    <p class="underlined">{$lang.mail}: {$order.b_email}<br/> {$order.b_phone}</p>
+                    <p class="underlined">{if $order.b_email}{$lang.mail}: {$order.b_email}<br/>{/if} {$lang.phone}:{$order.b_phone}</p>
                     <p class="underlined">{$lang.registration_date}: {$order.registration_date|date_format}</p>
                 </td>
                 <td colspan="2">
