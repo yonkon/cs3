@@ -53,21 +53,21 @@ REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('RU
 REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN', 'agents_office', 'My office');
 
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Пожалуйста, выберите услугу для указанной группы [group_name]' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'text_required_group_product';
+UPDATE `cscart_language_values` SET `value` = 'Пожалуйста, выберите услугу для указанной группы [group_name]' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'text_required_group_product';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Налоги на услугу' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'product_taxes';
+UPDATE `cscart_language_values` SET `value` = 'Налоги на услугу' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'product_taxes';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Услуга была успешно удалена.' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'text_product_has_been_deleted';
+UPDATE `cscart_language_values` SET `value` = 'Услуга была успешно удалена.' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'text_product_has_been_deleted';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Услуга(и) была(и) успешно удалена(ы)' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'text_products_have_been_deleted';
+UPDATE `cscart_language_values` SET `value` = 'Услуга(и) была(и) успешно удалена(ы)' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'text_products_have_been_deleted';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Не разрешать добавлять услуги в корзину' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'zpa_refuse';
+UPDATE `cscart_language_values` SET `value` = 'Не разрешать добавлять услуги в корзину' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'zpa_refuse';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Разрешить добавить услугу в корзину' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'zpa_permit';
+UPDATE `cscart_language_values` SET `value` = 'Разрешить добавить услугу в корзину' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'zpa_permit';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Выбрать услугу' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'select_product';
+UPDATE `cscart_language_values` SET `value` = 'Выбрать услугу' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'select_product';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Возвращаемая услуга' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'returnable_product';
+UPDATE `cscart_language_values` SET `value` = 'Возвращаемая услуга' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'returnable_product';
 
-UPDATE `cart`.`cscart_language_values` SET `value` = 'Услуга(и)' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'product_s';
+UPDATE `cscart_language_values` SET `value` = 'Услуга(и)' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'product_s';
 
