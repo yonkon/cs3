@@ -139,10 +139,10 @@ ul.hr li {
 .left_agent_menu_section li:hover *{
     color: rgb(255, 255, 200);
 }
-.left_agent_menu_section li .level-1 {
+.left_agent_menu_section li.level-1 {
     padding-left: 1em;
 }
-.left_agent_menu_section li .level-2 {
+.left_agent_menu_section li.level-2 {
     padding-left: 2em;
 }
 
@@ -493,4 +493,46 @@ ul.hr li {
     color: inherit;
     font-weight: normal;
     text-decoration: none;
+}
+
+.agent-icon:before{
+    display: inline-block;
+    width: 16px;
+    background: transparent;
+    color: transparent;
+    content: '-';
+    background-repeat: no-repeat;
+    margin-right: 4pt;
+    background-position: 50% 50%;
+}
+
+.icon-office:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/user.png");
+}
+.icon-products:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/basket.png");
+}
+.icon-orders:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/billing.png");
+}
+.icon-orders_saved:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/featured.png");
+}
+.icon-orders_active:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/busy.png");
+}
+.icon-orders_closed:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/check.png");
+}
+.icon-collegues:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/my-account.png");
+}
+.icon-add_client_form:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/customers.png");
+}
+.icon-report:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/print.png");
+}
+.icon-new_products:before {
+    background-image: url("/skins/basic/customer/views/agents/images/icon/16x16/suppliers.png");
 }
