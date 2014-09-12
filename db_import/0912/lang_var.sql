@@ -23,6 +23,12 @@ REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN
 REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('RU', 'subagents_report', 'Отчёт по продажам сотрудников');
 REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN', 'subagents_report', 'Your subagents sales report');
 
+REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('RU', 'subagent', 'Сотрудник');
+REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN', 'subagent', 'Subagent');
+
+REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('RU', 'subagents', 'Сотрудники');
+REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN', 'subagents', 'Subagents');
+
 
 REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('RU', 'full_report', 'Полный отчёт');
 REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN', 'full_report', 'Full report');
@@ -43,6 +49,9 @@ REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN
 REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('RU', 'all_subagents_nat', 'всех сотрудников');
 REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN', 'all_subagents_nat', 'all subagents');
 
+REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('RU', 'agents_office', 'Мой офис');
+REPLACE INTO `cscart_language_values` (`lang_code`, `name`, `value`) VALUES ('EN', 'agents_office', 'My office');
+
 
 UPDATE `cart`.`cscart_language_values` SET `value` = 'Пожалуйста, выберите услугу для указанной группы [group_name]' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'text_required_group_product';
 
@@ -61,3 +70,4 @@ UPDATE `cart`.`cscart_language_values` SET `value` = 'Выбрать услуг�
 UPDATE `cart`.`cscart_language_values` SET `value` = 'Возвращаемая услуга' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'returnable_product';
 
 UPDATE `cart`.`cscart_language_values` SET `value` = 'Услуга(и)' WHERE `cscart_language_values`.`lang_code` = 'RU' AND `cscart_language_values`.`name` = 'product_s';
+

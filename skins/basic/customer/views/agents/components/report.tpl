@@ -75,7 +75,7 @@
             {$lang.product}
             </a>{if $sort_by == "action"}{$sort_sign}{/if}
         </th>
-        {if $report_type == 'agent' || $report_type == 'all'}
+        {if false && ($report_type == 'agent' || $report_type == 'all')}
             <th>
             <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=partner&amp;sort_order={$sort_order}&amp;post_sort_by=agent" rev="pagination_contents">
             {$lang.agent}
@@ -137,7 +137,7 @@
             <td>
                     {$row_stats.order.product_data.product}
             </td>
-            {if $report_type == 'agent' || $report_type == 'all'}
+            {if false && ($report_type == 'agent' || $report_type == 'all')}
             <td>
                     {if $row_stats.partner_id == $row_stats.customer_id}
                         {$row_stats.customer_lastname} {$row_stats.customer_firstname}
