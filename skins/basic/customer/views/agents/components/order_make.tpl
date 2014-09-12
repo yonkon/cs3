@@ -17,7 +17,7 @@
             <label class="client_filds_add_product_label" for="client_phone">{$lang.Phone}</label>
             <input class="client_filds_add_product" id="client_phone" name="client[phone]" value="{$client.phone }">
         </div>
-        <div>
+        <div style="padding-bottom: 10px">
             <span>{$lang.Contact_phone_number_for_order_approvement}</span>
         </div>
         <div>
@@ -57,17 +57,17 @@
             <label for="client_need_shipment">{$lang.Need_shipment}</label>
             <input type="checkbox" id="client_need_shipment" name="client[need_shipment]" {if $client.need_shipment}checked="checked" {/if}>
         </div>
-        <div>
-            <label class="client_filds_add_product_label" for="client_comment">{$lang.Comment}</label>
+        <div style="padding-top: 5px;">
+            <label style="vertical-align: top;" class="client_filds_add_product_label" for="client_comment">{$lang.Comment}</label>
             <textarea class="client_filds_add_product_area" id="client_comment" name="client[comment]">{$client.comment }</textarea>
         </div>
-        <div>
+        <div style="padding-bottom: 10px">
                 <span class="graytext">{$lang.Order_comment_help_text}</span>
         </div>
         <div>
             <input type="checkbox" id="client_notify" name="client[notify]" {if $client.notify}checked="checked" {/if}>
             <label class="client_filds_add_product_label_mail" for="client_notify">{$lang.Notify_user_by_mail}</label>
-            <input class="client_filds_add_product" id="client_email" name="client[email]" value="{$client.email}">
+            <input style="padding-left: 2px;" placeholder="Введите email" class="client_filds_add_product" id="client_email" name="client[email]" value="{$client.email}">
         </div>
     </div>
     <div id="order_make_bottom">
