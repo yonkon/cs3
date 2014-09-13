@@ -3,7 +3,7 @@
 	<item title="sales_reports" dispatch="sales_reports.view" position="200" />
 	<item title="order_statuses" dispatch="statuses.manage" extra="type=O" position="300" />
 	
-	<item title="shipments" dispatch="shipments.manage" active_option="settings.General.use_shipments" position="400" />
+	<!--<item title="shipments" dispatch="shipments.manage" active_option="settings.General.use_shipments" position="400" />-->
 	
 	
 	<side>
@@ -14,12 +14,12 @@
 <products>
 	<item title="categories" dispatch="categories.manage" position="100" />
 	<item title="products" dispatch="products.manage" position="200" />
-	<item title="product_features" dispatch="product_features.manage" position="300" />
+	<!--<item title="product_features" dispatch="product_features.manage" position="300" />-->
 	
-	<item title="product_filters" dispatch="product_filters.manage" position="400" />
+	<!--<item title="product_filters" dispatch="product_filters.manage" position="400" />-->
 	
-	<item title="global_options" dispatch="product_options.manage" position="500" />
-	<item title="promotions" dispatch="promotions.manage" position="600" />
+	<!--<item title="global_options" dispatch="product_options.manage" position="500" />-->
+	<!--<item title="promotions" dispatch="promotions.manage" position="600" />-->
 
 	<side>
 		<item group="products.manage" title="global_update" href="%INDEX_SCRIPT?dispatch=products.global_update" />
@@ -37,20 +37,20 @@
 		<item group="products.update" title="clone_this_product" href="%INDEX_SCRIPT?dispatch=products.clone&amp;product_id=%PRODUCT_ID" />
 		<item group="products.update" title="delete_this_product" href="%INDEX_SCRIPT?dispatch=products.delete&amp;product_id=%PRODUCT_ID" meta="cm-confirm" />
 		
-		<item group="product_options.global" title="apply_to_products" href="%INDEX_SCRIPT?dispatch=product_options.global.apply" />
+		<!--<item group="product_options.global" title="apply_to_products" href="%INDEX_SCRIPT?dispatch=product_options.global.apply" />-->
 		
-		<item group="promotions.update" title="add_cart_promotion" href="%INDEX_SCRIPT?dispatch=promotions.add&amp;zone=cart" />
+		<!--<item group="promotions.update" title="add_cart_promotion" href="%INDEX_SCRIPT?dispatch=promotions.add&amp;zone=cart" />-->
 		
-		<item group="promotions.update" title="add_catalog_promotion" href="%INDEX_SCRIPT?dispatch=promotions.add&amp;zone=catalog" />
+		<!--<item group="promotions.update" title="add_catalog_promotion" href="%INDEX_SCRIPT?dispatch=promotions.add&amp;zone=catalog" />-->
 	</side>
 </products>
 
 <customers>
 	<item title="users" dispatch="profiles.manage" position="100" />
 	<item title="administrators" dispatch="profiles.manage" extra="user_type=A" position="200" />
-	<item title="customers" dispatch="profiles.manage" extra="user_type=C" position="300" />
-	<item title="profile_fields" dispatch="profile_fields.manage" position="600" />
-	<item title="users_carts" dispatch="cart.cart_list" position="700" />
+	<!--<item title="customers" dispatch="profiles.manage" extra="user_type=C" position="300" />-->
+	<!--<item title="profile_fields" dispatch="profile_fields.manage" position="600" />-->
+	<!--<item title="users_carts" dispatch="cart.cart_list" position="700" />-->
 	
 	<item title="usergroups" dispatch="usergroups.manage" position="800" />
 	
@@ -77,9 +77,9 @@
 <shippings_taxes>
 	<item title="shipping_methods" dispatch="shippings.manage" position="100" />
 	<item title="taxes" dispatch="taxes.manage" position="200" />
-	<item title="states" dispatch="states.manage" position="300" />
-	<item title="countries" dispatch="countries.manage" position="400" />
-	<item title="locations" dispatch="destinations.manage" position="500" />
+	<!--<item title="states" dispatch="states.manage" position="300" />-->
+	<!--<item title="countries" dispatch="countries.manage" position="400" />-->
+	<!--<item title="locations" dispatch="destinations.manage" position="500" />-->
 	
 	<item title="localizations" dispatch="localizations.manage" position="600" />
 	
@@ -93,9 +93,9 @@
 		
 		<item group="taxes.update" title="add_tax" href="%INDEX_SCRIPT?dispatch=taxes.add" />
 		
-		<item group="destinations.update" title="add_location" href="%INDEX_SCRIPT?dispatch=destinations.add" />
+		<!--<item group="destinations.update" title="add_location" href="%INDEX_SCRIPT?dispatch=destinations.add" />-->
 		
-		<item group="localizations.update" title="add_localization" href="%INDEX_SCRIPT?dispatch=localizations.add" />
+		<!--<item group="localizations.update" title="add_localization" href="%INDEX_SCRIPT?dispatch=localizations.add" />-->
 		
 	</side>
 </shippings_taxes>
@@ -152,12 +152,12 @@
 <design>
 	<item title="logos" dispatch="site_layout.logos" position="100" />
 	<item title="design_mode" dispatch="site_layout.design_mode" position="200" />
-	<item title="blocks" dispatch="block_manager.manage" position="300" />
+	<!--<item title="blocks" dispatch="block_manager.manage" position="300" />-->
 	<item title="product_tabs" dispatch="tabs.manage" position="400" />
 	<item title="menus" dispatch="menus.manage" children_dispatch="static_data.manage" children_extra="section=A" position="600" />
 	<item title="sitemap" dispatch="sitemap.manage" position="700" />
 	<item title="template_editor" dispatch="template_editor.manage" position="800" />
-	<item title="skin_selector" dispatch="skin_selector.manage" position="900" />
+	<!--<item title="skin_selector" dispatch="skin_selector.manage" position="900" />-->
     <item title="sliders" dispatch="agents.sliders" position="1000" />
 	<side>
 		<item group="sitemap" title="sitemap_settings" href="%INDEX_SCRIPT?dispatch=settings.manage&amp;section_id=Sitemap" />

@@ -2388,3 +2388,14 @@ function fn_agents_add_slide() {
     }
     return $sliders;
 }*/
+
+function fn_agents_get_site_order_profit($order, &$company_profit_percents ) {
+    if (empty($order['total']) || empty($order['company_id'])) {
+        return 0;
+    }
+    if (empty($company_profit_percents[$order['company_id']])) {
+        $query = db_process("SELECT commission FROM ?:companies WHERE company_id = ?i", array($order['company_id']));
+        $company_profit_percents[$order['company_id']] = doubleval(db_get_field($query));
+    }
+    return $order['total'] * (100 - $company_profit_percents[$order['company_id']]) / 100;
+}

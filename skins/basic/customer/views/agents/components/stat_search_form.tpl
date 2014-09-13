@@ -78,7 +78,7 @@
 
 
 {/capture}
-{include file="common_templates/section.tpl" section_title=$lang.search section_content=$smarty.capture.section}
+{include file="common_templates/section.tpl" section_title=$lang.to_form section_content=$smarty.capture.section}
 {literal}
 <script type="text/javascript">
     function toggleCustomerChoice() {
