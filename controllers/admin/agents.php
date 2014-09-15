@@ -515,7 +515,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $user = fn_get_user_info($auth['user_id'], false);
 // Подписываем лист
         $report_title = fn_get_lang_var('report_for_agent') . " #" . $user['user_id'] . ' ' . $user['lastname'] . ' '. $user['firstname'] . ' ';
-        $sheet->setTitle($report_title);
+        $sheet->setTitle(mb_substr($report_title, 0, 31));
 // Вставляем текст в ячейку A1
         $sheet->setCellValue("A1", $report_title);
         $sheet->getStyle('A1')->getFill()->setFillType(
@@ -541,17 +541,17 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("profit_source"));
         }
         $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("orders_count"));
-        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("agent_total_profit"));
-//        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("agent_average_profit"));
+        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("total_profit"));
+        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("site_profit"));
         $row++;
         $col = 0;
         foreach($general_stats as $profit_source => $g_st) {
             if($is_full_report) {
-                $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var($profit_source));
+                $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['action']);
             }
             $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['count']);
             $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['sum']);
-//            $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['avg']);
+            $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['site_profit']);
             $row++;
             $col = 0;
         }
@@ -582,6 +582,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         if ($subagent_included) {
             $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("agent_profit_from_subagent")); $col++;
         }
+        $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("site_profit")); $col++;
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("status")); $col++;
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("registration_date")); $col++;
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("paid_date"));
@@ -596,7 +597,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sheet->setCellValueByColumnAndRow($col++, $row, $order['product_data']['product']);
 
             if ($agent_included) {
-                $sheet->setCellValueByColumnAndRow($col++, $row, $sale['partner_id'] == $sale['customer_id'] ? fn_get_user_name( $sale['partner_id']) : '');
+                $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_user_name( $sale['partner_id']));
             }
 
             if ($subagent_included) {
@@ -611,12 +612,22 @@ elseif ($mode == 'report' || $mode == 'report_export') {
                 $sheet->setCellValueByColumnAndRow($col++, $row, $sale['partner_id'] == $sale['customer_id'] ? 0 : $sale['amount']);
             }
 
+            $sheet->setCellValueByColumnAndRow($col++, $row, $sale['site_profit']);
             $sheet->setCellValueByColumnAndRow($col++, $row, $sale['order']['status_description']);
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_date_format($sale['date']));
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_agents_get_payout_date($sale['payout_id']));
             $row++;
             $col = 0;
         }
+
+        foreach(range('A','N') as $columnID) {
+            $xls->getActiveSheet()->getColumnDimension($columnID)
+                ->setAutoSize(true);
+        }
+        $xls->getActiveSheet()->getStyle('A1:' . 'N' . $row)->getAlignment()->setIndent(0);
+
+        $xls->getActiveSheet()->getStyle('A1:' . 'N' . $row)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setWrapText(TRUE);
+
 
         $report_name = date('m_d_', time()) . 'report_user_' . $user['user_id'] . '.xls';
 

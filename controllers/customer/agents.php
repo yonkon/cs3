@@ -715,7 +715,7 @@ elseif ($mode == 'collegues' || $mode == 'collegues_export') {
         $user = fn_get_user_info($auth['user_id'], false);
 // Подписываем лист
         $report_title = fn_get_lang_var('report_for_agent') . " #" . $user['user_id'] . ' ' . $user['lastname'] . ' '. $user['firstname'] . ' ';
-        $sheet->setTitle($report_title);
+        $sheet->setTitle(mb_substr($report_title,0, 31));
 // Вставляем текст в ячейку A1
         $sheet->setCellValue("A1", $report_title);
         $sheet->getStyle('A1')->getFill()->setFillType(
@@ -1170,7 +1170,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $user = fn_get_user_info($auth['user_id'], false);
 // Подписываем лист
         $report_title = fn_get_lang_var('report_for_agent') . " #" . $user['user_id'] . ' ' . $user['lastname'] . ' '. $user['firstname'] . ' ';
-        $sheet->setTitle($report_title);
+        $sheet->setTitle(mb_substr($report_title,0, 31));
 // Вставляем текст в ячейку A1
         $sheet->setCellValue("A1", $report_title);
         $sheet->getStyle('A1')->getFill()->setFillType(
@@ -1272,6 +1272,15 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $row++;
             $col = 0;
         }
+
+        foreach(range('A','N') as $columnID) {
+            $xls->getActiveSheet()->getColumnDimension($columnID)
+                ->setAutoSize(true);
+        }
+        $xls->getActiveSheet()->getStyle('A1:' . 'N' . $row)->getAlignment()->setIndent(0);
+
+        $xls->getActiveSheet()->getStyle('A1:' . 'N' . $row)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER)->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER)->setWrapText(TRUE);
+
 
         $report_name = date('m_d_', time()) . 'report_user_' . $user['user_id'] . '.xls';
 
