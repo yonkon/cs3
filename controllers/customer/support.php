@@ -51,7 +51,7 @@ elseif ($mode == 'add_ticket') {
             }
 
 
-            $to_email = Registry::get('settings.Company.company_users_department');
+            $to_email = Registry::get('settings.Company.company_support_department');
             $ticket_id = fn_support_create_ticket($ticket);
             Registry::get('view_mail')->assign('theme', $_REQUEST['theme']);
             Registry::get('view_mail')->assign('message', $_REQUEST['message']);
