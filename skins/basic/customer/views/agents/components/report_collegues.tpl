@@ -114,17 +114,13 @@
                     {$row_stats.order.product_data.product}
             </td>
             <td>
-                    {if $row_stats.partner_id == $row_stats.customer_id}
-                        {$row_stats.customer_lastname} {$row_stats.customer_firstname}
-                        {/if}&nbsp;
+                    {$row_stats.customer_lastname} {$row_stats.customer_firstname}
             </td>
             <td>
                 {$row_stats.order.total}
             </td>
             <td>
-                {if $row_stats.partner_id == $row_stats.customer_id}
                     {$row_stats.amount}
-                {/if}
             </td>
             <td>
                 {$row_stats.order.status_description}

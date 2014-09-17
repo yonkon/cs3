@@ -41,7 +41,6 @@
                 <option value="{$com.company_id}" {if $com.company_id == $company_id}selected="selected"{/if}>{$com.company}</option>
             {/foreach}
         </select>
-
         <select class="clr" name="product_id">
             <option value="" {if empty($product_id)}selected="selected"{/if}>{$lang.product}</option>
             {foreach from=$products item="pr"}

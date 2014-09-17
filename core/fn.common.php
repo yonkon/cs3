@@ -4406,15 +4406,33 @@ function fn_tools_update_status($params)
 		Registry::get('ajax')->assign('return_status', $old_status);
 		return false;
 	}
+    $error_reason = '';
+    if ($params['table'] == 'affiliate_payouts') {
+        $query = db_process(
+            'SELECT o.status FROM ?:aff_partner_actions pa
+            JOIN ?:aff_action_links al ON al.action_id = pa.action_id AND al.object_type = ?s
+            JOIN ?:orders o ON o.order_id = al.object_data
+            WHERE pa.payout_id = ?i AND pa.action = ?s',
+            array('O', $params['id'], 'sale')
+        );
+        $order_status = db_get_field($query);
+        $query = '';
+        if ($order_status == 'C') {
+            $result = db_query("UPDATE ?:$params[table] SET status = ?s WHERE ?w", $params['status'], array($params['id_name'] => $params['id']));
+            fn_set_hook('tools_change_status', $params, $result);
+        } else {
+            $error_reason = "<br>".fn_get_lang_var('order_must_be_completed');
+        }
+    } else {
+        $result = db_query("UPDATE ?:$params[table] SET status = ?s WHERE ?w", $params['status'], array($params['id_name'] => $params['id']));
+        fn_set_hook('tools_change_status', $params, $result);
+    }
 
-	$result = db_query("UPDATE ?:$params[table] SET status = ?s WHERE ?w", $params['status'], array($params['id_name'] => $params['id']));
-
-	fn_set_hook('tools_change_status', $params, $result);
 
 	if ($result) {
 		fn_set_notification('N', fn_get_lang_var('notice'), fn_get_lang_var('status_changed'));
 	} else {
-		fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('error_status_not_changed'));
+		fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('error_status_not_changed') . $error_reason);
 		Registry::get('ajax')->assign('return_status', $old_status);
 	}
 

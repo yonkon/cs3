@@ -24,6 +24,14 @@ if(empty($_REQUEST['company_id']) ) {
 else {
     $cid = $_REQUEST['company_id'];
 }
+if ($auth['user_type'] == 'V') {
+    $cid = $_REQUEST['company_id'] = COMPANY_ID;
+    $is_vendor = true;
+} else {
+    $is_vendor = false;
+}
+Registry::get('view')->assign('is_vendor', $is_vendor);
+
 
 if (isset($cid)) {
     Registry::get('view')->assign('company_id', $cid);
@@ -218,6 +226,9 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $statistic_conditions .= " AND actions.partner_id != actions.customer_id ";
     }
     $view->assign('report_type', $_REQUEST['report_type']);
+    if ($is_vendor) {
+        $statistic_conditions .= " AND actions.partner_id = actions.customer_id ";
+    }
 
     if (!empty($_REQUEST['period']) && $_REQUEST['period'] != 'A') {
         list($_REQUEST['time_from'], $_REQUEST['time_to']) = fn_create_periods($_REQUEST);
@@ -256,7 +267,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         }
         $statistic_conditions .= " AND ($_conditions) ";
     } else {
-        $statistic_conditions .= " AND actions.payout_id != 0 ";
+        $statistic_conditions .= ''; //" AND actions.payout_id != 0 ";
     }
     if (!empty($statistic_search_data['zero_actions']) && $statistic_search_data['zero_actions'] == 'Y' && AREA != 'C') {
         $statistic_conditions .= " AND (actions.amount = 0) ";
@@ -319,7 +330,8 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $joins[] = $std_payout_join = db_process(' LEFT JOIN ?:affiliate_payouts ap ON ap.payout_id = actions.payout_id ');
     }
 
-    $general_stats = db_get_hash_array("SELECT action, actions.partner_id, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY actions.partner_id ",  'partner_id', $order_status_join, $payout_join, $product_join, $std_payout_join);
+    $general_stats = db_get_hash_array("SELECT action, actions.partner_id,  COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY actions.partner_id ",  'partner_id', $order_status_join, $payout_join, $product_join, $std_payout_join);
+//    $general_stats = db_get_hash_array("SELECT action, actions.partner_id, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY actions.partner_id ",  'partner_id', $order_status_join, $payout_join, $product_join, $std_payout_join);
     foreach($general_stats as &$g_st) {
         $_collegue = $collegues[$collegues_map[$g_st['partner_id']]];
         $g_st['action'] = $_collegue['lastname'] . ' ' . $_collegue['firstname'];
@@ -349,9 +361,24 @@ elseif ($mode == 'report' || $mode == 'report_export') {
     foreach($list_stats as &$sale) {
         $sale_order  = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
         $sale['order'] = $sale_order[0];
-        $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id'], false);
-        if($sale['partner_id'] == $sale['customer_id']) {
+        if (false && !$is_vendor) {
+            $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id'], false);
+        } else {
+            $sale['payout_date'] = $sale['order']['order_paid_date'];
+        }
+        if($sale['partner_id'] == $sale['customer_id'] && $sale['order']['status'] == 'C') {
             $general_stats[$sale['partner_id']]['site_profit'] += $sale['site_profit'] = fn_agents_get_site_order_profit($sale['order'], $company_profit_percents );
+        }
+        if ($sale['order']['status'] == 'C' ) {
+            $general_stats[$sale['partner_id']]['count']++;
+            if ($is_vendor) {
+                $general_stats[$sale['partner_id']]['sum'] += doubleval($sale['order']['subtotal']);
+            } else {
+                $general_stats[$sale['partner_id']]['sum'] += $sale['amount'];
+            }
+//            $general_stats['total']['sum'] += $sale['amount'];
+        } else {
+            $sale['amount'] = 0;
         }
     }
     unset($sale);
@@ -478,10 +505,16 @@ elseif ($mode == 'report' || $mode == 'report_export') {
     }
     $general_stats_total = array('action' => fn_get_lang_var('total'), 'sum' => 0, 'avg' => 0, 'site_profit' => 0);
     foreach ($general_stats as $g_st) {
-        $general_stats_total['sum'] += doubleval($g_st['sum']);
-        $general_stats_total['avg'] += doubleval($g_st['avg']);
+        if($is_vendor) {
+            $general_stats_total['sum'] += doubleval($g_st['sum']) - doubleval($g_st['site_profit']);
+        } else {
+            $general_stats_total['sum'] += doubleval($g_st['sum']);
+        }
         $general_stats_total['site_profit'] += doubleval($g_st['site_profit']);
         $general_stats_total['count'] += intval($g_st['count']);
+    }
+    if($is_vendor) {
+        $general_stats = array();
     }
     $general_stats['total'] = $general_stats_total;
 
@@ -495,9 +528,6 @@ elseif ($mode == 'report' || $mode == 'report_export') {
     $view->assign('companies', $companies[0]);
     $view->assign('company_id', $_REQUEST['company_id']);
     $view->assign('product_id', $_REQUEST['product_id']);
-
-
-
 
     if ($mode == 'report_export') {
 // Подключаем класс для работы с excel
@@ -537,10 +567,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sheet->mergeCells('A4:D4');
         $col = 0;
         $row = 5;
-        if($is_full_report) {
+        if($is_full_report ) {
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("profit_source"));
         }
-        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("orders_count"));
+        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("orders_paid_count"));
         $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("total_profit"));
         $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("site_profit"));
         $row++;
@@ -562,10 +592,12 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $row++;
 
         $col = 0;
-        $agent_included = $is_full_report || $_REQUEST['report_type'] == 'agent';
-        $subagent_included = $is_full_report || $_REQUEST['report_type'] == 'subagent';
+        $agent_included = $is_vendor == false && $is_full_report || $_REQUEST['report_type'] == 'agent';
+        $subagent_included = $is_vendor == false && $is_full_report || $_REQUEST['report_type'] == 'subagent';
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("Order")); $col++;
-        $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("company")); $col++;
+        if($is_vendor == false ) {
+            $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("company")); $col++;
+        }
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("product")); $col++;
         if ($agent_included) {
             $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("agent"));
@@ -593,7 +625,9 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $order = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
             $order = $order[0];
             $sheet->setCellValueByColumnAndRow($col++, $row, $order['order_id']);
-            $sheet->setCellValueByColumnAndRow($col++, $row, $order['company_data']['company']);
+            if (!$is_vendor) {
+                $sheet->setCellValueByColumnAndRow($col++, $row, $order['company_data']['company']);
+            }
             $sheet->setCellValueByColumnAndRow($col++, $row, $order['product_data']['product']);
 
             if ($agent_included) {
@@ -615,7 +649,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sheet->setCellValueByColumnAndRow($col++, $row, $sale['site_profit']);
             $sheet->setCellValueByColumnAndRow($col++, $row, $sale['order']['status_description']);
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_date_format($sale['date']));
-            $sheet->setCellValueByColumnAndRow($col++, $row, fn_agents_get_payout_date($sale['payout_id']));
+            $sheet->setCellValueByColumnAndRow($col++, $row, empty($sale['payout_date']) ? '' : fn_date_format($sale['payout_date']));
             $row++;
             $col = 0;
         }

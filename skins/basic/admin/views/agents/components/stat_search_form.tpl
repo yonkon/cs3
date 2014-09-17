@@ -38,12 +38,14 @@
             {include file="common_templates/calendar.tpl" date_id="paid_date_to" date_name="paid_date_to" date_val=$search.paid_date_to start_year=$settings.Company.company_start_year}
         </div>
         <div class="form-field">
+            {if $is_vendor == false}
             <select class="clr" name="company_id">
                 <option value="" {if empty($product_id)}selected="selected"{/if}>{$lang.company}</option>
                 {foreach from=$companies item="com"}
                     <option value="{$com.company_id}" {if $com.company_id == $company_id}selected="selected"{/if}>{$com.company}</option>
                 {/foreach}
             </select>
+            {/if}
 
             <select class="clr" name="product_id">
                 <option value="" {if empty($product_id)}selected="selected"{/if}>{$lang.product}</option>
@@ -53,7 +55,7 @@
             </select>
         </div>
 
-        {if $mode != 'collegues'}
+        {*{if $mode != 'collegues'}
             <div class="form-field">
                 <label for="report_type">{$lang.report_type}</label>
                 <select id="report_type" name="report_type" onchange="toggleCustomerChoice()">
@@ -62,10 +64,10 @@
                     <option value="all"      {if $report_type == 'all'}selected="selected" {/if}>{$lang.full_report}</option>
                 </select>
             </div>
-        {/if}
+        {/if}*}
 
-
-        <div id="customer_id_div" class="form-field{if $report_type == 'agent'} hidden {/if}">
+        {if $is_vendor == false}
+        <div id="customer_id_div" class="form-field">
             <label for="customer_id">{$lang.show_report_for}: </label>
             <select id="customer_id" name="customer_id">
                 <option value="">{$lang.all_subagents_nat}</option>
@@ -74,7 +76,7 @@
                 {/foreach}
             </select>
         </div>
-
+        {/if}
 
 
         <div class="buttons-container">{include file="buttons/button.tpl" but_text=$lang.to_form but_name="dispatch[$controller.$mode/search]"}</div>

@@ -47,7 +47,7 @@
 
 <div id="orders_div" class="clr">
     {foreach from=$products item="product"}
-    <form>
+    <form id="order_div_{$product.product_id}">
         <input type="hidden" name="dispatch" value="agents.order_make">
         <input type="hidden" name="product_id" value="{$product.product_id}">
     <div class="order_div">
@@ -65,7 +65,8 @@
                 <td>
                     <span id="item_{$product.product_id}_count_text" class="price">{$product.price|floatval|format_price:$currencies.$secondary_currency:'price':"price big":true}</span>
                         <div>
-                            <button class="green button" type="submit" name="submit" value="submit">{$lang.checkout}</button>
+                            <button class="green button w80" type="submit" name="submit" value="submit">{$lang.checkout}</button>
+                            <button class="green button w80 margin-top" type="button" name="remove" value="remove" onclick="removeSavedOrder({$product.product_id});">{$lang.remove}</button>
                         </div>
                 </td>
             </tr>
@@ -94,6 +95,7 @@
     {/literal}
     var url_products = '{'agents.ajax_get_products'|fn_url}';
     var url_cities = '{'agents.ajax_get_cities'|fn_url}';
+    var url_remove = '{'agents.ajax_remove_saved_order'|fn_url}';
     {*var url_offices = '{'agents.ajax_get_offices'|fn_url}';*}
 
     {literal}
@@ -116,6 +118,29 @@
 //        ajax_get_options(url_products, data, '#product');
 ////        ajax_get_options(url_offices, data, '#office');
 //    })
+function removeSavedOrder(id) {
+    $.ajax({
+        type: "POST",
+        url: url_remove,
+        data: {
+            'product_id' : id
+        }
+    })
 
+            .success(function( msg ) {
+                if(typeof msg != 'undefined') {
+                    var data = JSON.parse(msg);
+                    if(typeof data.status != 'undefined' && data.status == 'OK') {
+                        $('#order_div_'+id).remove();
+                    } else {
+                        alert('JSON malformat error');
+                    }
+                }
+            })
+
+            .error(function( msg ) {
+                alert('Server error');
+            });
+}
 </script>
 {/literal}

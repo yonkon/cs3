@@ -4,10 +4,10 @@
     {assign var="report_type" value="all"}
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
         <tr>
-            {if $report_type == 'all'}
+            {*{if $report_type == 'all'}*}
                 <th width="40%">{$lang.profit_source}</th>
-            {/if}
-            <th class="right" width="20%">{$lang.orders_count}</th>
+            {*{/if}*}
+            <th class="right" width="20%">{$lang.orders_paid_count}</th>
             <th class="right" width="20%">{$lang.total_profit}</th>
             <th class="right" width="20%">{$lang.site_profit}</th>
         </tr>
@@ -66,24 +66,26 @@
                     {$lang.order}
                 </a>{if $sort_by == "action"}{$sort_sign}{/if}
             </th>
+            {if $is_vendor == false}
             <th>
                 <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=company&amp;sort_order={$sort_order}" rev="pagination_contents">
                     {$lang.company}
                 </a>{if $sort_by == "action"}{$sort_sign}{/if}
             </th>
+            {/if}
             <th>
                 <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=product&amp;sort_order={$sort_order}" rev="pagination_contents">
                     {$lang.product}
                 </a>{if $sort_by == "action"}{$sort_sign}{/if}
             </th>
-            {if ($report_type == 'agent' || $report_type == 'all')}
+            {if ($is_vendor == false && ($report_type == 'agent' || $report_type == 'all'))}
                 <th>
                     <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=partner&amp;sort_order={$sort_order}&amp;post_sort_by=agent" rev="pagination_contents">
                         {$lang.agent}
                     </a>{if $sort_by == "action"}{$sort_sign}{/if}
                 </th>
             {/if}
-            {if $report_type == 'subagent' || $report_type == 'all'}
+            {if $is_vendor == false && ($report_type == 'subagent' || $report_type == 'all')}
                 <th>
                     <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=partner&amp;sort_order={$sort_order}&amp;post_sort_by=subagent" rev="pagination_contents">
                         {$lang.subagent}
@@ -95,14 +97,14 @@
                     {$lang.price}
                 </a>{if $sort_by == "action"}{$sort_sign}{/if}
             </th>
-            {if $report_type == 'agent' || $report_type == 'all'}
+            {if $is_vendor == false && ($report_type == 'agent' || $report_type == 'all')}
                 <th>
                     <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;post_sort_by=agent_profit&amp;sort_order={$sort_order}" rev="pagination_contents">
                         {$lang.agent_profit}
                     </a>{if $sort_by == "action"}{$sort_sign}{/if}
                 </th>
             {/if}
-            {if $report_type == 'subagent' || $report_type == 'all'}
+            {if $is_vendor == false && ($report_type == 'subagent' || $report_type == 'all')}
                 <th>
                     <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;sort_by=cost&amp;post_sort_by=subagent_profit&amp;sort_order={$sort_order}" rev="pagination_contents">
                         {$lang.agent_profit_from_subagent}
@@ -135,45 +137,47 @@
                 <td>
                     <a href="{'agents.orders'|fn_url}&where[order_id]={$row_stats.order.order_id}&where[user_id]={$row_stats.customer_id}"> {$row_stats.order.order_id}</a>
                 </td>
+                {if $is_vendor == false}
                 <td>
                     {$row_stats.order.company_data.company}
                 </td>
+                {/if}
                 <td>
                     {$row_stats.order.product_data.product}
                 </td>
-                {if ($report_type == 'agent' || $report_type == 'all')}
+                {if ($is_vendor == false && ($report_type == 'agent' || $report_type == 'all'))}
                     <td>
                         {$row_stats.partner_lastname} {$row_stats.partner_firstname}
                         &nbsp;
                     </td>
                 {/if}
-                {if $report_type == 'subagent' || $report_type == 'all'}
+                {if $is_vendor == false && ($report_type == 'subagent' || $report_type == 'all')}
                     <td>
-                        {if $row_stats.partner_id != $row_stats.customer_id}
+                        {if $is_vendor == false && $row_stats.partner_id != $row_stats.customer_id}
                             {$row_stats.customer_lastname} {$row_stats.customer_firstname}
                         {/if}
                         &nbsp;
                     </td>
                 {/if}
                 <td>
-                    {$row_stats.order.total}
+                    {include file="common_templates/price.tpl" value=$row_stats.order.total|round:2}
                 </td>
-                {if $report_type == 'agent' || $report_type == 'all'}
+                {if $is_vendor == false && ($report_type == 'agent' || $report_type == 'all')}
                     <td>
                         {if $row_stats.partner_id == $row_stats.customer_id}
-                            {$row_stats.amount}
+                            {include file="common_templates/price.tpl" value=$row_stats.amount|round:2}
                         {/if}
                     </td>
                 {/if}
-                {if $report_type == 'subagent' || $report_type == 'all'}
+                {if $is_vendor == false && ($report_type == 'subagent' || $report_type == 'all')}
                     <td>
                         {if $row_stats.partner_id != $row_stats.customer_id}
-                            {$row_stats.amount}
+                            {include file="common_templates/price.tpl" value=$row_stats.amount|round:2}
                         {/if}
                     </td>
                 {/if}
                 <td>
-                    {$row_stats.site_profit}
+                    {include file="common_templates/price.tpl" value=$row_stats.site_profit|round:2}
                 </td>
                 <td>
                     {$row_stats.order.status_description}

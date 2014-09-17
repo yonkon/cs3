@@ -1,0 +1,3 @@
+<affiliate>
+    <item title="report" dispatch="agents.report" position="900" />
+</affiliate>

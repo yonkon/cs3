@@ -4,7 +4,7 @@
 
 <affiliate>
 	<item title="product_groups" dispatch="product_groups.manage" position="100" />
-	<item title="affilate_banners_manager" dispatch="banners_manager.manage" position="200" />
+	<!--<item title="affilate_banners_manager" dispatch="banners_manager.manage" position="200" />-->
 	<item title="plans" dispatch="affiliate_plans.manage" position="300" />
 	<item title="affiliate_partners" dispatch="partners.manage" position="400" />
 	<item title="approve_commissions" dispatch="aff_statistics.approve" position="500" />
@@ -12,13 +12,13 @@
 	<item title="payouts" dispatch="payouts.manage" position="700" />
 	<item title="accounting_history" dispatch="payouts.previous" position="800" />
 
-	<subitem item="affilate_banners_manager" title="text_banners " href="%INDEX_SCRIPT?dispatch=banners_manager.manage&amp;banner_type=T" />
-	<subitem item="affilate_banners_manager" title="graphic_banners" href="%INDEX_SCRIPT?dispatch=banners_manager.manage&amp;banner_type=G" />
-	<subitem item="affilate_banners_manager" title="product_banners" href="%INDEX_SCRIPT?dispatch=banners_manager.manage&amp;banner_type=P" />
+	<!--<subitem item="affilate_banners_manager" title="text_banners " href="%INDEX_SCRIPT?dispatch=banners_manager.manage&amp;banner_type=T" />-->
+	<!--<subitem item="affilate_banners_manager" title="graphic_banners" href="%INDEX_SCRIPT?dispatch=banners_manager.manage&amp;banner_type=G" />-->
+	<!--<subitem item="affilate_banners_manager" title="product_banners" href="%INDEX_SCRIPT?dispatch=banners_manager.manage&amp;banner_type=P" />-->
 	
 	<side>
-		<item group="banners_manager" title="affiliate_settings" href="%INDEX_SCRIPT?dispatch=addons.manage#groupaffiliate" />
-		<item group="banners_manager.update" title="add_banner" href="%INDEX_SCRIPT?dispatch=banners_manager.add&amp;banner_type=%BANNER_TYPE&amp;link_to=%LINK_TO" />
+		<!--<item group="banners_manager" title="affiliate_settings" href="%INDEX_SCRIPT?dispatch=addons.manage#groupaffiliate" />-->
+		<!--<item group="banners_manager.update" title="add_banner" href="%INDEX_SCRIPT?dispatch=banners_manager.add&amp;banner_type=%BANNER_TYPE&amp;link_to=%LINK_TO" />-->
 
 		<item group="affiliate_plans" title="affiliate_settings" href="%INDEX_SCRIPT?dispatch=addons.manage#groupaffiliate" />
 		<item group="affiliate_plans.update" title="add_plan" href="%INDEX_SCRIPT?dispatch=%CONTROLLER.add" />

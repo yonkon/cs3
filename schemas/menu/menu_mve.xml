@@ -11,3 +11,7 @@
 	</side>
 	<item title="vendor_account_balance" dispatch="companies.balance" position="200" />
 </vendors>
+
+<affiliate>
+    <item title="report" dispatch="agents.report" position="900" />
+</affiliate>

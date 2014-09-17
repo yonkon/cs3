@@ -457,8 +457,8 @@ elseif ($mode == 'collegues' || $mode == 'collegues_export') {
 
     $statistic_search_data = (empty($search_type) || $search_type != 'add') ? $statistic_search : fn_array_merge($statistic_search_data, $statistic_search);
 
-    $statistic_conditions .= db_quote(" AND (actions.partner_id IN (?n))", $collegues_ids);
-    $statistic_conditions .= " AND actions.partner_id = actions.customer_id ";
+    $statistic_conditions .= db_quote(" AND (actions.partner_id = ?i AND actions.customer_id IN (?n))", $auth['user_id'], $collegues_ids);
+    $statistic_conditions .= " AND actions.partner_id != actions.customer_id ";
 
     if (!empty($_REQUEST['period']) && $_REQUEST['period'] != 'A') {
         list($_REQUEST['time_from'], $_REQUEST['time_to']) = fn_create_periods($_REQUEST);
@@ -477,7 +477,7 @@ elseif ($mode == 'collegues' || $mode == 'collegues_export') {
         $statistic_conditions .= db_quote(" AND (actions.plan_id = ?i) ", $statistic_search_data['plan_id']);
     }
 
-    $statistic_conditions .= " AND actions.payout_id != 0 ";
+    $statistic_conditions .= ''; //" AND actions.payout_id != 0 ";
 
     $statistic_search_data['amount_from'] = empty($statistic_search_data['amount_from']) ? 0 : floatval($statistic_search_data['amount_from']);
     if (!empty($statistic_search_data['amount_from'])) {
@@ -534,19 +534,14 @@ elseif ($mode == 'collegues' || $mode == 'collegues_export') {
         $joins[] = $std_payout_join = db_process(' LEFT JOIN ?:affiliate_payouts ap ON ap.payout_id = actions.payout_id ');
     }
 
-    $general_stats = db_get_hash_array("SELECT action, actions.partner_id, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY actions.partner_id", 'partner_id', $order_status_join, $payout_join, $product_join, $std_payout_join);
+//    $general_stats = db_get_hash_array("SELECT action, actions.customer_id as partner_id, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY actions.customer_id", 'partner_id', $order_status_join, $payout_join, $product_join, $std_payout_join);
+    $general_stats = db_get_hash_array("SELECT action, actions.customer_id as partner_id, COUNT(action) as count, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY actions.customer_id", 'partner_id', $order_status_join, $payout_join, $product_join, $std_payout_join);
 
-    foreach($general_stats as &$g_st) {
-        $_collegue = $collegues[$collegues_map[$g_st['partner_id']]];
-        $g_st['action'] = $_collegue['lastname'] . ' ' . $_collegue['firstname'];
-    }
-    unset($g_st);
 
-    $general_stats['total'] = db_get_row("SELECT 'Всего' as action, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions");
+    $general_stats['total'] = db_get_row("SELECT 'Всего' as action, COUNT(action) as count, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions");
 
 
 
-    $view->assign('general_stats', $general_stats);
 
     $sort_order = empty($_REQUEST['sort_order']) ? 'desc' : $_REQUEST['sort_order'];
     $sort_by = empty($_REQUEST['sort_by']) ? 'date' : $_REQUEST['sort_by'];
@@ -566,8 +561,20 @@ elseif ($mode == 'collegues' || $mode == 'collegues_export') {
         $sale_order  = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
         $sale['order'] = $sale_order[0];
         $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id'], false);
+        if($sale['order']['status'] == 'C') {
+            $general_stats[$sale['customer_id']]['sum'] += $sale['amount'];
+            $general_stats['total']['sum'] += $sale['amount'];
+        } else {
+            $sale['amount'] = 0;
+        }
     }
     unset($sale);
+    foreach($general_stats as &$g_st) {
+        $_collegue = $collegues[$collegues_map[$g_st['partner_id']]];
+        $g_st['action'] = $_collegue['lastname'] . ' ' . $_collegue['firstname'];
+    }
+    unset($g_st);
+
 
 
 
@@ -696,6 +703,7 @@ elseif ($mode == 'collegues' || $mode == 'collegues_export') {
     $view->assign('companies', $companies[0]);
     $view->assign('company_id', $_REQUEST['company_id']);
     $view->assign('product_id', $_REQUEST['product_id']);
+    $view->assign('general_stats', $general_stats);
 
 
 
@@ -924,7 +932,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             }
             $statistic_conditions .= " AND ($_conditions) ";
         } else {
-            $statistic_conditions .= " AND actions.payout_id != 0 ";
+            $statistic_conditions .= ''; //" AND actions.payout_id != 0 ";
         }
         if (!empty($statistic_search_data['zero_actions']) && $statistic_search_data['zero_actions'] == 'Y' && AREA != 'C') {
             $statistic_conditions .= " AND (actions.amount = 0) ";
@@ -987,15 +995,17 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $joins[] = $std_payout_join = db_process(' LEFT JOIN ?:affiliate_payouts ap ON ap.payout_id = actions.payout_id ');
     }
 
-        $general_stats['total'] = db_get_row("SELECT action, IF(ap.status = 'S', ap.amount, 0) as amount, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY action",  $order_status_join, $payout_join, $product_join, $std_payout_join);
+//        $general_stats['total'] = db_get_row("SELECT action, IF(ap.status = 'S', ap.amount, 0) as amount, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY action",  $order_status_join, $payout_join, $product_join, $std_payout_join);
+        $general_stats['total'] = db_get_row("SELECT action, COUNT(action) as count, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions GROUP BY action",  $order_status_join, $payout_join, $product_join, $std_payout_join);
         if($_REQUEST['report_type'] == 'all') {
-            $general_stats['you'] = db_get_row("SELECT action, IF(ap.status = 'S', ap.amount, 0) as amount, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions AND actions.partner_id = actions.customer_id GROUP BY action", $order_status_join, $payout_join, $product_join, $std_payout_join);
-            $general_stats['collegues'] = db_get_row("SELECT action, IF(ap.status = 'S', ap.amount, 0) as amount, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions AND actions.partner_id != actions.customer_id GROUP BY action", $order_status_join, $payout_join, $product_join, $std_payout_join);
+/*            $general_stats['you'] = db_get_row("SELECT action, IF(ap.status = 'S', ap.amount, 0) as amount, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions AND actions.partner_id = actions.customer_id GROUP BY action", $order_status_join, $payout_join, $product_join, $std_payout_join);
+            $general_stats['collegues'] = db_get_row("SELECT action, IF(ap.status = 'S', ap.amount, 0) as amount, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions AND actions.partner_id != actions.customer_id GROUP BY action", $order_status_join, $payout_join, $product_join, $std_payout_join);*/
+            $general_stats['you'] = db_get_row("SELECT action, COUNT(action) as count, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions AND actions.partner_id = actions.customer_id GROUP BY action", $order_status_join, $payout_join, $product_join, $std_payout_join);
+            $general_stats['collegues'] = db_get_row("SELECT action, COUNT(action) as count, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions  as actions ?p ?p ?p ?p WHERE $statistic_conditions AND actions.partner_id != actions.customer_id GROUP BY action", $order_status_join, $payout_join, $product_join, $std_payout_join);
         }
 
 //        $general_stats['total'] = db_get_row("SELECT 'total' as action, COUNT(action) as count, SUM(actions.amount) as sum, AVG(actions.amount) as avg, COUNT(distinct actions.partner_id) as partners FROM ?:aff_partner_actions as actions WHERE $statistic_conditions");
 
-        $view->assign('general_stats', $general_stats);
 
         $list_plans = fn_get_affiliate_plans_list();
         $view->assign('list_plans', $list_plans);
@@ -1020,9 +1030,23 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sale_order  = fn_agents_get_orders(null, array('where' => array('order_id' => $sale['data']['O'])));
             $sale['order'] = $sale_order[0];
             $sale['payout_date'] = fn_agents_get_payout_date($sale['payout_id'], false);
+            if ($sale['order']['status'] == 'C') {
+                $general_stats['total']['sum'] += $sale['amount'];
+                if($sale['partner_id'] == $sale['customer_id']) {
+                    $general_stats['you']['sum'] += $sale['amount'];
+                } else {
+                    $general_stats['collegues']['sum'] += $sale['amount'];
+                }
+            } else {
+                $sale['amount'] = 0;
+            }
+
         }
         unset($sale);
-
+    if ($_REQUEST['report_type'] !== 'all') {
+        unset($general_stats['you']);
+        unset($general_stats['collegues']);
+    }
 
 
         if (!empty($_REQUEST['post_sort_by']) ) {
@@ -1150,6 +1174,7 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $view->assign('companies', $companies[0]);
         $view->assign('company_id', $_REQUEST['company_id']);
         $view->assign('product_id', $_REQUEST['product_id']);
+        $view->assign('general_stats', $general_stats);
 
 
 
@@ -1604,6 +1629,20 @@ elseif ($mode == 'ajax_save_product') {
         $saved = db_get_array($query);
         if(empty($saved)) {
             db_query(db_process('INSERT INTO ?:orders_saved VALUES (NULL, ?i, ?i)', array($_REQUEST['product_id'], $auth['user_id'])) );
+        }
+        echo json_encode(array('status' => 'OK') );
+    }
+    die();
+}
+elseif ($mode == 'ajax_remove_saved_order') {
+
+    if(empty($_REQUEST['product_id']) || empty($auth['user_id'])) {
+        echo (json_encode(array('status' => 'error')));
+    } else {
+        $query = db_process('DELETE FROM ?:orders_saved WHERE user_id = ?i AND product_id = ?i', array($auth['user_id'], $_REQUEST['product_id']));
+        $deleted = db_query($query);
+        if(empty($deleted)) {
+            echo (json_encode(array('status' => 'error')));
         }
         echo json_encode(array('status' => 'OK') );
     }
