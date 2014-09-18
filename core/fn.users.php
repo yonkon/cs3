@@ -39,6 +39,7 @@ function fn_get_user_info($user_id, $get_profile = true, &$profile_id = NULL)
 		'tax_exempt',
 		'lang_code',
         'password_change_timestamp',
+        'agent_contract_id'
 	);
 
 	$user_fields = implode(',', $user_fields);

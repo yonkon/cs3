@@ -136,7 +136,7 @@
 		<label for="company_vendor_commission">{$lang.vendor_commission}:</label>
 		<input type="text" name="company_data[commission]" id="company_vendor_commission" value="{$company_data.commission}" class="input-text-medium" />
 		<select name="company_data[commission_type]">
-			<option value="A" {if $company_data.commission_type == "A"}selected="selected"{/if}>{$currencies.$primary_currency.symbol}</option>
+			{*<option value="A" {if $company_data.commission_type == "A"}selected="selected"{/if}>{$currencies.$primary_currency.symbol}</option>*}
 			<option value="P" {if $company_data.commission_type == "P"}selected="selected"{/if}>%</option>
 		</select>
 	</div>

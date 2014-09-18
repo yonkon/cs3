@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `cs_agents` (
   `phone` varchar(13) NOT NULL,
   `super_agent` int(10) unsigned DEFAULT NULL,
   `email` varchar(64) NOT NULL,
-  `contract_id` varchar(32) DEFAULT NULL,
+  `agent_contract_id` varchar(32) DEFAULT NULL,
   `password` varchar(32) NOT NULL,
   `login` varchar(32) DEFAULT NULL,
   `status` tinyint(4) NOT NULL DEFAULT '0',

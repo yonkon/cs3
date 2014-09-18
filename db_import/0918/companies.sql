@@ -1,0 +1,1 @@
+ALTER TABLE `cscart_companies` ADD `company_contract_id` VARCHAR(36) NULL ;
