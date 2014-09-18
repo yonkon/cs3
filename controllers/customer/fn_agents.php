@@ -1771,7 +1771,7 @@ function fn_agents_get_active_order_statuses($lang_code = CART_LANGUAGE) {
 }
 
 function fn_agents_get_company_info($company_id, $lang_code = CART_LANGUAGE) {
-    $query = db_process('SELECT c.company_id, c.company, c.email, c.fax, c.company_long_description, c.company_home_master, c.company_home_master_description,  cd.company_description, c.phone, c.url, c.email, il.image_id, i.* FROM  ?:companies c LEFT JOIN ?:company_descriptions cd ON cd.company_id = c.company_id  LEFT JOIN ?:images_links il ON il.object_id = c.company_id LEFT JOIN ?:images i ON i.image_id = il.image_id WHERE c.company_id = ?i GROUP by c.company_id', array($company_id));
+    $query = db_process('SELECT c.company_id, c.company, c.email, c.fax, c.company_long_description, c.company_home_master, c.company_home_master_description, c.company_contract_id,  cd.company_description, c.phone, c.url, c.email, il.image_id, i.* FROM  ?:companies c LEFT JOIN ?:company_descriptions cd ON cd.company_id = c.company_id  LEFT JOIN ?:images_links il ON il.object_id = c.company_id LEFT JOIN ?:images i ON i.image_id = il.image_id WHERE c.company_id = ?i GROUP by c.company_id', array($company_id));
     $company_info = db_get_array($query);
     if(empty($company_info) ) {
         return array();

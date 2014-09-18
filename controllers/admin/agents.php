@@ -617,7 +617,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("site_profit")); $col++;
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("status")); $col++;
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("registration_date")); $col++;
-        $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("paid_date"));
+        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("paid_date"));
+        if (!$is_vendor) {
+            $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("company_contract_id"));
+        }
         $row++;
 
         $col = 0;
@@ -649,7 +652,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sheet->setCellValueByColumnAndRow($col++, $row, $sale['site_profit']);
             $sheet->setCellValueByColumnAndRow($col++, $row, $sale['order']['status_description']);
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_date_format($sale['date']));
-            $sheet->setCellValueByColumnAndRow($col++, $row, empty($sale['payout_date']) ? '' : fn_date_format($sale['payout_date']));
+            $sheet->setCellValueByColumnAndRow($col++, $row, empty($sale['payout_date']) ? '' : fn_date_format(strtotime($sale['payout_date'])));
+            if (!$is_vendor) {
+                $sheet->setCellValueByColumnAndRow($col++, $row, $sale['order']['company_data']['company_contract_id']);
+            }
             $row++;
             $col = 0;
         }

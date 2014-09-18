@@ -140,6 +140,10 @@
                 {if $is_vendor == false}
                 <td>
                     {$row_stats.order.company_data.company}
+                    {if !empty($row_stats.order.company_data.company_contract_id)}
+                        <br>
+                        <span class="small-note">{$lang.company_contract_id}: {$row_stats.order.company_data.company_contract_id}</span>
+                    {/if}
                 </td>
                 {/if}
                 <td>
