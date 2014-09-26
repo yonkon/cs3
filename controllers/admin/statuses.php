@@ -53,7 +53,7 @@ if ($mode == 'update') {
 
 	$section_data = array();
 
-	$statuses = db_get_hash_array("SELECT ?:statuses.*, ?:status_descriptions.* FROM ?:statuses LEFT JOIN ?:status_descriptions ON ?:statuses.status = ?:status_descriptions.status AND ?:statuses.type = ?:status_descriptions.type AND ?:status_descriptions.lang_code = ?s AND ?:statuses.type = ?s ORDER BY ?:status_descriptions.description", 'status', DESCR_SL, $_REQUEST['type']);
+	$statuses = db_get_hash_array("SELECT ?:statuses.*, ?:status_descriptions.* FROM ?:statuses LEFT JOIN ?:status_descriptions ON ?:statuses.status = ?:status_descriptions.status AND ?:statuses.type = ?:status_descriptions.type AND ?:status_descriptions.lang_code = ?s AND ?:statuses.type = ?s AND ?:statuses.status != 'B' ORDER BY ?:status_descriptions.description", 'status', DESCR_SL, $_REQUEST['type']);
 
 	$view->assign('statuses', $statuses);
 

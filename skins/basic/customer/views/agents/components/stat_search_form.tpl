@@ -50,8 +50,9 @@
      </div>
 
     {if $mode != 'collegues'}
-    <div class="form-field">
-        <select id="report_type" name="report_type" onchange="toggleCustomerChoice()">
+    <div class="form-field" style="margin-left: 13em">
+        <label for="report_type">{$lang.choose_report_type}: </label>
+        <select id="report_type"  name="report_type" onchange="toggleCustomerChoice()">
             <option value="agent"    {if $report_type == 'agent'}selected="selected" {/if}>{$lang.your_report}</option>
             <option value="subagent" {if $report_type == 'subagent'}selected="selected" {/if}>{$lang.subagents_report}</option>
             <option value="all"      {if $report_type == 'all'}selected="selected" {/if}>{$lang.full_report}</option>
@@ -60,7 +61,7 @@
     {/if}
 
 
-    <div id="customer_id_div" class="form-field{if $report_type == 'agent'} hidden {/if}">
+    <div id="customer_id_div" class="form-field{if $report_type == 'agent'} hidden {/if}" style="margin-left: 13em">
         <label for="customer_id">{$lang.show_report_for}: </label>
         <select id="customer_id" name="customer_id">
             <option value="">{$lang.all_subagents_nat}</option>
@@ -72,7 +73,7 @@
 
 
 
-<div class="buttons-container">{include file="buttons/button.tpl" but_text=$lang.search but_name="dispatch[$controller.$mode/search]"}</div>
+<div class="buttons-container">{include file="buttons/button.tpl" but_text=$lang.to_form but_name="dispatch[$controller.$mode/search]"}</div>
 </form>
 
 

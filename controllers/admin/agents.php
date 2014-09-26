@@ -368,6 +368,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         }
         if($sale['partner_id'] == $sale['customer_id'] && $sale['order']['status'] == 'C') {
             $general_stats[$sale['partner_id']]['site_profit'] += $sale['site_profit'] = fn_agents_get_site_order_profit($sale['order'], $company_profit_percents );
+            $sale['pure_site_profit'] = doubleval($sale['site_profit']) - doubleval($sale['amount']);
+        }
+        if($sale['partner_id'] != $sale['customer_id'] && $sale['order']['status'] == 'C') {
+            $sale['pure_site_profit'] = - doubleval($sale['amount']);
         }
         if ($sale['order']['status'] == 'C' ) {
             $general_stats[$sale['partner_id']]['count']++;
@@ -567,20 +571,30 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         $sheet->mergeCells('A4:D4');
         $col = 0;
         $row = 5;
-        if($is_full_report ) {
+        if($is_full_report && !$is_vendor) {
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("profit_source"));
         }
         $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("orders_paid_count"));
-        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("total_profit"));
-        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("site_profit"));
+        $sheet->setCellValueByColumnAndRow($col++, $row,  fn_get_lang_var($is_vendor ? "total_profit" : "admin_report_agent_total_profit"));
+        if (!$is_vendor) {
+            $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("admin_pure_site_profit"));
+        }
+        if (!$is_vendor) {
+            $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("admin_site_profit"));
+        } else {
+            $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("site_profit"));
+        }
         $row++;
         $col = 0;
         foreach($general_stats as $profit_source => $g_st) {
-            if($is_full_report) {
+            if($is_full_report && !$is_vendor) {
                 $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['action']);
             }
             $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['count']);
             $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['sum']);
+            if (!$is_vendor) {
+                $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['site_profit']-$g_st['sum']);
+            }
             $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['site_profit']);
             $row++;
             $col = 0;
@@ -614,7 +628,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         if ($subagent_included) {
             $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("agent_profit_from_subagent")); $col++;
         }
-        $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("site_profit")); $col++;
+        $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var($is_vendor?"site_profit":"admin_site_profit"));
+        if(!$is_vendor) {
+            $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("admin_pure_site_profit"));
+        }
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("status")); $col++;
         $sheet->setCellValueByColumnAndRow($col, $row, fn_get_lang_var("registration_date")); $col++;
         $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("paid_date"));
@@ -650,6 +667,9 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             }
 
             $sheet->setCellValueByColumnAndRow($col++, $row, $sale['site_profit']);
+            if(!$is_vendor) {
+                $sheet->setCellValueByColumnAndRow($col++, $row, $sale['pure_site_profit']);
+            }
             $sheet->setCellValueByColumnAndRow($col++, $row, $sale['order']['status_description']);
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_date_format($sale['date']));
             $sheet->setCellValueByColumnAndRow($col++, $row, empty($sale['payout_date']) ? '' : fn_date_format(strtotime($sale['payout_date'])));

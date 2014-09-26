@@ -4,21 +4,32 @@
     {assign var="report_type" value="all"}
     <table cellpadding="0" cellspacing="0" border="0" width="100%" class="table">
         <tr>
-            {*{if $report_type == 'all'}*}
+            {if $is_vendor == false}
                 <th width="40%">{$lang.profit_source}</th>
-            {*{/if}*}
+            {/if}
             <th class="right" width="20%">{$lang.orders_paid_count}</th>
-            <th class="right" width="20%">{$lang.total_profit}</th>
-            <th class="right" width="20%">{$lang.site_profit}</th>
+            {if $is_vendor}<th class="right" width="20%">{$lang.total_profit}</th>
+            {else}<th class="right" width="20%">{$lang.admin_report_agent_total_profit}</th>
+            {/if}
+            {if $is_vendor == false}
+                <th class="right" width="20%">{$lang.admin_pure_site_profit}</th>
+            {/if}
+            {if $is_vendor}<th class="right" width="20%">{$lang.site_profit}</th>
+            {else}<th class="right" width="20%">{$lang.admin_site_profit}</th>
+        {/if}
         </tr>
         {if $general_stats|count}
             {foreach from=$general_stats item='g_st' key="g_st_lang_var"}
                 <tr {cycle values=" ,class=\"table-row\""}>
-                    {if $report_type == 'all'}
+                    {if $is_vendor == false && $report_type == 'all'}
                         <td><strong>{$g_st.action}</strong></td>
                     {/if}
                     <td class="right">{$g_st.count|default:"0"}</td>
                     <td class="right">{include file="common_templates/price.tpl" value=$g_st.sum|round:2}</td>
+                    {if $is_vendor == false}
+                        {math equation="pr - su" pr=$g_st.site_profit su=$g_st.sum assign="pure_site_profit"}
+                        <td class="right">{include file="common_templates/price.tpl" value=$pure_site_profit|round:2}</td>
+                    {/if}
                     <td class="right">{include file="common_templates/price.tpl" value=$g_st.site_profit|round:2}</td>
                 </tr>
             {/foreach}
@@ -112,8 +123,13 @@
                 </th>
             {/if}
             <th>
-                {$lang.site_profit}
+                {if $is_vendor}{$lang.site_profit}
+                    {else}{$lang.admin_site_profit}
+                {/if}
             </th>
+            {if $is_vendor == false}
+            <th>{$lang.admin_pure_site_profit}</th>
+            {/if}
             <th>
                 <a class="{$ajax_class}" href="{$url_prefix}{$c_url}&amp;post_sort_by=status&amp;sort_order={$sort_order}" rev="pagination_contents">
                     {$lang.status}
@@ -183,6 +199,11 @@
                 <td>
                     {include file="common_templates/price.tpl" value=$row_stats.site_profit|round:2}
                 </td>
+                {if $is_vendor == false}
+                    <td>
+                        {include file="common_templates/price.tpl" value=$row_stats.pure_site_profit|round:2}
+                    </td>
+                {/if}
                 <td>
                     {$row_stats.order.status_description}
                 </td>

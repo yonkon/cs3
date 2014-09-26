@@ -1741,7 +1741,7 @@ function fn_agents_get_saved_orders($user_id, $params = array(), $lang_code = CA
 
 
 function fn_agents_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
-    $active_statuses = array('O', 'P',  'A');
+    $active_statuses = array('O', 'P');
     $params['where'][db_process('?:orders.status')] = $active_statuses ;
     return fn_agents_get_orders($user_id, $params, $lang_code);
 }
@@ -1762,6 +1762,7 @@ function fn_agents_get_order_statuses($status = null, $lang_code = CART_LANGUAGE
             $query .= db_process(' AND status IN (?a)', array($status));
         }
     }
+    $query .= 'AND status != "B"';
     $statuses = db_get_array($query);
     return $statuses;
 }

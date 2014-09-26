@@ -4152,7 +4152,7 @@ function fn_get_payment_data($payment_id, $object_id = 0, $lang_code = CART_LANG
 function fn_get_statuses($type = STATUSES_ORDER, $simple = false, $additional_statuses = false, $exclude_parent = false, $lang_code = CART_LANGUAGE)
 {
 	if ($simple) {
-		$statuses = db_get_hash_single_array("SELECT a.status, b.description FROM ?:statuses as a LEFT JOIN ?:status_descriptions as b ON b.status = a.status AND b.type = a.type AND b.lang_code = ?s WHERE a.type = ?s", array('status', 'description'), $lang_code, $type);
+		$statuses = db_get_hash_single_array("SELECT a.status, b.description FROM ?:statuses as a LEFT JOIN ?:status_descriptions as b ON b.status = a.status AND b.type = a.type AND b.lang_code = ?s WHERE a.type = ?s AND a.status != 'B' ", array('status', 'description'), $lang_code, $type);
 		if ($type == STATUSES_ORDER && !empty($additional_statuses)) {
 			$statuses['N'] = fn_get_lang_var('incompleted', $lang_code);
 			if (empty($exclude_parent)) {
