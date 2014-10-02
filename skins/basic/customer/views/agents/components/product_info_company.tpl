@@ -1,7 +1,7 @@
 {if !empty($company) }
 <div class="company_description_div clr switchable_tab {if $active_tab != 'company'}hidden{/if}">
     <a href="" class="block clr margin-bottom">{$lang.back_to_catalog}</a>
-    <img class="margin-top" width="350px" height="350px" src="{$company.image_path|unescape|fn_generate_thumbnail:350:350:true|escape}" alt="{$lang.logo}">
+    <img class="margin-top" width="150px" height="150px" src="{$company.image_path|unescape|fn_generate_thumbnail:150:150:true|escape}" alt="{$lang.logo}">
     <p class="bold margin-top">{$company.company}</p>
     <p class="margin-bottom">{$company.company_description|unescape}</p>
     <p class="margin-bottom">{$company.company_long_description|unescape}</p>

@@ -4,8 +4,6 @@
 
         <a href="{'agents.companies_and_products'|fn_url}">{$lang.back_to_catalog}</a>
         <img class="block" src="{$product.image.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}" alt="{$lang.logo}">
-        <div class="share42init"></div>
-        <script type="text/javascript" src="{$smarty.server.HTTP_HOST}/share42/share42.js"></script>
 
         <p class="bold">{$product.product}</p>
         <p>{$product.description|unescape}</p>
