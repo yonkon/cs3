@@ -12,7 +12,7 @@ if (!empty($auth['user_type']) && $auth['user_type'] != 'P' || empty($auth['user
     return array(CONTROLLER_STATUS_DENIED);
 }
 
-include dirname(__FILE__) . "/fn_agents.php";
+require_once(dirname(__FILE__) . "/fn_agents.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -1430,9 +1430,26 @@ elseif ($mode == 'order_make') {
         if(!empty($errors)){
             fn_agents_display_errors($errors);
             $step = 1;
-        }
-        else{
-            fn_agents_process_order($_REQUEST, $step, $auth);
+        } else {
+            if(!empty($_FILES)) {
+                $file = $_FILES['order_file'];
+                $path = DIR_CUSTOM_FILES . 'order_files/' . $file['name'];
+                if(!is_dir(dirname($path))) {
+                    mkdir(dirname($path));
+                    chmod(dirname($path), 0777);
+                }
+                $tmp_name = $file['tmp_name'];
+                if (is_uploaded_file($tmp_name )) {
+                    if(move_uploaded_file($tmp_name , $path)) {
+                        $_REQUEST['order_file'] = $path;
+                        Registry::get('view')->assign('order_file', $path);
+                    } else {
+                        fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('file_not_uploaded'));
+                        $step = 1;
+                    }
+                }
+            }
+                fn_agents_process_order($_REQUEST, $step, $auth);
         }
     }
     if ($step == 3) {
@@ -1447,14 +1464,15 @@ elseif ($mode == 'order_make') {
     $product = $product[0][0];
     $company_id = $product['company_id'];
 //    $regions = fn_agents_get_all_regions();
-    $regions = fn_agents_get_company_offices_with_regions($company_id);
+    $product_offices = fn_agents_get_product_offices_ids($_REQUEST['product_id']);
+    $regions = fn_agents_get_company_offices_with_regions($company_id, array('office_id' => $product_offices));
     $view->assign('regions', $regions );
     $companies = fn_get_companies(array('company_id' => $company_id), $auth);
     $view->assign('companies', $companies[0]);
     $view->assign('company', $companies[0][0]);
 //    $cities = fn_agents_get_all_cities($_REQUEST['client']);
     $view->assign('cities', $regions);
-    $offices = fn_agents_get_company_offices_with_shippings($company_id);
+    $offices = fn_agents_get_company_offices_with_shippings($company_id, array('office_id' => $product_offices) );
     if(empty($offices)) {
         fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('company_have_no_offices'));
         return array(CONTROLLER_STATUS_REDIRECT, 'agents.companies_and_products' );
@@ -1525,7 +1543,11 @@ elseif ($mode == 'product_info' || $mode == 'company_info') {
     }
     unset ($c_product);
     $company['image_path'] = fn_agents_get_company_logo($company['company_id']);
-    $offices = fn_agents_get_company_offices_with_shippings($company['company_id']);
+    if($mode == 'product_info') {
+        $offices = fn_agents_get_company_offices_with_shippings($company['company_id'], array('office_id'=> fn_agents_get_product_offices_ids($_REQUEST['product_id'])));
+    } else {
+        $offices = fn_agents_get_company_offices_with_shippings($company['company_id']);
+    }
     $cities = fn_agents_extract_cities_from_offices($offices);
     $view->assign('order_statuses', fn_agents_get_order_statuses());
     $view->assign('mode', 'product_info');

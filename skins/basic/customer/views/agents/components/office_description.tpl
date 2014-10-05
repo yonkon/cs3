@@ -57,9 +57,12 @@
     {/foreach}
     </div>
 </div>
-
-{literal}
 <script type="text/javascript">
+    lang.address = '{$lang.address}';
+    lang.phone = '{$lang.phone}';
+    lang.fax = '{$lang.fax}';
+    lang.working_mode = '{$lang.working_mode}';
+    {literal}
     function switch_active_tab(tab_name) {
         $('.switch_link').each(function(i, el) {
             var $el = $(el);
@@ -92,6 +95,9 @@
                             lng: latlng.lng()
                         });
                         gmap.fitZoom();
+                        if(gmap.markers.length == 1) {
+                            gmap.zoomOut(4);
+                        }
                     }
                 }
             });
@@ -142,17 +148,38 @@
                         var br = document.createElement('br');
                         $names_and_descr.append(br);
 
-                        p = document.createElement('p');
+                        p = document.createElement('span');
                         $adresses_and_phones.append(p);
                         $p = $(p);
-                        $p.addClass('bold no-padding office_address');
-                        $p.text(dt.address);
+                        $p.addClass('no-padding office_address');
+                        $p.text(lang.address + ': ' + dt.address);
 
-                        p = document.createElement('p');
+                        br = document.createElement('br');
+                        $adresses_and_phones.append(br);
+
+                        p = document.createElement('span');
                         $adresses_and_phones.append(p);
                         $p = $(p);
                         $p.addClass('no-padding');
-                        $p.text(dt.phone);
+                        $p.text(lang.phone + ': ' + dt.phone);
+
+                        br = document.createElement('br');
+                        $adresses_and_phones.append(br);
+
+                        p = document.createElement('span');
+                        $adresses_and_phones.append(p);
+                        $p = $(p);
+                        $p.addClass('no-padding');
+                        $p.text(lang.fax + ': ' + dt.fax);
+
+                        br = document.createElement('br');
+                        $adresses_and_phones.append(br);
+
+                        p = document.createElement('span');
+                        $adresses_and_phones.append(p);
+                        $p = $(p);
+                        $p.addClass('no-padding');
+                        $p.html(lang.working_mode + ': ' + dt.working_mode);
 
                         br = document.createElement('br');
                         $adresses_and_phones.append(br);

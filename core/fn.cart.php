@@ -1303,8 +1303,11 @@ function fn_change_order_status($order_id, $status_to, $status_from = '', $force
 
 	if (empty($status_from)) {
 		$status_from = $order_info['status'];
-	}
 
+	}
+    Registry::get('view_mail')->assign('status_to', $order_statuses[$status_to]['description']);
+    Registry::get('view_mail')->assign('status_from', $order_statuses[$status_from]['description']);
+    Registry::get('view_mail')->assign('order_id', $order_info['order_id']);
 	if (empty($order_info) || empty($status_to) || $status_from == $status_to) {
 		return false;
 	}
@@ -4160,7 +4163,7 @@ function fn_get_statuses($type = STATUSES_ORDER, $simple = false, $additional_st
 			}
 		}
 	} else {
-		$statuses = db_get_hash_array("SELECT a.status, b.description FROM ?:statuses as a LEFT JOIN ?:status_descriptions as b ON b.status = a.status AND b.type = a.type AND b.lang_code = ?s WHERE a.type = ?s", 'status', $lang_code, $type);
+		$statuses = db_get_hash_array("SELECT a.status, b.description FROM ?:statuses as a LEFT JOIN ?:status_descriptions as b ON b.status = a.status AND b.type = a.type AND b.lang_code = ?s WHERE a.type = ?s AND a.status != 'B' ", 'status', $lang_code, $type);
 		foreach ($statuses as $status => $data) {
 			$statuses[$status] = fn_array_merge($statuses[$status], fn_get_status_params($status, $type));
 		}

@@ -109,7 +109,7 @@
 				{/hook}
 			</tr>
 			</table>
-		
+		{*
 			{hook name="orders:invoice_customer_info"}
 			{if !$profile_fields}
 			{assign var="profile_fields" value='I'|fn_get_profile_fields}
@@ -198,8 +198,8 @@
 			</table>
 			{/if}
 			{/hook}
-			{* Customer info *}
-		
+			*}{* Customer info *}{*
+		*}
 		
 			{* Ordered products *}
 			
@@ -251,9 +251,9 @@
 			{hook name="orders:ordered_products"}
 			{/hook}
 			{* /Ordered products *}
-		
+
 			{* Order totals *}
-			<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		{*	<table cellpadding="0" cellspacing="0" border="0" width="100%">
 			<tr>
 				<td align="right">
 				<table border="0" style="padding: 3px 0px 12px 0px;">
@@ -333,9 +333,9 @@
 				</td>
 			</tr>
 			</table>
-		
+		*}
 			{* /Order totals *}
-		
+
 			{if $order_info.notes}
 			<table cellpadding="0" cellspacing="0" border="0" width="100%">
 			<tr valign="top">

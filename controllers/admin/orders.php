@@ -446,7 +446,7 @@ if ($mode == 'delete') {
 
 	$order_info = fn_get_order_short_info($_REQUEST['id']);
 	$old_status = $order_info['status'];
-	if (fn_change_order_status($_REQUEST['id'], $_REQUEST['status'], '', fn_get_notification_rules($_REQUEST))) {
+	if (fn_change_order_status($_REQUEST['id'], $_REQUEST['status'], $old_status, fn_get_notification_rules($_REQUEST))) {
 		$order_info = fn_get_order_short_info($_REQUEST['id']);
 		$new_status = $order_info['status'];
 		if ($_REQUEST['status'] != $new_status) {

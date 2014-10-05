@@ -12,7 +12,9 @@
     <input type="hidden" id="client_company" name="client[company]" value="{$client.company}">
     <input type="hidden" id="client_need_shipment" name="client[need_shipment]" value="{$client.need_shipment}">
     <input type="hidden" id="client_comment" name="client[comment]" value="{$client.comment}">
-    <div id="order_make_top">
+    <input type="hidden" name="order_filepath" value="{$order_file}">
+
+        <div id="order_make_top">
         <h2 id="h2 lightbox-header-text">{$lang.New_order_Approvement}</h2>
         {*<img src="/images/close.png" class="close" alt="{$lang.close}">*}
         <p>{$lang.Verify_client_data_please}</p>

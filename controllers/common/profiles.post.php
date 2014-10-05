@@ -141,6 +141,9 @@ if ($mode == 'add' || $mode == 'update') {
 	$uid = 0;
 	$user_data = array();
 	$profile_id = empty($_REQUEST['profile_id']) ? 0 : $_REQUEST['profile_id'];
+    if(empty($profile_id) && !empty($_REQUEST['user_id'])) {
+        $profile_id = db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type = 'P' ", $_REQUEST['user_id']);
+    }
 	if (AREA == 'A') {
 		$_uid = !empty($profile_id) ? db_get_field("SELECT user_id FROM ?:user_profiles WHERE profile_id = ?i", $profile_id) : $auth['user_id'];
 		$uid = empty($_REQUEST['user_id']) ? (($mode == 'add') ? '' : $_uid) : $_REQUEST['user_id'];

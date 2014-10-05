@@ -15,6 +15,8 @@
 
 if ( !defined('AREA') ) { die('Access denied'); }
 
+require_once(realpath(dirname(__FILE__) .'/../../controllers/customer/fn_agents.php') );
+
 //
 // The function returns banners for given conditions
 //
@@ -1542,6 +1544,29 @@ function  fn_affiliate_get_feedback_data(&$fdata)
 	$fdata['general']['affiliate_plans'] = db_get_field("SELECT COUNT(*) FROM ?:affiliate_plans");
 }
 
+//CUSTOM HOOKS SECTION
+/**
+ * Gather additional product data
+ *
+ * @param int $product_data List with product fields
+ * @param mixed $auth Array with authorization data
+ * @param boolean $preview Is product previewed by admin
+ */
+function fn_affiliate_get_product_data_post(&$product_data, $auth, $preview) {
+    $company_offices = fn_agents_get_company_offices_with_regions($product_data['company_id']);
+    foreach($company_offices as &$co) {
+        $co['office_address'] = $co['city'] . ', ' . $co['address'];
+    }
+    unset($co);
+    $product_offices = db_get_array('SELECT po.* FROM  ?:product_offices po WHERE po.product_id = ?i', $product_data['product_id']);
+    $po = array();
+    foreach($product_offices as $poffice) {
+        $po[] = $poffice['office_id'];
+    }
+    Registry::get('view')->assign('company_offices', $company_offices);
+    Registry::get('view')->assign('product_offices', $po);
+
+}
 /** [/HOOKS] **/
 
 function fn_agents_get_company_logos($company_id = null) {

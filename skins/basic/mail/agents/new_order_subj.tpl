@@ -1,0 +1,1 @@
+{$lang.new_order} #{$order_id}

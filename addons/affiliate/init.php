@@ -39,7 +39,9 @@ fn_register_hooks(
 	'get_user_types',
 	'check_user_type_access_rules',
 	'get_feedback_data',
-	'get_predefined_statuses'
+	'get_predefined_statuses',
+    //CUSTOM SECTION
+    'get_product_data_post'
 );
 
 ?>

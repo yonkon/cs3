@@ -6,9 +6,9 @@ if ( !defined('AREA') )	{ die('Access denied');	}
 if (empty($auth['user_id'])) {
     return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form");
 }
-
-include dirname(__FILE__) . "/../customer/fn_agents.php";
-
+$fnagentsphp = realpath(dirname(__FILE__) . "/../customer/fn_agents.php");
+require_once $fnagentsphp;
+$view = Registry::get('view');
 if(empty($_REQUEST['company_id']) ) {
     if(!empty ($_REQUEST['office_id'])) {
         $office = fn_agents_get_company_offices(null, array('office_id' => $_REQUEST['office_id'] ) );
@@ -68,6 +68,7 @@ elseif ($mode == 'offices_add') {
         } else {
             fn_agents_display_errors($errors);
         }
+        Registry::get('view')->assign('office', $_REQUEST['office']);
     }
     Registry::get('view')->assign('content_tpl', 'views/agents/offices.tpl');
     return array(CONTROLLER_STATUS_OK, $redirect_url);
@@ -721,3 +722,22 @@ elseif ($mode == 'report' || $mode == 'report_export') {
         return array(CONTROLLER_STATUS_OK);
     }
 }
+elseif ($mode == 'product_offices') {
+    $pid = intval($_REQUEST['product_id']);
+    $oid = intval($_REQUEST['office_id']);
+    $en = $_REQUEST['enabled'];
+    if(empty($pid) || empty($oid) || empty($en)) {
+        echo (json_encode(array('status' => 'error')));
+        die();
+//        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+    if($en === 'true') {
+        db_query("REPLACE INTO ?:product_offices (`product_id`, `office_id`) VALUES ( $pid , $oid)");
+    } else {
+        db_query("DELETE FROM  ?:product_offices WHERE `product_id` = $pid AND `office_id` = $oid ");
+    }
+    echo (json_encode(array('status' => 'ok')));
+    die();
+    $view->assign('product_id', $pid);
+}
+

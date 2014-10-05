@@ -73,7 +73,9 @@
                             <div>
                                 <button id="order_submit_{$product.product_id}" class="big green button" type="submit" name="checkout" value="checkout">{$lang.checkout}</button>
                             </div>
-                            <div class="shipping">{if true || $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="{"/skins/basic/customer/views/agents/images/shipping.png"|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">{/if}
+                            <div class="shipping">
+                                {if $product.free_shipping == 'Y'}<img class="shipping-img" src="{"/skins/basic/customer/views/agents/images/shipping.png"|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">{/if}
+                            {*<div class="shipping">{if $product.free_shipping || $product.edp_shipping || $product.shipping_freight}<img class="shipping-img" src="{"/skins/basic/customer/views/agents/images/shipping.png"|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}">{/if}*}
                             </div>
                         </td>
                     </tr>

@@ -5,10 +5,11 @@
         <p class="graytext">{$lang.Fill_client_data_please}</p>
     </div>
     <div id="order_make_content">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
         <input type="hidden" name="step" value="{$step}">
         <input type="hidden" name="client[affiliate_id]" value="{$auth.user_id}">
         <input type="hidden" name="item_count" value="{$product.amount|default:1}">
+        <input type="hidden" name="order_filepath" value="{$order_file}">
         <div>
             <label class="client_filds_add_product_label" for="client_fio">{$lang.FIO}</label>
             <input class="client_filds_add_product" id="client_fio" name="client[fio]" value="{$client.fio }">
@@ -53,7 +54,7 @@
                 {/foreach}
             </select>
         </div>
-        <div>
+        <div style="padding-top:5px;">
             <label for="client_need_shipment">{$lang.Need_shipment}</label>
             <input type="checkbox" id="client_need_shipment" name="client[need_shipment]" {if $client.need_shipment}checked="checked" {/if}>
         </div>
@@ -67,7 +68,13 @@
         <div>
             <input type="checkbox" id="client_notify" name="client[notify]" {if $client.notify}checked="checked" {/if}>
             <label class="client_filds_add_product_label_mail" for="client_notify">{$lang.Notify_user_by_mail}</label>
-            <input style="padding-left: 2px;" placeholder="Введите email" class="client_filds_add_product" id="client_email" name="client[email]" value="{$client.email}">
+            <input style="padding-left: 2px; width: 160px;" placeholder="Введите email" class="client_filds_add_product" id="client_email" name="client[email]" value="{$client.email}">
+        </div>
+        <div style="padding-top: 0.5em;">
+            <label class="client_filds_add_product_label" style="margin-top: 5px; width: 225px" for="order_file">{$lang.order_file}</label>
+            {*<div class="client_filds_add_product">*}
+                <input style="vertical-align: top; width: 200px;" type="file" id="order_file" name="order_file">
+            {*</div>*}
         </div>
     </div>
     <div id="order_make_bottom">

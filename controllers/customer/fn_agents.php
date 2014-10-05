@@ -1367,9 +1367,35 @@ function fn_agents_process_order($order_data, $step = 1, $auth) {
     }
 
     if($step == 3) {
-        fn_agents_new_order($cart, $auth);
+        $order_id = fn_agents_new_order($cart, $auth);
+        $order_id = $order_id[0];
         fn_clear_cart($cart);
         fn_save_cart_content($cart, $auth['user_id']);
+        $from_email = array(
+            'email' => Registry::get('settings.Company.company_support_department'),
+            'name' => 'Mail system'
+        );
+        Registry::get('view_mail')->assign('target', 'agent');
+
+        if ( !empty($order_data['order_filepath']) ) {
+            $uploadfile = $order_data['order_filepath'];
+        } else {
+            $uploadfile = '';
+        }
+
+        $agent = fn_get_user_info($auth['user_id']);
+        $company = fn_get_company_data($order_data['client']['company']);
+        $to_email = $agent['email'];
+        Registry::get('view_mail')->assign('order_id', $order_id);
+        Registry::get('view_mail')->assign('target', 'agent');
+        fn_send_mail($to_email, $from_email,'agents/new_order_subj.tpl', 'agents/new_order_message.tpl', $uploadfile ? array('attachment' => $uploadfile) : array(), CART_LANGUAGE);
+        $to_email = $company['email'];
+        Registry::get('view_mail')->assign('target', 'company');
+        fn_send_mail($to_email, $from_email,'agents/new_order_subj.tpl', 'agents/new_order_message.tpl', $uploadfile ? array('attachment' => $uploadfile) : array(), CART_LANGUAGE);
+        if(!empty($uploadfile)) {
+            fn_delete_file($uploadfile);
+        }
+
     }
 
 
@@ -1466,6 +1492,7 @@ function fn_agents_new_order(&$cart, &$auth, $action = '', $parent_order_id = 0)
     } else {
         fn_set_notification('E', fn_get_lang_var('error'), fn_get_lang_var('text_order_placed_error'));
     }
+    return $order_id;
 }
 function fn_agents_save_order(&$cart, &$auth, $action = '', $parent_order_id = 0) {
     $order_id = fn_place_order($cart, $auth, $action, $parent_order_id);
@@ -1921,7 +1948,11 @@ function fn_agents_get_company_offices($company_id, $params = array(), $lang = C
     $order = ' ORDER BY city ASC ';
 
     if(!empty($params['office_id'])) {
-        $where .= db_process(' AND co.office_id = ?i ', array($params['office_id']) );
+        if (is_array($params['office_id'])) {
+            $where .= db_process(' AND co.office_id IN (?n) ', array($params['office_id']) );
+        } else {
+            $where .= db_process(' AND co.office_id = ?i ', array($params['office_id']) );
+        }
     }
     if(!empty($params['region_id'])) {
         $join .= db_process(' LEFT JOIN Cities c ON c.CityId = co.city_id');
@@ -1946,7 +1977,11 @@ function fn_agents_get_company_offices_with_regions($company_id, $params = array
     $order = ' ORDER BY city ASC ';
 
     if(!empty($params['office_id'])) {
-        $where .= db_process(' AND co.office_id = ?i ', array($params['office_id']) );
+        if (is_array($params['office_id'])) {
+            $where .= db_process(' AND co.office_id IN (?n) ', array($params['office_id']) );
+        } else {
+            $where .= db_process(' AND co.office_id = ?i ', array($params['office_id']) );
+        }
     }
     if(!empty($params['region_id'])) {
         $where .= db_process(' AND c.RegionID = ?i ' , array($params['region_id']) );
@@ -2010,7 +2045,7 @@ function fn_agents_get_office_fields_errors($office) {
     }
     $integer_fields = array(
         'company_id',
-        'phone',
+//        'phone',
         'city_id'
     );
     if(isset($params['integer_fields'])) {
@@ -2399,4 +2434,17 @@ function fn_agents_get_site_order_profit($order, &$company_profit_percents ) {
         $company_profit_percents[$order['company_id']] = doubleval(db_get_field($query));
     }
     return $order['total'] * (100 - $company_profit_percents[$order['company_id']]) / 100;
+}
+
+function fn_agents_get_product_offices($pid) {
+    return db_get_array("SELECT * FROM ?:product_offices WHERE product_id = ?i", $pid);
+}
+
+function fn_agents_get_product_offices_ids($pid) {
+    $pos = fn_agents_get_product_offices($pid);
+    $product_offices_ids = array();
+    foreach($pos as $po) {
+        $product_offices_ids[] = $po['office_id'];
+    }
+    return $product_offices_ids;
 }
