@@ -1768,7 +1768,7 @@ function fn_agents_get_saved_orders($user_id, $params = array(), $lang_code = CA
 
 
 function fn_agents_get_active_orders($user_id, $params = array(), $lang_code = CART_LANGUAGE) {
-    $active_statuses = array('O', 'P');
+    $active_statuses = array('F', 'P');
     $params['where'][db_process('?:orders.status')] = $active_statuses ;
     return fn_agents_get_orders($user_id, $params, $lang_code);
 }

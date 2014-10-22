@@ -35,7 +35,7 @@
 {/if}
 
 {if !$nothing_extra}
-    {include file="common/subheader.tpl" title=$title}
+    {include file="common_templates/subheader.tpl" title=$title}
 {/if}
 
 {foreach from=$profile_fields.$section item=field}

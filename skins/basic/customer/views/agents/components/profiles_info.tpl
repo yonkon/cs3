@@ -1,4 +1,4 @@
-{include file="common/subheader.tpl" title=$lang.customer_information}
+{include file="common_templates/subheader.tpl" title=$lang.customer_information}
 
 {assign var="profile_fields" value=$location|fn_get_profile_fields}
 {split data=$profile_fields.C size=2 assign="contact_fields" simple=true size_is_horizontal=true}

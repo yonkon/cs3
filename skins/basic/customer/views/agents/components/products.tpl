@@ -58,7 +58,7 @@
                     <tr>
                         <td id="product_image"> <a class="center-block block" href="{'agents.product_info'|fn_url}&product_id={$product.product_id}"><img class="product-image" src="{$product.image.image_path|unescape|fn_generate_thumbnail:$settings.Thumbnails.product_lists_thumbnail_width:$settings.Thumbnails.product_lists_thumbnail_height:true|escape}"></a></td>
                         <td id="product_name" colspan="2">
-                            <h2><a style="font-weight: bold; text-decoration: underline; font-size: 15pt;" href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
+                            <h2><a style="font-weight: bold; text-decoration: underline; font-size: 11pt;" href="{'agents.product_info'|fn_url}&product_id={$product.product_id}">{$product.product}</a></h2>
                             <div class="'product-description">{$product.description|unescape|truncate:360}</div>
                         </td>
                         <td id="product_buy">

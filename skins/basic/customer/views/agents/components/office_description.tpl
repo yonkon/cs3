@@ -30,7 +30,7 @@
         <h2 class="margin-top bold">{$lang.Addresses_and_phones}</h2>
         <div id="adresses_and_phones" class="margin-top">
         {foreach from=$offices item='office'}
-            <p class="no-padding office_address">{$lang.address}: {$office.address}</p>
+            <p class="no-padding">{$lang.address}: <span class="office_address">{$office.address}</span></p>
             <p class="no-padding">{$lang.phone}: {$office.phone}</p>
             <p class="no-padding">{$lang.fax}: {$office.fax}</p>
             <p class="no-padding">{$lang.working_mode}: {$office.working_mode|unescape}</p>
@@ -151,8 +151,8 @@
                         p = document.createElement('span');
                         $adresses_and_phones.append(p);
                         $p = $(p);
-                        $p.addClass('no-padding office_address');
-                        $p.text(lang.address + ': ' + dt.address);
+                        $p.addClass('no-padding');
+                        $p.html(lang.address + ': <span class="office_address">' + dt.address + '</span>');
 
                         br = document.createElement('br');
                         $adresses_and_phones.append(br);

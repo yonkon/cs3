@@ -1,5 +1,5 @@
 {if !$nothing_extra}
-    {include file="common/subheader.tpl" title=$lang.user_account_info}
+    {include file="common_templates/subheader.tpl" title=$lang.user_account_info}
 {/if}
 
 {hook name="profiles:account_info"}

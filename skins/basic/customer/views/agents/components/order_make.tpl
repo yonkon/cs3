@@ -73,7 +73,7 @@
         <div style="padding-top: 0.5em;">
             <label class="client_filds_add_product_label" style="margin-top: 5px; width: 225px" for="order_file">{$lang.order_file}</label>
             {*<div class="client_filds_add_product">*}
-                <input style="vertical-align: top; width: 200px;" type="file" id="order_file" name="order_file">
+                <input style="vertical-align: top;" type="file" id="order_file" name="order_file">
             {*</div>*}
         </div>
     </div>

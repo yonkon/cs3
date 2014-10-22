@@ -32,9 +32,9 @@
 		</fieldset>
 		{/hook}
 		
-		<fieldset>
+		{*<fieldset>
 		{include file="views/profiles/components/profile_fields.tpl" section="C" title=$lang.contact_information}
-		</fieldset>
+		</fieldset>*}
 
 		{if $settings.General.user_multiple_profiles == "Y" && $mode == "update"}
 		<fieldset>
@@ -44,14 +44,14 @@
 		</fieldset>
 		{/if}
 
-		<fieldset>
+		{*<fieldset>
 		{if $profile_fields.B}
 			{include file="views/profiles/components/profile_fields.tpl" section="B" title=$lang.billing_address}
 			{include file="views/profiles/components/profile_fields.tpl" section="S" title=$lang.shipping_address body_id="sa" shipping_flag=$profile_fields|fn_compare_shipping_billing}
 		{else}
 			{include file="views/profiles/components/profile_fields.tpl" section="S" title=$lang.shipping_address shipping_flag=false}
 		{/if}
-		</fieldset>
+		</fieldset>*}
 	</div>
 	
 	{if $mode == "update" && ((!$user_data|fn_check_user_type_admin_area && !"COMPANY_ID"|defined) || ($user_data|fn_check_user_type_admin_area && $usergroups && !"COMPANY_ID"|defined && $auth.is_root == 'Y' && ($user_data.company_id != 0 || ($user_data.company_id == 0 && $user_data.is_root != 'Y'))) || ($user_data.user_type == 'V' && "COMPANY_ID"|defined && $auth.is_root == 'Y' && $user_data.user_id != $auth.user_id && $user_data.company_id == $smarty.const.COMPANY_ID))}

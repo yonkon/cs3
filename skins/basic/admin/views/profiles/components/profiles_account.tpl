@@ -30,6 +30,13 @@
 </div>
 
 
+<div class="form-field">
+  <label for="phone" class="cm-required">{$lang.phone}:</label>
+  <input type="text" id="phone" name="user_data[phone]" class="input-text" size="32" maxlength="128" value="{$user_data.phone}" />
+</div>
+
+
+
 {if $uid != 1 || !$user_data|fn_check_user_type_admin_area || "RESTRICTED_ADMIN"|defined}
 	{if !("COMPANY_ID"|defined && $user_data.is_root == "Y")}
 

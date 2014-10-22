@@ -1,7 +1,7 @@
 {if $settings.General.user_multiple_profiles == "Y" && $auth.user_id}
 
 {if $show_title}
-    {include file="common/subheader.tpl" title=$lang.select_profile}
+    {include file="common_templates/subheader.tpl" title=$lang.select_profile}
 {/if}
 
 {if !$hide_profile_select}

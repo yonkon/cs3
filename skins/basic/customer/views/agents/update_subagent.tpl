@@ -13,8 +13,8 @@
             <input type="hidden" name="user_data[company_id]" value="{$user_data.company_id}">
             {hook name="checkout:checkout_steps"}{/hook}
 
-            {include file="common/image_verification.tpl" option="use_for_register" align="left" assign="image_verification"}
-            {if $image_verification}
+            {include file="common_templates/image_verification.tpl" option="use_for_register" align="left" assign="image_verification"}
+            {if true || $image_verification}
                 <div class="control-group">
                     {$image_verification nofilter}
                 </div>
@@ -71,7 +71,7 @@
                     {hook name="profiles:account_update"}
                     {/hook}
 
-                    {include file="common/image_verification.tpl" option="use_for_register" align="center"}
+                    {include file="common_templates/image_verification.tpl" option="use_for_register" align="center"}
 
                 {/capture}
                 {$smarty.capture.group nofilter}
