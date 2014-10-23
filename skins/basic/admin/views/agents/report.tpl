@@ -8,7 +8,9 @@
                 <th width="40%">{$lang.profit_source}</th>
             {/if}
             <th class="right" width="20%">{$lang.orders_paid_count}</th>
-            {if $is_vendor}<th class="right" width="20%">{$lang.total_profit}</th>
+          {if $is_vendor}<th class="right" width="20%">{$lang.total_profit}</th>{/if}
+
+          {if $is_vendor}<th class="right" width="20%">{$lang.total_income}</th>
             {else}<th class="right" width="20%">{$lang.admin_report_agent_total_profit}</th>
             {/if}
             {if $is_vendor == false}
@@ -25,9 +27,14 @@
                         <td><strong>{$g_st.action}</strong></td>
                     {/if}
                     <td class="right">{$g_st.count|default:"0"}</td>
+                  {if $is_vendor == true}
+                    {math equation="pr - su" pr=$g_st.site_profit su=$g_st.sum assign="pure_site_profit"}
+                    {math equation="pr + su" pr=$g_st.site_profit su=$g_st.sum assign="site_income"}
+                    <td class="right">{include file="common_templates/price.tpl" value=$site_income|round:2}</td>
+                  {/if}
                     <td class="right">{include file="common_templates/price.tpl" value=$g_st.sum|round:2}</td>
                     {if $is_vendor == false}
-                        {math equation="pr - su" pr=$g_st.site_profit su=$g_st.sum assign="pure_site_profit"}
+
                         <td class="right">{include file="common_templates/price.tpl" value=$pure_site_profit|round:2}</td>
                     {/if}
                     <td class="right">{include file="common_templates/price.tpl" value=$g_st.site_profit|round:2}</td>

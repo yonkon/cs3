@@ -576,7 +576,10 @@ elseif ($mode == 'report' || $mode == 'report_export') {
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("profit_source"));
         }
         $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("orders_paid_count"));
-        $sheet->setCellValueByColumnAndRow($col++, $row,  fn_get_lang_var($is_vendor ? "total_profit" : "admin_report_agent_total_profit"));
+        if($is_vendor) {
+          $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("total_profit"));
+        }
+        $sheet->setCellValueByColumnAndRow($col++, $row,  fn_get_lang_var($is_vendor ? "total_income" : "admin_report_agent_total_profit"));
         if (!$is_vendor) {
             $sheet->setCellValueByColumnAndRow($col++, $row, fn_get_lang_var("admin_pure_site_profit"));
         }
@@ -592,7 +595,11 @@ elseif ($mode == 'report' || $mode == 'report_export') {
                 $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['action']);
             }
             $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['count']);
-            $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['sum']);
+          if ($is_vendor) {
+            $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['site_profit']+$g_st['sum']);
+          }
+          $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['sum']);
+
             if (!$is_vendor) {
                 $sheet->setCellValueByColumnAndRow($col++, $row, $g_st['site_profit']-$g_st['sum']);
             }
